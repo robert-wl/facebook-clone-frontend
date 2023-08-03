@@ -1,0 +1,44 @@
+
+
+scalar Time
+
+type User {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    username: String!
+    email: String!
+    dob: Time!
+    gender: String!
+    active: Boolean!
+    profile: String
+    background: String
+}
+
+input NewUser {
+    firstName: String!
+    lastName: String!
+    username: String!
+    email: String!
+    password: String!
+    dob: Time!
+    gender: String!
+}
+
+type Query {
+    getUser(id: ID!): User
+    getUsers: [User]
+    checkActivateLink(id: String!): Boolean!
+    checkResetLink(id: String!): Boolean!
+    #getInactiveUsers: [InactiveUser]
+}
+
+type Mutation {
+    createUser(input: NewUser!): User!
+    activateUser(id: String!): User!
+    authenticateUser(email: String!, password: String!): String!
+    forgotPassword(email: String!): Boolean!
+    resetPassword(id: String!, password: String!): User!
+    #updateUser(id: ID!, input: NewUser!): User
+    #deleteUser(id: ID!): User
+}
