@@ -1,7 +1,7 @@
 import styles from "../../src/assets/styles/page.module.scss";
 import {useQuery} from "@apollo/client";
 import {CHECK_ACTIVATE_LINK} from "../../lib/query/user/checkActivateLink.graphql";
-import {useNavigate, useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 
 
 export default function ActivateAccountProtector({ children } : { children: JSX.Element }){
@@ -11,7 +11,6 @@ export default function ActivateAccountProtector({ children } : { children: JSX.
             id: activationID
         }
     });
-    const navigate = useNavigate()
 
     if(loading){
         return (
@@ -20,13 +19,12 @@ export default function ActivateAccountProtector({ children } : { children: JSX.
     }
 
 
-    console.log(data)
     return (
         <>
             {
                 data && data.checkActivateLink ?
                 children :
-                navigate('/login')
+                <Navigate to={"/login"} replace={true} />
 
             }
         </>

@@ -1,4 +1,5 @@
 
+directive @auth on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 
 scalar Time
 
@@ -30,6 +31,7 @@ type Query {
     getUsers: [User]
     checkActivateLink(id: String!): Boolean!
     checkResetLink(id: String!): Boolean!
+    getAuth: User! @auth
     #getInactiveUsers: [InactiveUser]
 }
 

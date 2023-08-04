@@ -1,0 +1,14 @@
+
+
+.imageBox {
+  img {
+    border-radius: 3rem;
+    width: 3rem;
+    opacity: 90%;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 100%;
+    }
+  }
+}

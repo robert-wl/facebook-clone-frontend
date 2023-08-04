@@ -1,6 +1,6 @@
 import styles from '../../src/assets/styles/page.module.scss';
 import {useQuery} from "@apollo/client";
-import {useNavigate, useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import {CHECK_RESET_LINK} from "../../lib/query/user/checkResetLink.graphql";
 
 
@@ -11,7 +11,6 @@ export default function ResetPasswordProtector({ children } : { children: JSX.El
             id: forgotID
         }
     });
-    const navigate = useNavigate()
 
     if(loading){
         return (
@@ -25,7 +24,7 @@ export default function ResetPasswordProtector({ children } : { children: JSX.El
             {
                 data && data.checkResetLink ?
                 children :
-                navigate('/login')
+                <Navigate to={"/login"} replace={true} />
 
             }
         </>

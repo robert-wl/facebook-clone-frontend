@@ -39,7 +39,7 @@ func ParseJWT(jwtToken string) (string, error) {
 		key = defaultKey
 	}
 
-	token, err := jwt.ParseWithClaims(jwtToken, &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(key), nil
 	})
 
@@ -47,10 +47,9 @@ func ParseJWT(jwtToken string) (string, error) {
 		return "", err
 	}
 
-	if claims, ok := token.Claims.(*jwt.RegisteredClaims); ok && token.Valid {
-		return claims.Subject, nil
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims["sub"].(string), nil
 	} else {
 		return "", fmt.Errorf("Invalid Token")
 	}
-
 }

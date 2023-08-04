@@ -6,6 +6,30 @@ package model
 //	"time"
 //)
 //
+//type Comment struct {
+//	ID            string         `json:"id"`
+//	User          *User          `json:"user"`
+//	Content       string         `json:"content"`
+//	LikeCount     int            `json:"likeCount"`
+//	ReplyCount    int            `json:"replyCount"`
+//	ParentPost    *Post          `json:"parentPost,omitempty"`
+//	ParentComment *Comment       `json:"parentComment,omitempty"`
+//	Likes         []*CommentLike `json:"likes,omitempty"`
+//	Comments      []*Comment     `json:"comments,omitempty"`
+//	CreatedAt     time.Time      `json:"createdAt"`
+//}
+//
+//type CommentLike struct {
+//	CommentID string `json:"commentId"`
+//	User      *User  `json:"user"`
+//}
+//
+//type NewPost struct {
+//	Content string    `json:"content"`
+//	Privacy string    `json:"privacy"`
+//	Files   []*string `json:"files,omitempty"`
+//}
+//
 //type NewUser struct {
 //	FirstName string    `json:"firstName"`
 //	LastName  string    `json:"lastName"`
@@ -14,6 +38,25 @@ package model
 //	Password  string    `json:"password"`
 //	Dob       time.Time `json:"dob"`
 //	Gender    string    `json:"gender"`
+//}
+//
+//type Post struct {
+//	ID           string      `json:"id"`
+//	User         *User       `json:"user"`
+//	Content      string      `json:"content"`
+//	Privacy      string      `json:"privacy"`
+//	LikeCount    int         `json:"likeCount"`
+//	CommentCount int         `json:"commentCount"`
+//	ShareCount   int         `json:"shareCount"`
+//	Files        []*string   `json:"files,omitempty"`
+//	Likes        []*PostLike `json:"likes,omitempty"`
+//	Comments     []*Comment  `json:"comments,omitempty"`
+//	CreatedAt    time.Time   `json:"createdAt"`
+//}
+//
+//type PostLike struct {
+//	PostID string `json:"postId"`
+//	User   *User  `json:"user"`
 //}
 //
 //type User struct {

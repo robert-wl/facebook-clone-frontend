@@ -37,6 +37,10 @@ func MigrateDatabase() {
 
 	err := db.AutoMigrate(
 		&model.User{},
+		&model.Post{},
+		&model.PostLike{},
+		&model.Comment{},
+		&model.CommentLike{},
 	)
 
 	fmt.Println(err)

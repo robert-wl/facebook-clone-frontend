@@ -12,6 +12,7 @@ import (
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 	"github.com/yahkerobertkertasnya/TPAWebBack/helper"
+	"github.com/yahkerobertkertasnya/TPAWebBack/helper/mail"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -38,11 +39,20 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		user.Password = hashed
 	}
 
-	if err := r.DB.Save(&user).Error; err != nil {
+	html := fmt.Sprintf(
+		`
+		<h1>Activate</h1>
+		<a href="http://localhost:5173/activate/%s">Click here to activate your account</a>
+		`, activationId)
+
+	_, err := mail.SendVerification(user.Email, "Activate Account", html)
+	if err != nil {
 		return nil, err
 	}
 
-	//TODO: send email
+	if err := r.DB.Save(&user).Error; err != nil {
+		return nil, err
+	}
 
 	return user, nil
 }
@@ -51,7 +61,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 func (r *mutationResolver) ActivateUser(ctx context.Context, id string) (*model.User, error) {
 	var user *model.User
 
-	if err := r.DB.First(&user, "activation_id = ?", id).Update("active", true).Update("activation_id", nil).Error; err != nil {
+	if err := r.DB.First(&user, "not active and misc_id = ?", id).Update("active", true).Update("misc_id", nil).Error; err != nil {
 		return nil, err
 	}
 
@@ -81,10 +91,20 @@ func (r *mutationResolver) AuthenticateUser(ctx context.Context, email string, p
 func (r *mutationResolver) ForgotPassword(ctx context.Context, email string) (bool, error) {
 	forgotId := uuid.NewString()
 
+	html := fmt.Sprintf(
+		`
+		<h1>Reset Password</h1>
+		<a href="http://localhost:5173/forgot/%s">Click here to reset your password</a>
+		`, forgotId)
+
+	_, err := mail.SendVerification(email, "Reset Password", html)
+	if err != nil {
+		return false, err
+	}
+
 	if err := r.DB.First(&model.User{}, "email = ?", email).Update("misc_id", forgotId).Error; err != nil {
 		return false, err
 	}
-	//TODO: send email
 
 	return true, nil
 }
@@ -148,6 +168,17 @@ func (r *queryResolver) CheckResetLink(ctx context.Context, id string) (bool, er
 	}
 
 	return true, nil
+}
+
+// GetAuth is the resolver for the getAuth field.
+func (r *queryResolver) GetAuth(ctx context.Context) (*model.User, error) {
+	var user *model.User
+
+	if err := r.DB.First(&user, "id = ?", ctx.Value("UserID")).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

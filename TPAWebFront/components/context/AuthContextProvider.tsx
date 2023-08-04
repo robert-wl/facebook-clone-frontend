@@ -1,32 +1,21 @@
 import {createContext, useState} from "react";
 import {User} from "../../gql/graphql";
+import {useQuery} from "@apollo/client";
+import {GET_AUTH} from "../../lib/query/user/getAuth.graphql.ts";
 
-
-
-interface Auth {
-    user: User | null,
-    token: string | null
-}
-
-
-
-export const AuthContext = createContext<any>({});
+export const AuthContext = createContext<User | null>(null);
 export default function AuthContextProvider({ children } : { children : JSX.Element }){
-    const [auth, setAuth] = useState<Auth>({
-        user: null,
-        token: null,
-    });
-    const token = localStorage.getItem("hai")
+    useQuery(GET_AUTH, {
+        onCompleted: (data) => {
+            setAuth(data.getAuth)
+        },
+        skip: !localStorage.getItem("token")
+    })
+    const [auth, setAuth] = useState<User | null>(null);
 
-    if(token == null || token == ""){
-        setAuth({
-            user: null,
-            token: null,
-        })
-    }
 
     return (
-        <AuthContext.Provider value={{ auth, setAuth }}>
+        <AuthContext.Provider value={auth}>
             {children}
         </AuthContext.Provider>
     )

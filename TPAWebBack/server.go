@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
@@ -9,6 +11,7 @@ import (
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/resolver"
 	"github.com/yahkerobertkertasnya/TPAWebBack/helper"
+	"github.com/yahkerobertkertasnya/TPAWebBack/helper/directives"
 	"github.com/yahkerobertkertasnya/TPAWebBack/middleware"
 	"log"
 	"net/http"
@@ -37,6 +40,10 @@ func main() {
 	c := graph.Config{Resolvers: &resolver.Resolver{
 		DB: database.GetInstance(),
 	}}
+
+	c.Directives.Auth = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+		return directives.AuthDirectives(ctx, next)
+	}
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(c))
 

@@ -6,14 +6,12 @@ import {useState} from "react";
 import Toastify from "toastify-js";
 import errorHandler from "../../controller/errorHandler.ts";
 
-
 export default function Login(){
     const [authenticateUser] = useMutation(AUTHENTICATE_USER);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate()
     const handleSubmit = () => {
-        console.log("aa")
         let error = "Unknown error";
         if(email.length == 0){
             error = "Error: Email cannot be empty"
@@ -29,8 +27,8 @@ export default function Login(){
                 }
             }).
             then((token) => {
-                console.log(token)
-                localStorage.setItem("token", token.data.authenticateUser.token)
+                localStorage.setItem("token", token.data.authenticateUser)
+
                 return navigate("/")
             }).
             catch(err => errorHandler(err));
@@ -60,6 +58,7 @@ export default function Login(){
                         placeholder={"Email address"}
                     />
                     <input
+                        type={"password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className={styles.password}

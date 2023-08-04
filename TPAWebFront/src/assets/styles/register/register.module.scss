@@ -53,7 +53,7 @@
           }
 
           &:focus {
-            border: 2px solid gray;
+            border: 1px solid gray;
           }
 
           &::placeholder {
@@ -156,6 +156,9 @@
         border-radius: 0.25rem;
         background-color: #42b72a;
         margin: 0.5rem 0;
+        padding: 0.6em 1.2em;
+        border-color: transparent;
+
 
         h3 {
           margin: 0;
