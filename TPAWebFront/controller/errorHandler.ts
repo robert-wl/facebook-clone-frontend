@@ -12,13 +12,15 @@ export default function errorHandler(error: ApolloError){
         }).showToast();
     }
     else if(error.message.includes("Token is expired")) {
-        return Toastify({
+        window.location.href = "/login";
+        Toastify({
             text: "Error: " + "invalid session",
             style: {
                 background: "red",
             },
         }).showToast();
     }
+    console.log(error)
     Toastify({
         text: "Error: " + error.message,
         style: {

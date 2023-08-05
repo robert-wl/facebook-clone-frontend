@@ -136,9 +136,62 @@ func (r *mutationResolver) ResetPassword(ctx context.Context, id string, passwor
 	return user, nil
 }
 
+// UpdateUserProfile is the resolver for the updateUserProfile field.
+func (r *mutationResolver) UpdateUserProfile(ctx context.Context, profile string) (*model.User, error) {
+	var user *model.User
+	userID := ctx.Value("UserID")
+
+	if err := r.DB.First(&user, "id = ?", userID).Update("profile", profile).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// UpdateUserBackground is the resolver for the updateUserBackground field.
+func (r *mutationResolver) UpdateUserBackground(ctx context.Context, background string) (*model.User, error) {
+	var user *model.User
+	userID := ctx.Value("UserID")
+
+	if err := r.DB.First(&user, "id = ?", userID).Update("background", background).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// UpdateUser is the resolver for the updateUser field.
+func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUser) (*model.User, error) {
+	var user *model.User
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.First(&user, "id = ?", userID).Error; err != nil {
+		return nil, err
+	}
+
+	user.FirstName = input.FirstName
+	user.LastName = input.LastName
+	if input.Password != "" {
+		user.Password = input.Password
+	}
+	user.Gender = input.Gender
+
+	if err := r.DB.Save(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 // GetUser is the resolver for the getUser field.
-func (r *queryResolver) GetUser(ctx context.Context, id string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: GetUser - getUser"))
+func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
+	var user *model.User
+
+	if err := r.DB.Preload("Posts").Preload("Posts.User").First(&user, "username = ?", username).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 // GetUsers is the resolver for the getUsers field.

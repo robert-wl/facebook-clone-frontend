@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.17",
+    "firebase": "^10.1.0",
     "graphql": "^16.7.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",

@@ -10,6 +10,7 @@ import ResetPassword from "./pages/ResetPassword.tsx";
 import ResetPasswordProtector from "../components/middleware/ResetPasswordProtector.tsx";
 import AuthenticatedProtector from "../components/middleware/AuthenticatedProtector.tsx";
 import Home from "./pages/Home.tsx";
+import User from "./pages/User.tsx";
 
 function App() {
 
@@ -37,6 +38,11 @@ function App() {
        <Route path="/" element={
            <AuthenticatedProtector>
                <Home />
+           </AuthenticatedProtector>
+       } />
+       <Route path="/user/:username" element={
+           <AuthenticatedProtector>
+               <User />
            </AuthenticatedProtector>
        } />
    </Routes>

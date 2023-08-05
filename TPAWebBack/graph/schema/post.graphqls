@@ -11,6 +11,7 @@ type Post {
     files: [String]
     likes: [PostLike]
     comments: [Comment]
+    liked: Boolean
     createdAt: Time!
 }
 
@@ -29,6 +30,7 @@ type Comment {
     parentComment: Comment
     likes: [CommentLike]
     comments: [Comment]
+    liked: Boolean
     createdAt: Time!
 }
 
@@ -43,11 +45,26 @@ input NewPost {
     files: [String]
 }
 
+input NewComment {
+    content: String!
+    parentPost: ID
+    parentComment: ID
+}
+
+input Pagination {
+    start: Int!
+    limit: Int!
+}
+
 extend type Query {
-    getPost(id: ID!): Post
-    getPosts: [Post]
+    getPost(id: ID!): Post @auth
+    getPosts(pagination: Pagination!): [Post] @auth
+    getCommentPost(postID: ID!): [Comment] @auth
 }
 
 extend type Mutation {
-    createPost(newPost: NewPost): Post @auth
+    createPost(newPost: NewPost!): Post @auth
+    createComment(newComment: NewComment!): Comment @auth
+    likePost(postID: ID!): PostLike @auth
+    likecomment(commentID: ID!): CommentLike @auth
 }

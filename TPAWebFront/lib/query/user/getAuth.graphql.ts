@@ -7,6 +7,11 @@ export const GET_AUTH = gql`
         id
         firstName
         lastName
+        username
+        profile
+        dob
+        gender
+        email
       }
     }
 `

@@ -1,0 +1,97 @@
+
+.container {
+  width: 100%;
+  margin: 1rem 1rem 0;
+
+  .top {
+    display: flex;
+
+    .image {
+      width: 2rem;
+      border-radius: 20rem;
+
+      img {
+        height: 2rem;
+        width: 2rem;
+        border-radius: 20rem;
+      }
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+
+      .contentBox {
+        position: relative;
+        margin-left: 0.5rem;
+        border-radius: 1rem;
+        background-color: rgb(100, 100, 100, 0.1);
+        text-align: start;
+        width: fit-content;
+        max-width: 37.5rem;
+
+        h4 {
+          margin: 0.5rem 0.9rem 0 0.9rem;
+          font-size: 0.9rem;
+          padding: 0 0.5rem 0 0;
+        }
+
+        p {
+          margin: -0.25rem 0.9rem 0 0.9rem;
+          padding: 0 0.5rem 0.5rem 0;
+          word-wrap: break-word;
+        }
+
+        .like {
+          position: absolute;
+          display: flex;
+          background-color: white;
+          right: -20%;
+          bottom: 0;
+          padding: 0.3rem 0.3rem 0.3rem;
+          box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
+          border-radius: 10rem;
+          font-size: 0.75rem;
+
+          svg {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: row;
+        margin-left: 1.5rem;
+        text-align: start;
+        font-size: 0.75rem;
+        font-weight: bolder;
+        color: gray;
+
+        p {
+          margin: 0.2rem 0 0;
+          padding-right: 1rem;
+
+          &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+          }
+        }
+
+        .liked {
+          margin: 0.2rem 0 0;
+          padding-right: 1rem;
+          color: #1877f2;
+
+          &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}

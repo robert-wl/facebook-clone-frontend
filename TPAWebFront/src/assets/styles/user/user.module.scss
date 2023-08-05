@@ -1,0 +1,232 @@
+$background-color: #e9ecf1;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: $background-color;
+  align-items: center;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    color: black;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 0.5rem;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -1rem;
+    background-color: white;
+    height: 40rem;
+    width: 100%;
+
+    .headerContent {
+      position: relative;
+      width: 42.5rem;
+      margin: 0 1rem;
+      max-width: 42.5rem;
+      height: 20rem;
+
+      svg:nth-child(1) {
+        position: absolute;
+        padding: 0.3rem;
+        border-radius: 20rem;
+        background-color: rgb(200, 200, 200, 1);
+        bottom: 4%;
+        right: 2%;
+
+        &:hover {
+          cursor: pointer;
+          background-color: rgb(100, 100, 100, 1);
+        }
+      }
+
+      img:nth-child(3) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-bottom-left-radius: 1rem;
+        border-bottom-right-radius: 1rem;
+      }
+
+      img:nth-child(4) {
+        bottom: -25%;
+        left: 2.5%;
+        position: absolute;
+        height: 10rem;
+        width: 10rem;
+        border-radius: 20rem;
+        object-fit: cover;
+        border: 0.25rem solid white;
+      }
+
+      .circular {
+        position: relative;
+
+        svg {
+          bottom: -4rem;
+          left: 21.5%;
+          position: absolute;
+          padding: 0.3rem;
+          border-radius: 20rem;
+          background-color: rgb(200, 200, 200, 1);
+
+          &:hover {
+            cursor: pointer;
+            background-color: rgb(100, 100, 100, 1);
+          }
+        }
+      }
+    }
+
+    .profile {
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+      justify-content: space-between;
+      margin: 0 25rem;
+      margin-top: 0.5rem;
+      width: 100vw;
+      max-width: 42.5rem;
+
+      .text {
+        margin-left: 12rem;
+
+        h1 {
+          display: flex;
+          text-align: start;
+          color: black;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        p {
+          color: black;
+          display: flex;
+          text-align: start;
+          margin: 0;
+          margin-top: -0.4rem;
+        }
+      }
+
+      button {
+        display: flex;
+        margin-top: 1rem;
+        margin-right: 1rem;
+        border-radius: 0.25rem;
+        background-color: rgb(100, 100, 100, 0.2);
+        color: black;
+        border: none;
+        padding: 0.5rem 0.75rem;
+
+        &:hover {
+          cursor: pointer;
+          background-color: rgb(100, 100, 100, 0.4);
+        }
+      }
+    }
+
+    .info {
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+      justify-content: start;
+      margin-left: 5rem;
+      width: 100vw;
+      max-width: 42.5rem;
+
+      p {
+        display: flex;
+        align-items: center;
+        color: black;
+        font-size: 0.9rem;
+
+        svg {
+          margin-right: 0.5rem;
+          margin-bottom: 0.2rem;
+        }
+
+        &:nth-child(2), &:nth-child(3), &:nth-child(4) {
+          margin-left: 2rem;
+        }
+      }
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      width: 100vw;
+      max-width: 42.5rem;
+      align-items: start;
+      justify-content: start;
+
+      button {
+        background-color: transparent;
+        border: none;
+        border-bottom: 0.25rem solid transparent;
+        width: 100%;
+        color: black;
+        height: 3rem;
+        margin: 0 2rem;
+      }
+
+      .active {
+        color: #1877f2;
+        border-bottom: 0.25rem solid #1877f2;
+      }
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    max-width: 42.5rem;
+    margin: 0 1rem;
+    color: black;
+
+    .inputBox {
+      display: flex;
+      flex-direction: column;
+      border-radius: 0.5rem;
+      box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
+      background-color: white;
+      margin: 1rem auto;
+      width: 100%;
+
+      .inputHeader {
+        margin: 0.5rem 1rem;
+        display: flex;
+        flex-direction: row;
+        height: 3rem;
+
+        button {
+          margin-left: 1rem;
+          width: 100%;
+          border-radius: 2rem;
+          background-color: rgb(100, 100, 100, 0.1);
+          text-align:  start;
+          font-size: 1rem;
+          color: gray;
+          padding: 0.6em 1.2em;
+          border-color: transparent;
+
+          &:hover {
+            background-color: rgb(100, 100, 100, 0.15);
+            border: 1px solid darkgray;
+          }
+        }
+      }
+    }
+  }
+}

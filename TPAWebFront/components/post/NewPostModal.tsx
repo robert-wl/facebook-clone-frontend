@@ -1,19 +1,28 @@
 import styles from "../../src/assets/styles/post/newPost.module.scss"
 import ProfilePicture from "../ProfilePicture.tsx";
-import {ChangeEvent, Dispatch, SetStateAction, useState} from "react";
+import {ChangeEvent, Dispatch, SetStateAction, useContext, useState} from "react";
 import ImageList from "../ImageList.tsx";
 import uploadStorage from "../../controller/firebase/storage.ts";
 import {useMutation} from "@apollo/client";
 import {CREATE_POST} from "../../lib/query/post/createPost.graphql.ts";
+import {AuthContext} from "../context/AuthContextProvider.tsx";
+import {Post} from "../../gql/graphql.ts";
+
+interface NewPostModal {
+    modalState: boolean,
+    setModalState: Dispatch<SetStateAction<boolean>>,
+    setData: Dispatch<SetStateAction<Post[]>>,
+    data: Post[],
+    setLoading: Dispatch<SetStateAction<boolean>>
+}
 
 
-
-// eslint-disable-next-line
-export default function NewPostModal({ modalState, setModalState, refetch }: { modalState: boolean, setModalState: Dispatch<SetStateAction<boolean>>, refetch: any }){
+export default function NewPostModal({ modalState, setModalState, data, setData, setLoading }: NewPostModal){
     const [files, setFiles] = useState<File[]>([]);
     const [content, setContent] = useState("");
     const [visibility, setVisibility] = useState("friend");
     const [createPost] = useMutation(CREATE_POST);
+    const auth = useContext(AuthContext);
 
     const handleInput = () => {
         const fileInput = document.getElementsByClassName("fileInput")[0] as HTMLInputElement;
@@ -36,14 +45,15 @@ export default function NewPostModal({ modalState, setModalState, refetch }: { m
 
     const handleSubmit = async () => {
         if(content.length === 0) return;
-
+        setLoading(true);
+        handleClose();
         const urlList: string[] = []
         for(const file of files){
             const url = await uploadStorage("post", file);
             urlList.push(url);
         }
 
-        await createPost({
+        const {data:dat} = await createPost({
             variables: {
                 post: {
                     content: content,
@@ -52,9 +62,10 @@ export default function NewPostModal({ modalState, setModalState, refetch }: { m
                 }
             }
         });
+        
 
-        await refetch();
-        handleClose();
+        setData([dat.createPost, ...data]);
+        setLoading(false);
     }
 
     if(!modalState) return  <></>
@@ -80,9 +91,9 @@ export default function NewPostModal({ modalState, setModalState, refetch }: { m
                 <hr />
                 <main>
                     <div className={styles.profile}>
-                        <ProfilePicture />
+                        <ProfilePicture src={auth?.profile} />
                         <div className={styles.name}>
-                             Name
+                            { auth?.firstName } { auth?.lastName }
                             <select
                                 onChange={(e) => setVisibility(e.target.value)}
                             >
@@ -121,6 +132,7 @@ export default function NewPostModal({ modalState, setModalState, refetch }: { m
                                 multiple={true}
                                 hidden={true}
                                 onChange={handleFiles}
+                                accept={"image/*, video/*"}
                             />
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  className="bi bi-image" viewBox="0 0 16 16">

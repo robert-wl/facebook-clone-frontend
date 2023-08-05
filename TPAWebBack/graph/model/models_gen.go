@@ -16,12 +16,19 @@ package model
 //	ParentComment *Comment       `json:"parentComment,omitempty"`
 //	Likes         []*CommentLike `json:"likes,omitempty"`
 //	Comments      []*Comment     `json:"comments,omitempty"`
+//	Liked         *bool          `json:"liked,omitempty"`
 //	CreatedAt     time.Time      `json:"createdAt"`
 //}
 //
 //type CommentLike struct {
 //	CommentID string `json:"commentId"`
 //	User      *User  `json:"user"`
+//}
+//
+//type NewComment struct {
+//	Content       string  `json:"content"`
+//	ParentPost    *string `json:"parentPost,omitempty"`
+//	ParentComment *string `json:"parentComment,omitempty"`
 //}
 //
 //type NewPost struct {
@@ -40,6 +47,11 @@ package model
 //	Gender    string    `json:"gender"`
 //}
 //
+//type Pagination struct {
+//	Start int `json:"start"`
+//	Limit int `json:"limit"`
+//}
+//
 //type Post struct {
 //	ID           string      `json:"id"`
 //	User         *User       `json:"user"`
@@ -51,12 +63,20 @@ package model
 //	Files        []*string   `json:"files,omitempty"`
 //	Likes        []*PostLike `json:"likes,omitempty"`
 //	Comments     []*Comment  `json:"comments,omitempty"`
+//	Liked        *bool       `json:"liked,omitempty"`
 //	CreatedAt    time.Time   `json:"createdAt"`
 //}
 //
 //type PostLike struct {
 //	PostID string `json:"postId"`
 //	User   *User  `json:"user"`
+//}
+//
+//type UpdateUser struct {
+//	FirstName string `json:"firstName"`
+//	LastName  string `json:"lastName"`
+//	Password  string `json:"password"`
+//	Gender    string `json:"gender"`
 //}
 //
 //type User struct {
@@ -70,4 +90,6 @@ package model
 //	Active     bool      `json:"active"`
 //	Profile    *string   `json:"profile,omitempty"`
 //	Background *string   `json:"background,omitempty"`
+//	CreatedAt  time.Time `json:"createdAt"`
+//	Posts      []*Post   `json:"posts,omitempty"`
 //}

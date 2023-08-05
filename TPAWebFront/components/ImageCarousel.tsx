@@ -48,15 +48,16 @@ export default function ImageCarousel({ files } : { files: any }){
                     }
                     <img
                         src={files ? files[i] : ""}
+                        alt={""}
                     />
                 </div>
                 {
                     files && files.length > 1 && files.map((src: string, index: number) => {
                         if(index != 0) return (
-                            <div className={styles.image}>
+                            <div key={index} className={styles.image}>
                                 <img
                                     src={src}
-                                />
+                                    alt={""}/>
                             </div>
                         )
                     })
@@ -67,6 +68,7 @@ export default function ImageCarousel({ files } : { files: any }){
                     files && files.length > 1 && files.map((_: string, index: number) => {
                         return (
                             <div
+                                key={index}
                                 onClick={() => setI(index)}
                                 className={index == i ? styles.dotActive : styles.dot}
                             />

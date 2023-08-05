@@ -21,7 +21,10 @@ export default function ImageList({ files, setFiles } : { files: File[], setFile
                 files.map((file, i) => {
                     return (
                         <div key={i} className={styles.image}>
-                            <img src={URL.createObjectURL(file)} />
+                            <img
+                                src={URL.createObjectURL(file)}
+                                alt={""}
+                            />
                             <div
                                 className={styles.close}
                                 onClick={() => handleFile(i)}

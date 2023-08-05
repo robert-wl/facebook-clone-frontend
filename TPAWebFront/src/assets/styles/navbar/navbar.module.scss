@@ -1,13 +1,23 @@
 
+.navbarSpace {
+  display: flex;
+  position: relative;
+  width: 100vw;
+  padding-bottom: 2rem;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+}
 
 .bar {
+  position: absolute;
   display: flex;
   flex-direction: row;
   width: 100vw;
-  height: 3.5rem;
+  height: 3rem;
   background-color: white;
   justify-content: space-between;
   padding-top: 0.5rem;
+  z-index: 1000;
 
   .left {
 
@@ -19,8 +29,10 @@
 
   .center {
     margin: auto;
+    height: 3rem;
     display: flex;
     flex-direction: row;
+    align-items: center;
     color: black;
   }
 
@@ -28,5 +40,40 @@
     display: flex;
     flex-direction: row;
     margin-right: 1rem;
+    justify-content: center;
+    align-items: center;
+
+    .circles {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgb(100, 100, 100, 0.2);
+      border-radius: 20rem;
+      height: 2.5rem;
+      width: 2.5rem;
+      margin-right: 1rem;
+      margin-bottom: 0.4rem;
+      opacity: 80%;
+
+      &:hover {
+        cursor: pointer;
+        opacity: 100%;
+      }
+    }
+
+    a .imageBox {
+      img {
+        border-radius: 3rem;
+        height: 2.5rem;
+        width: 2.5rem;
+        opacity: 85%;
+        object-fit: cover;
+
+        &:hover {
+          cursor: pointer;
+          opacity: 100%;
+        }
+      }
+    }
   }
 }
