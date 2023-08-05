@@ -118,7 +118,7 @@ export default function User(){
                             accept={"image/*, video/*"}
                         />
                         <img src={user?.background ? user?.background : "https://picsum.photos/200/300"} alt={"profile picture"} />
-                        <img src={user?.profile ? user?.profile : ""}/>
+                        <img src={user?.profile ? user?.profile : ""} alt={""}/>
                         <div className={styles.circular}>
                             <IoMdReverseCamera
                                 onClick={() => handleProfileInput()}
