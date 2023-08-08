@@ -1,0 +1,42 @@
+
+
+.container, .containerActive {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  padding: 0.5rem 0;
+
+
+  .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-left: 0.5rem;
+    background-color: rgb(100, 100, 100, 0.2);
+    border-radius: 20rem;
+
+    svg {
+    }
+  }
+
+  h4 {
+    display: flex;
+    flex-direction: row;
+    height: inherit;
+    width: 70%;
+    margin: auto 0 auto 1rem;
+    align-items: center;
+    text-align: start;
+  }
+
+  &:hover {
+    background-color: rgb(100, 100, 100, 0.2);
+  }
+}
+
+.containerActive {
+  background-color: rgb(100, 100, 100, 0.2);
+}

@@ -11,29 +11,41 @@ import ResetPasswordProtector from "../components/middleware/ResetPasswordProtec
 import AuthenticatedProtector from "../components/middleware/AuthenticatedProtector.tsx";
 import Home from "./pages/Home.tsx";
 import User from "./pages/User.tsx";
+import UnauthenticatedProtector from "../components/middleware/UnauthenticatedProtector.tsx";
+import Friends from "./pages/Friends.tsx";
 
 function App() {
 
   return (
    <Routes>
        <Route path="/login" element={
-           <Login />
+           <UnauthenticatedProtector>
+               <Login />
+           </UnauthenticatedProtector>
        } />
        <Route path="/register" element={
-           <Register />
+           <UnauthenticatedProtector>
+               <Register />
+           </UnauthenticatedProtector>
        } />
        <Route path="/forgot" element={
-           <ForgotAccount />
+           <UnauthenticatedProtector>
+               <ForgotAccount />
+           </UnauthenticatedProtector>
        } />
        <Route path="/forgot/:forgotID" element={
-           <ResetPasswordProtector>
-               <ResetPassword />
-           </ResetPasswordProtector>
+           <UnauthenticatedProtector>
+               <ResetPasswordProtector>
+                   <ResetPassword />
+               </ResetPasswordProtector>
+           </UnauthenticatedProtector>
        } />
        <Route path="/activate/:activationID" element={
-           <ActivateAccountProtector>
-               <ActivateAccount />
-           </ActivateAccountProtector>
+           <UnauthenticatedProtector>
+               <ActivateAccountProtector>
+                <ActivateAccount />
+               </ActivateAccountProtector>
+           </UnauthenticatedProtector>
        } />
        <Route path="/" element={
            <AuthenticatedProtector>
@@ -43,6 +55,11 @@ function App() {
        <Route path="/user/:username" element={
            <AuthenticatedProtector>
                <User />
+           </AuthenticatedProtector>
+       } />
+       <Route path="/friends" element={
+           <AuthenticatedProtector>
+               <Friends />
            </AuthenticatedProtector>
        } />
    </Routes>

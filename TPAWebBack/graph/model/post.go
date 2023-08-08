@@ -8,9 +8,9 @@ type Post struct {
 	User         *User       `json:"user"`
 	Content      string      `json:"content"`
 	Privacy      string      `json:"privacy"`
-	LikeCount    int         `json:"likeCount"`
-	CommentCount int         `json:"commentCount"`
-	ShareCount   int         `json:"shareCount"`
+	LikeCount    int         `json:"likeCount" gorm:"-"`
+	CommentCount int         `json:"commentCount" gorm:"-"`
+	ShareCount   int         `json:"shareCount" gorm:"-"`
 	Files        []*string   `json:"files,omitempty" gorm:"json"`
 	Likes        []*PostLike `json:"likes,omitempty"`
 	Comments     []*Comment  `json:"comments,omitempty" gorm:"foreignKey:ParentPostID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`

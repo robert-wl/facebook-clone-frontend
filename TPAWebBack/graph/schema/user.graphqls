@@ -16,6 +16,8 @@ type User {
     background: String
     createdAt: Time!
     posts: [Post]
+    friendCount: Int!
+    friended: String!
 }
 
 input NewUser {

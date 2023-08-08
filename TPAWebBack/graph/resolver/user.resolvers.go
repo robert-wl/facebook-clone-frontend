@@ -186,9 +186,29 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUse
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
 	var user *model.User
+	var friendCount int64
+	var friend *model.Friend
+
+	userID := ctx.Value("UserID").(string)
 
 	if err := r.DB.Preload("Posts").Preload("Posts.User").First(&user, "username = ?", username).Error; err != nil {
 		return nil, err
+	}
+
+	if err := r.DB.Find(&model.Friend{}, "(sender_id = ? or receiver_id = ?) and accepted = true", userID, userID).Count(&friendCount).Error; err != nil {
+
+	}
+
+	user.FriendCount = int(friendCount)
+
+	if err := r.DB.First(&friend, "(sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?)", userID, user.ID, user.ID, userID).Error; err != nil {
+		user.Friended = "not friends"
+	} else {
+		if friend.Accepted {
+			user.Friended = "friends"
+		} else {
+			user.Friended = "pending"
+		}
 	}
 
 	return user, nil

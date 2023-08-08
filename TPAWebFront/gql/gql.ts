@@ -13,6 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n    mutation addFriend($friendInput: FriendInput!){\n      addFriend(friendInput: $friendInput){\n        sender {\n          username\n        }\n        receiver {\n          username\n        }\n        accepted\n      }\n    }    \n": types.AddFriendDocument,
     "\n    mutation createPost($post: NewPost!){\n       createPost(newPost: $post){\n        id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        comments {\n          id\n          content\n        }\n        files\n        createdAt\n      }\n    }\n": types.CreatePostDocument,
     "\n    query getCommentPost($postId: ID!) {\n      getCommentPost(postID: $postId){\n        id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        liked\n        likeCount\n        comments {\n            id\n            content\n            liked\n            likeCount\n            user {\n              firstName\n              lastName\n              profile\n            }\n        }\n      }\n    }\n": types.GetCommentPostDocument,
     "\n    query getPosts($pagination: Pagination!) {\n      getPosts(pagination: $pagination){\n        id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        comments {\n          id\n          content\n        }\n        files\n        createdAt\n      }\n    }\n": types.GetPostsDocument,
@@ -23,8 +24,11 @@ const documents = {
     "\n    query checkResetLink($id: String!){\n      checkResetLink(id: $id)\n    }    \n": types.CheckResetLinkDocument,
     "\n    mutation createUser($user: NewUser!){\n      createUser(input: $user){\n        id\n        firstName\n        lastName\n        username\n        email\n        dob\n        gender\n        active\n      }\n    }\n\n": types.CreateUserDocument,
     "\n    mutation forgotPassword($email: String!){\n      forgotPassword(email: $email)\n    }    \n": types.ForgotPasswordDocument,
-    "\n    query getUser($username: String!) {\n      getUser(username: $username) {\n        id\n        firstName\n        lastName\n        username\n        email\n        dob\n        gender\n        active\n        profile\n        background\n        posts {\n          id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        files\n        createdAt\n        }\n      }\n    }   \n": types.GetUserDocument,
+    "\n    query getUser($username: String!) {\n      getUser(username: $username) {\n        id\n        firstName\n        lastName\n        username\n        email\n        dob\n        gender\n        active\n        profile\n        background\n        friended\n        friendCount\n        posts {\n          id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        files\n        createdAt\n        }\n      }\n    }  \n": types.GetUserDocument,
     "\n    mutation resetPassword($id: String!, $password: String!){\n      resetPassword (id: $id, password: $password) {\n        id\n      }\n    }      \n": types.ResetPasswordDocument,
+    "   \n    mutation updateUser($updateUser: UpdateUser!){\n      updateUser(input: $updateUser){\n        id\n      }\n    }\n": types.UpdateUserDocument,
+    "\n    mutation updateUserBackground($background: String!){\n      updateUserBackground(background: $background){\n        id\n      }\n    }    \n": types.UpdateUserBackgroundDocument,
+    " \n    mutation updateUserProfile($profile: String!){\n      updateUserProfile(profile: $profile){\n        id\n      }\n    }\n": types.UpdateUserProfileDocument,
 };
 
 /**
@@ -41,6 +45,10 @@ const documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation addFriend($friendInput: FriendInput!){\n      addFriend(friendInput: $friendInput){\n        sender {\n          username\n        }\n        receiver {\n          username\n        }\n        accepted\n      }\n    }    \n"): (typeof documents)["\n    mutation addFriend($friendInput: FriendInput!){\n      addFriend(friendInput: $friendInput){\n        sender {\n          username\n        }\n        receiver {\n          username\n        }\n        accepted\n      }\n    }    \n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -84,11 +92,23 @@ export function graphql(source: "\n    mutation forgotPassword($email: String!){
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query getUser($username: String!) {\n      getUser(username: $username) {\n        id\n        firstName\n        lastName\n        username\n        email\n        dob\n        gender\n        active\n        profile\n        background\n        posts {\n          id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        files\n        createdAt\n        }\n      }\n    }   \n"): (typeof documents)["\n    query getUser($username: String!) {\n      getUser(username: $username) {\n        id\n        firstName\n        lastName\n        username\n        email\n        dob\n        gender\n        active\n        profile\n        background\n        posts {\n          id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        files\n        createdAt\n        }\n      }\n    }   \n"];
+export function graphql(source: "\n    query getUser($username: String!) {\n      getUser(username: $username) {\n        id\n        firstName\n        lastName\n        username\n        email\n        dob\n        gender\n        active\n        profile\n        background\n        friended\n        friendCount\n        posts {\n          id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        files\n        createdAt\n        }\n      }\n    }  \n"): (typeof documents)["\n    query getUser($username: String!) {\n      getUser(username: $username) {\n        id\n        firstName\n        lastName\n        username\n        email\n        dob\n        gender\n        active\n        profile\n        background\n        friended\n        friendCount\n        posts {\n          id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        files\n        createdAt\n        }\n      }\n    }  \n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation resetPassword($id: String!, $password: String!){\n      resetPassword (id: $id, password: $password) {\n        id\n      }\n    }      \n"): (typeof documents)["\n    mutation resetPassword($id: String!, $password: String!){\n      resetPassword (id: $id, password: $password) {\n        id\n      }\n    }      \n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "   \n    mutation updateUser($updateUser: UpdateUser!){\n      updateUser(input: $updateUser){\n        id\n      }\n    }\n"): (typeof documents)["   \n    mutation updateUser($updateUser: UpdateUser!){\n      updateUser(input: $updateUser){\n        id\n      }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation updateUserBackground($background: String!){\n      updateUserBackground(background: $background){\n        id\n      }\n    }    \n"): (typeof documents)["\n    mutation updateUserBackground($background: String!){\n      updateUserBackground(background: $background){\n        id\n      }\n    }    \n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: " \n    mutation updateUserProfile($profile: String!){\n      updateUserProfile(profile: $profile){\n        id\n      }\n    }\n"): (typeof documents)[" \n    mutation updateUserProfile($profile: String!){\n      updateUserProfile(profile: $profile){\n        id\n      }\n    }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

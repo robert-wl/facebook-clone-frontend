@@ -25,6 +25,17 @@ package model
 //	User      *User  `json:"user"`
 //}
 //
+//type Friend struct {
+//	Sender   *User `json:"sender"`
+//	Receiver *User `json:"receiver"`
+//	Accepted bool  `json:"accepted"`
+//}
+//
+//type FriendInput struct {
+//	Sender   string `json:"sender"`
+//	Receiver string `json:"receiver"`
+//}
+//
 //type NewComment struct {
 //	Content       string  `json:"content"`
 //	ParentPost    *string `json:"parentPost,omitempty"`
@@ -80,16 +91,18 @@ package model
 //}
 //
 //type User struct {
-//	ID         string    `json:"id"`
-//	FirstName  string    `json:"firstName"`
-//	LastName   string    `json:"lastName"`
-//	Username   string    `json:"username"`
-//	Email      string    `json:"email"`
-//	Dob        time.Time `json:"dob"`
-//	Gender     string    `json:"gender"`
-//	Active     bool      `json:"active"`
-//	Profile    *string   `json:"profile,omitempty"`
-//	Background *string   `json:"background,omitempty"`
-//	CreatedAt  time.Time `json:"createdAt"`
-//	Posts      []*Post   `json:"posts,omitempty"`
+//	ID          string    `json:"id"`
+//	FirstName   string    `json:"firstName"`
+//	LastName    string    `json:"lastName"`
+//	Username    string    `json:"username"`
+//	Email       string    `json:"email"`
+//	Dob         time.Time `json:"dob"`
+//	Gender      string    `json:"gender"`
+//	Active      bool      `json:"active"`
+//	Profile     *string   `json:"profile,omitempty"`
+//	Background  *string   `json:"background,omitempty"`
+//	CreatedAt   time.Time `json:"createdAt"`
+//	Posts       []*Post   `json:"posts,omitempty"`
+//	FriendCount int       `json:"friendCount"`
+//	Friended    string    `json:"friended"`
 //}

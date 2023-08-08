@@ -19,6 +19,7 @@ export default function errorHandler(error: ApolloError){
                 background: "red",
             },
         }).showToast();
+        localStorage.removeItem("token");
     }
     console.log(error)
     Toastify({

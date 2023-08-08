@@ -66,8 +66,16 @@ type ComplexityRoot struct {
 		User      func(childComplexity int) int
 	}
 
+	Friend struct {
+		Accepted func(childComplexity int) int
+		Receiver func(childComplexity int) int
+		Sender   func(childComplexity int) int
+	}
+
 	Mutation struct {
+		AcceptFriend         func(childComplexity int, friend string) int
 		ActivateUser         func(childComplexity int, id string) int
+		AddFriend            func(childComplexity int, friendInput model.FriendInput) int
 		AuthenticateUser     func(childComplexity int, email string, password string) int
 		CreateComment        func(childComplexity int, newComment model.NewComment) int
 		CreatePost           func(childComplexity int, newPost model.NewPost) int
@@ -75,6 +83,7 @@ type ComplexityRoot struct {
 		ForgotPassword       func(childComplexity int, email string) int
 		LikePost             func(childComplexity int, postID string) int
 		Likecomment          func(childComplexity int, commentID string) int
+		RejectFriend         func(childComplexity int, friend string) int
 		ResetPassword        func(childComplexity int, id string, password string) int
 		UpdateUser           func(childComplexity int, input model.UpdateUser) int
 		UpdateUserBackground func(childComplexity int, background string) int
@@ -106,6 +115,7 @@ type ComplexityRoot struct {
 		CheckResetLink    func(childComplexity int, id string) int
 		GetAuth           func(childComplexity int) int
 		GetCommentPost    func(childComplexity int, postID string) int
+		GetFriends        func(childComplexity int) int
 		GetPost           func(childComplexity int, id string) int
 		GetPosts          func(childComplexity int, pagination model.Pagination) int
 		GetUser           func(childComplexity int, username string) int
@@ -113,18 +123,20 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Active     func(childComplexity int) int
-		Background func(childComplexity int) int
-		CreatedAt  func(childComplexity int) int
-		Dob        func(childComplexity int) int
-		Email      func(childComplexity int) int
-		FirstName  func(childComplexity int) int
-		Gender     func(childComplexity int) int
-		ID         func(childComplexity int) int
-		LastName   func(childComplexity int) int
-		Posts      func(childComplexity int) int
-		Profile    func(childComplexity int) int
-		Username   func(childComplexity int) int
+		Active      func(childComplexity int) int
+		Background  func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		Dob         func(childComplexity int) int
+		Email       func(childComplexity int) int
+		FirstName   func(childComplexity int) int
+		FriendCount func(childComplexity int) int
+		Friended    func(childComplexity int) int
+		Gender      func(childComplexity int) int
+		ID          func(childComplexity int) int
+		LastName    func(childComplexity int) int
+		Posts       func(childComplexity int) int
+		Profile     func(childComplexity int) int
+		Username    func(childComplexity int) int
 	}
 }
 
@@ -137,6 +149,9 @@ type MutationResolver interface {
 	UpdateUserProfile(ctx context.Context, profile string) (*model.User, error)
 	UpdateUserBackground(ctx context.Context, background string) (*model.User, error)
 	UpdateUser(ctx context.Context, input model.UpdateUser) (*model.User, error)
+	AddFriend(ctx context.Context, friendInput model.FriendInput) (*model.Friend, error)
+	AcceptFriend(ctx context.Context, friend string) (*model.Friend, error)
+	RejectFriend(ctx context.Context, friend string) (*model.Friend, error)
 	CreatePost(ctx context.Context, newPost model.NewPost) (*model.Post, error)
 	CreateComment(ctx context.Context, newComment model.NewComment) (*model.Comment, error)
 	LikePost(ctx context.Context, postID string) (*model.PostLike, error)
@@ -148,6 +163,7 @@ type QueryResolver interface {
 	CheckActivateLink(ctx context.Context, id string) (bool, error)
 	CheckResetLink(ctx context.Context, id string) (bool, error)
 	GetAuth(ctx context.Context) (*model.User, error)
+	GetFriends(ctx context.Context) ([]*model.Friend, error)
 	GetPost(ctx context.Context, id string) (*model.Post, error)
 	GetPosts(ctx context.Context, pagination model.Pagination) ([]*model.Post, error)
 	GetCommentPost(ctx context.Context, postID string) ([]*model.Comment, error)
@@ -259,6 +275,39 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CommentLike.User(childComplexity), true
 
+	case "Friend.accepted":
+		if e.complexity.Friend.Accepted == nil {
+			break
+		}
+
+		return e.complexity.Friend.Accepted(childComplexity), true
+
+	case "Friend.receiver":
+		if e.complexity.Friend.Receiver == nil {
+			break
+		}
+
+		return e.complexity.Friend.Receiver(childComplexity), true
+
+	case "Friend.sender":
+		if e.complexity.Friend.Sender == nil {
+			break
+		}
+
+		return e.complexity.Friend.Sender(childComplexity), true
+
+	case "Mutation.acceptFriend":
+		if e.complexity.Mutation.AcceptFriend == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_acceptFriend_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AcceptFriend(childComplexity, args["friend"].(string)), true
+
 	case "Mutation.activateUser":
 		if e.complexity.Mutation.ActivateUser == nil {
 			break
@@ -270,6 +319,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ActivateUser(childComplexity, args["id"].(string)), true
+
+	case "Mutation.addFriend":
+		if e.complexity.Mutation.AddFriend == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addFriend_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddFriend(childComplexity, args["friendInput"].(model.FriendInput)), true
 
 	case "Mutation.authenticateUser":
 		if e.complexity.Mutation.AuthenticateUser == nil {
@@ -354,6 +415,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Likecomment(childComplexity, args["commentID"].(string)), true
+
+	case "Mutation.rejectFriend":
+		if e.complexity.Mutation.RejectFriend == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_rejectFriend_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RejectFriend(childComplexity, args["friend"].(string)), true
 
 	case "Mutation.resetPassword":
 		if e.complexity.Mutation.ResetPassword == nil {
@@ -544,6 +617,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetCommentPost(childComplexity, args["postID"].(string)), true
 
+	case "Query.getFriends":
+		if e.complexity.Query.GetFriends == nil {
+			break
+		}
+
+		return e.complexity.Query.GetFriends(childComplexity), true
+
 	case "Query.getPost":
 		if e.complexity.Query.GetPost == nil {
 			break
@@ -629,6 +709,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.FirstName(childComplexity), true
 
+	case "User.friendCount":
+		if e.complexity.User.FriendCount == nil {
+			break
+		}
+
+		return e.complexity.User.FriendCount(childComplexity), true
+
+	case "User.friended":
+		if e.complexity.User.Friended == nil {
+			break
+		}
+
+		return e.complexity.User.Friended(childComplexity), true
+
 	case "User.gender":
 		if e.complexity.User.Gender == nil {
 			break
@@ -679,6 +773,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputFriendInput,
 		ec.unmarshalInputNewComment,
 		ec.unmarshalInputNewPost,
 		ec.unmarshalInputNewUser,
@@ -780,7 +875,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 	return introspection.WrapTypeFromDef(parsedSchema, parsedSchema.Types[name]), nil
 }
 
-//go:embed "schema/post.graphqls" "schema/user.graphqls"
+//go:embed "schema/friends.graphqls" "schema/post.graphqls" "schema/user.graphqls"
 var sourcesFS embed.FS
 
 func sourceData(filename string) string {
@@ -792,6 +887,7 @@ func sourceData(filename string) string {
 }
 
 var sources = []*ast.Source{
+	{Name: "schema/friends.graphqls", Input: sourceData("schema/friends.graphqls"), BuiltIn: false},
 	{Name: "schema/post.graphqls", Input: sourceData("schema/post.graphqls"), BuiltIn: false},
 	{Name: "schema/user.graphqls", Input: sourceData("schema/user.graphqls"), BuiltIn: false},
 }
@@ -800,6 +896,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_acceptFriend_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["friend"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friend"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["friend"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_activateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -813,6 +924,21 @@ func (ec *executionContext) field_Mutation_activateUser_args(ctx context.Context
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addFriend_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.FriendInput
+	if tmp, ok := rawArgs["friendInput"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendInput"))
+		arg0, err = ec.unmarshalNFriendInput2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriendInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["friendInput"] = arg0
 	return args, nil
 }
 
@@ -927,6 +1053,21 @@ func (ec *executionContext) field_Mutation_likecomment_args(ctx context.Context,
 		}
 	}
 	args["commentID"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_rejectFriend_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["friend"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friend"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["friend"] = arg0
 	return args, nil
 }
 
@@ -1249,6 +1390,10 @@ func (ec *executionContext) fieldContext_Comment_user(ctx context.Context, field
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -1824,8 +1969,204 @@ func (ec *executionContext) fieldContext_CommentLike_user(ctx context.Context, f
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Friend_sender(ctx context.Context, field graphql.CollectedField, obj *model.Friend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Friend_sender(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sender, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Friend_sender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Friend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "dob":
+				return ec.fieldContext_User_dob(ctx, field)
+			case "gender":
+				return ec.fieldContext_User_gender(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "background":
+				return ec.fieldContext_User_background(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "posts":
+				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Friend_receiver(ctx context.Context, field graphql.CollectedField, obj *model.Friend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Friend_receiver(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Receiver, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Friend_receiver(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Friend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "dob":
+				return ec.fieldContext_User_dob(ctx, field)
+			case "gender":
+				return ec.fieldContext_User_gender(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "background":
+				return ec.fieldContext_User_background(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "posts":
+				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Friend_accepted(ctx context.Context, field graphql.CollectedField, obj *model.Friend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Friend_accepted(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Accepted, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Friend_accepted(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Friend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1894,6 +2235,10 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -1975,6 +2320,10 @@ func (ec *executionContext) fieldContext_Mutation_activateUser(ctx context.Conte
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2166,6 +2515,10 @@ func (ec *executionContext) fieldContext_Mutation_resetPassword(ctx context.Cont
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2267,6 +2620,10 @@ func (ec *executionContext) fieldContext_Mutation_updateUserProfile(ctx context.
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2368,6 +2725,10 @@ func (ec *executionContext) fieldContext_Mutation_updateUserBackground(ctx conte
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2469,6 +2830,10 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2481,6 +2846,246 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_addFriend(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addFriend(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AddFriend(rctx, fc.Args["friendInput"].(model.FriendInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Friend); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Friend`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Friend)
+	fc.Result = res
+	return ec.marshalOFriend2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriend(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_addFriend(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "sender":
+				return ec.fieldContext_Friend_sender(ctx, field)
+			case "receiver":
+				return ec.fieldContext_Friend_receiver(ctx, field)
+			case "accepted":
+				return ec.fieldContext_Friend_accepted(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Friend", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addFriend_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_acceptFriend(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_acceptFriend(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AcceptFriend(rctx, fc.Args["friend"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Friend); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Friend`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Friend)
+	fc.Result = res
+	return ec.marshalOFriend2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriend(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_acceptFriend(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "sender":
+				return ec.fieldContext_Friend_sender(ctx, field)
+			case "receiver":
+				return ec.fieldContext_Friend_receiver(ctx, field)
+			case "accepted":
+				return ec.fieldContext_Friend_accepted(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Friend", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_acceptFriend_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_rejectFriend(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_rejectFriend(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().RejectFriend(rctx, fc.Args["friend"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Friend); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Friend`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Friend)
+	fc.Result = res
+	return ec.marshalOFriend2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriend(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_rejectFriend(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "sender":
+				return ec.fieldContext_Friend_sender(ctx, field)
+			case "receiver":
+				return ec.fieldContext_Friend_receiver(ctx, field)
+			case "accepted":
+				return ec.fieldContext_Friend_accepted(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Friend", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_rejectFriend_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2944,6 +3549,10 @@ func (ec *executionContext) fieldContext_Post_user(ctx context.Context, field gr
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3516,6 +4125,10 @@ func (ec *executionContext) fieldContext_PostLike_user(ctx context.Context, fiel
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3603,6 +4216,10 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3681,6 +4298,10 @@ func (ec *executionContext) fieldContext_Query_getUsers(ctx context.Context, fie
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3881,8 +4502,81 @@ func (ec *executionContext) fieldContext_Query_getAuth(ctx context.Context, fiel
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "posts":
 				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getFriends(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getFriends(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetFriends(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Friend); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Friend`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Friend)
+	fc.Result = res
+	return ec.marshalOFriend2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriend(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getFriends(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "sender":
+				return ec.fieldContext_Friend_sender(ctx, field)
+			case "receiver":
+				return ec.fieldContext_Friend_receiver(ctx, field)
+			case "accepted":
+				return ec.fieldContext_Friend_accepted(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Friend", field.Name)
 		},
 	}
 	return fc, nil
@@ -4849,6 +5543,94 @@ func (ec *executionContext) fieldContext_User_posts(ctx context.Context, field g
 				return ec.fieldContext_Post_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_friendCount(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_friendCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FriendCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_friendCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_friended(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_friended(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Friended, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_friended(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6627,6 +7409,44 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputFriendInput(ctx context.Context, obj interface{}) (model.FriendInput, error) {
+	var it model.FriendInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"sender", "receiver"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "sender":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sender"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Sender = data
+		case "receiver":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("receiver"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Receiver = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewComment(ctx context.Context, obj interface{}) (model.NewComment, error) {
 	var it model.NewComment
 	asMap := map[string]interface{}{}
@@ -7024,6 +7844,55 @@ func (ec *executionContext) _CommentLike(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var friendImplementors = []string{"Friend"}
+
+func (ec *executionContext) _Friend(ctx context.Context, sel ast.SelectionSet, obj *model.Friend) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, friendImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Friend")
+		case "sender":
+			out.Values[i] = ec._Friend_sender(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "receiver":
+			out.Values[i] = ec._Friend_receiver(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "accepted":
+			out.Values[i] = ec._Friend_accepted(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -7099,6 +7968,18 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "addFriend":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addFriend(ctx, field)
+			})
+		case "acceptFriend":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_acceptFriend(ctx, field)
+			})
+		case "rejectFriend":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_rejectFriend(ctx, field)
+			})
 		case "createPost":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPost(ctx, field)
@@ -7387,6 +8268,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getFriends":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getFriends(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "getPost":
 			field := field
 
@@ -7537,6 +8437,16 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "posts":
 			out.Values[i] = ec._User_posts(ctx, field, obj)
+		case "friendCount":
+			out.Values[i] = ec._User_friendCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "friended":
+			out.Values[i] = ec._User_friended(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7899,6 +8809,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNFriendInput2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriendInput(ctx context.Context, v interface{}) (model.FriendInput, error) {
+	res, err := ec.unmarshalInputFriendInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
@@ -8373,6 +9288,54 @@ func (ec *executionContext) marshalOCommentLike2ᚖgithubᚗcomᚋyahkerobertker
 		return graphql.Null
 	}
 	return ec._CommentLike(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOFriend2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriend(ctx context.Context, sel ast.SelectionSet, v []*model.Friend) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOFriend2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriend(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOFriend2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐFriend(ctx context.Context, sel ast.SelectionSet, v *model.Friend) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Friend(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

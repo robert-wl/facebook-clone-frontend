@@ -14,6 +14,8 @@ export const GET_USER = gql`
         active
         profile
         background
+        friended
+        friendCount
         posts {
           id
         user {
@@ -31,5 +33,5 @@ export const GET_USER = gql`
         createdAt
         }
       }
-    }   
+    }  
 `
