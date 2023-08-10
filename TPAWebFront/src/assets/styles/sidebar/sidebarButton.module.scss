@@ -18,8 +18,6 @@
     background-color: rgb(100, 100, 100, 0.2);
     border-radius: 20rem;
 
-    svg {
-    }
   }
 
   h4 {
@@ -34,6 +32,7 @@
 
   &:hover {
     background-color: rgb(100, 100, 100, 0.2);
+    cursor: pointer;
   }
 }
 

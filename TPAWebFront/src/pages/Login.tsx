@@ -2,15 +2,17 @@ import styles from "../assets/styles/login/login.module.scss"
 import {Link, useNavigate} from "react-router-dom";
 import {useMutation} from "@apollo/client";
 import {AUTHENTICATE_USER} from "../../lib/query/user/authenticateUser.graphql.ts";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import Toastify from "toastify-js";
 import errorHandler from "../../controller/errorHandler.ts";
+import {AuthContext} from "../../components/context/AuthContextProvider.tsx";
 
 export default function Login(){
     const [authenticateUser] = useMutation(AUTHENTICATE_USER);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { getUser } = useContext(AuthContext);
     const handleSubmit = () => {
         let error = "Unknown error";
         if(email.length == 0){
@@ -29,6 +31,9 @@ export default function Login(){
             then((token) => {
                 localStorage.setItem("token", token.data.authenticateUser)
 
+                if (getUser) {
+                    getUser();
+                }
                 return navigate("/")
             }).
             catch(err => errorHandler(err));

@@ -19,6 +19,7 @@
     background-color: white;
     box-shadow: 1px 1px 10px rgb(100, 100, 100, 0.3);
 
+
     header {
       display: flex;
       flex-direction: row;
@@ -60,6 +61,7 @@
       overflow-y: auto;
       overflow-x: hidden;
 
+
       .profile {
         margin: 0 1rem;
         display: flex;
@@ -85,7 +87,7 @@
       }
 
       textarea {
-        width: 90%;
+        width: 93%;
         height: 5rem;
         border-color: transparent;
         background-color: rgb(100, 100, 100, 0.025);
@@ -95,7 +97,8 @@
         font-family: Arial, serif;
         font-size: 1.5rem;
         outline: none;
-        margin: 1rem 1rem;
+        margin: 1rem 1rem 1rem 0;
+        max-width: 93%;
 
         &:focus {
           border-color: transparent;
@@ -103,6 +106,14 @@
 
         &::placeholder {
           color: gray;
+        }
+
+        &::-webkit-scrollbar {
+          background-color: rgb(100, 100, 100, 0.025);
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: lightgray;
         }
       }
 

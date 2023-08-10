@@ -62,7 +62,9 @@
       }
     }
 
-    a .imageBox {
+    .imageBox {
+      position: relative;
+
       img {
         border-radius: 3rem;
         height: 2.5rem;
@@ -73,6 +75,51 @@
         &:hover {
           cursor: pointer;
           opacity: 100%;
+        }
+      }
+
+      .dropDown {
+        display: none;
+        flex-direction: column;
+        width: 9rem;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        box-shadow: 5px 12px 25px rgb(0, 0, 0, 0.2);
+        opacity: 100%;
+
+        > button, > button a {
+          display: flex;
+          flex-direction: row;
+          border-color: transparent;
+          background-color: transparent;
+          color: black;
+          align-items: center;
+          text-decoration: none;
+
+          & a {
+            width: 100%;
+          }
+
+          > p {
+            text-decoration: none;
+            text-align: start;
+            width: 60%;
+            margin-left: 0.5rem;
+          }
+
+          a > p, svg:nth-child(3) {
+            margin-left: 0.5rem;
+            justify-self: end;
+          }
+
+          &:hover {
+            background-color: rgb(100, 100, 100, 0.3);
+          }
+
+          & a:hover{
+            background-color: transparent;
+          }
         }
       }
     }

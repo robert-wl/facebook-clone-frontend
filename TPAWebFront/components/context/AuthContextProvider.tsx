@@ -4,7 +4,16 @@ import {useQuery} from "@apollo/client";
 import {GET_AUTH} from "../../lib/query/user/getAuth.graphql.ts";
 import errorHandler from "../../controller/errorHandler.ts";
 
-export const AuthContext = createContext<User | null>(null);
+
+interface AuthContext {
+    auth: User | null,
+    getUser: (() => void) | null
+}
+
+export const AuthContext = createContext<AuthContext>({
+    auth: null,
+    getUser: null
+});
 export default function AuthContextProvider({ children } : { children : JSX.Element }){
     const { refetch } = useQuery(GET_AUTH, {
         onCompleted: (data) => {
@@ -14,12 +23,20 @@ export default function AuthContextProvider({ children } : { children : JSX.Elem
     })
     const [auth, setAuth] = useState<User | null>(null);
 
-/*    useEffect(() => {
-        refetch();
-    }, []);*/
+    const getUser = () => {
+        refetch().
+        then((data) => {
+            setAuth(data.data.getAuth)
+        }).
+        catch(errorHandler)
+    }
+
+    useEffect(() => {
+        getUser();
+    }, []);
 
     return (
-        <AuthContext.Provider value={auth}>
+        <AuthContext.Provider value={{ auth, getUser }}>
             {children}
         </AuthContext.Provider>
     )

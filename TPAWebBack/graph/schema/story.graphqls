@@ -1,0 +1,32 @@
+
+directive @goField(forceResolver: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+type StoryBox {
+    id: ID!
+    user: User! @goField(forceResolver: true)
+    image: String
+    text: String
+    font: String
+    color: String
+    createdAt: Time!
+}
+
+input NewTextStory {
+    text: String!
+    font: String!
+    color: String!
+}
+
+input NewImageStory {
+    image: String!
+}
+
+extend type Query {
+    getStories(username: String!): [StoryBox] @auth
+    getUserWithStories: [User] @auth
+}
+
+extend type Mutation {
+    createTextStory(input: NewTextStory!): StoryBox! @auth
+    createImageStory(input: NewImageStory!): StoryBox! @auth
+}

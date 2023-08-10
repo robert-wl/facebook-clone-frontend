@@ -8,7 +8,11 @@ export const GET_COMMENT_POST = gql`
         user {
           firstName
           lastName
+          username
           profile
+          email
+          gender
+          dob
         }
         content
         liked
@@ -21,7 +25,11 @@ export const GET_COMMENT_POST = gql`
             user {
               firstName
               lastName
+              username
               profile
+              email
+              gender
+              dob
             }
         }
       }

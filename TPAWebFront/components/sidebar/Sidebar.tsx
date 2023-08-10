@@ -1,14 +1,13 @@
 import styles from "../../src/assets/styles/sidebar/sidebar.module.scss";
 import {useContext} from "react";
 import {AuthContext} from "../context/AuthContextProvider.tsx";
-import ProfilePicture from "../ProfilePicture.tsx";
-import SidebarButton from "./SidebarButton.tsx";
-import {FaUserFriends} from "react-icons/fa";
-import {BsFillPersonCheckFill, BsFillPersonPlusFill} from "react-icons/bs";
 
-
-export default function Sidebar(){
-    const auth = useContext(AuthContext)
+interface Sidebar {
+    children: JSX.Element
+    title: string
+}
+export default function Sidebar({ children, title } : Sidebar){
+    const { auth } = useContext(AuthContext)
 
     if(auth)
     return (
@@ -16,35 +15,15 @@ export default function Sidebar(){
             <div className={styles.barSpace} />
             <div className={styles.bar}>
                 <header>
-                    <ProfilePicture src={auth?.profile} />
                     <div className={styles.bio}>
-                        <h4>{ auth?.firstName } { auth?.lastName }</h4>
-                        <p>{ auth?.username }</p>
+                        <h2>{ title }</h2>
                     </div>
                 </header>
                 <hr />
                 <div className={styles.content}>
-                    <SidebarButton active={true} text={"All"}>
-                        <FaUserFriends
-                            color={"black"}
-                            size={"1.5rem"}
-                        />
-                    </SidebarButton>
-                    <SidebarButton active={false} text={"Requests"}>
-                        <BsFillPersonPlusFill
-                            color={"black"}
-                            size={"1.5rem"}
-                        />
-                    </SidebarButton>
-                    <SidebarButton active={false} text={"Recommendation"}>
-                        <BsFillPersonCheckFill
-                            color={"black"}
-                            size={"1.5rem"}
-                        />
-                    </SidebarButton>
+                    { children }
                 </div>
             </div>
         </>
     )
-
 }

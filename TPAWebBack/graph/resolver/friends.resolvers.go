@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 )
@@ -33,7 +34,6 @@ func (r *mutationResolver) AddFriend(ctx context.Context, friendInput model.Frie
 	} else {
 		return nil, r.DB.Delete(&friendModel).Error
 	}
-
 }
 
 // AcceptFriend is the resolver for the acceptFriend field.
@@ -75,4 +75,25 @@ func (r *queryResolver) GetFriends(ctx context.Context) ([]*model.Friend, error)
 	}
 
 	return friends, nil
+}
+
+// GetUserFriends is the resolver for the getUserFriends field.
+func (r *queryResolver) GetUserFriends(ctx context.Context, username string) ([]*model.Friend, error) {
+	var friends []*model.Friend
+	var user *model.User
+
+	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.Preload("Receiver").Preload("Sender").Find(&friends, "sender_id = ? or receiver_id = ?", user.ID, user.ID).Error; err != nil {
+		return nil, err
+	}
+
+	return friends, nil
+}
+
+// GetUserMutuals is the resolver for the getUserMutuals field.
+func (r *queryResolver) GetUserMutuals(ctx context.Context, username string) ([]*model.Friend, error) {
+	panic(fmt.Errorf("not implemented: GetUserMutuals - getUserMutuals"))
 }

@@ -42,10 +42,20 @@ package model
 //	ParentComment *string `json:"parentComment,omitempty"`
 //}
 //
+//type NewImageStory struct {
+//	Image string `json:"image"`
+//}
+//
 //type NewPost struct {
 //	Content string    `json:"content"`
 //	Privacy string    `json:"privacy"`
 //	Files   []*string `json:"files,omitempty"`
+//}
+//
+//type NewTextStory struct {
+//	Text  string `json:"text"`
+//	Font  string `json:"font"`
+//	Color string `json:"color"`
 //}
 //
 //type NewUser struct {
@@ -81,6 +91,16 @@ package model
 //type PostLike struct {
 //	PostID string `json:"postId"`
 //	User   *User  `json:"user"`
+//}
+//
+//type StoryBox struct {
+//	ID        string    `json:"id"`
+//	User      *User     `json:"user"`
+//	Image     *string   `json:"image,omitempty"`
+//	Text      *string   `json:"text,omitempty"`
+//	Font      *string   `json:"font,omitempty"`
+//	Color     *string   `json:"color,omitempty"`
+//	CreatedAt time.Time `json:"createdAt"`
 //}
 //
 //type UpdateUser struct {

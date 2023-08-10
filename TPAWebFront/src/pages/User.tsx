@@ -1,11 +1,11 @@
 import Loading from "../../components/Loading.tsx";
 import styles from "../assets/styles/user/user.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
-import {ChangeEvent, useContext, useState} from "react";
+import {ChangeEvent, useContext, useEffect, useState} from "react";
 import {LiaBirthdayCakeSolid, LiaUserFriendsSolid} from "react-icons/lia";
 import {BsFillPersonPlusFill, BsGenderAmbiguous} from "react-icons/bs";
 import {MdOutlineMarkEmailRead} from "react-icons/md";
-import {FriendInput, Maybe, Post} from "../../gql/graphql.ts";
+import {Friend, FriendInput, Maybe, Post} from "../../gql/graphql.ts";
 import {User} from "../../gql/graphql";
 import PostBox from "../../components/post/PostBox.tsx";
 import {useParams} from "react-router-dom";
@@ -20,13 +20,22 @@ import errorHandler from "../../controller/errorHandler.ts";
 import EditUserModal from "../../components/user/EditUserModal.tsx";
 import {AuthContext} from "../../components/context/AuthContextProvider.tsx";
 import {ADD_FRIEND} from "../../lib/query/friend/addFriend.graphql.ts";
+import {GET_FRIENDS} from "../../lib/query/friend/getFriends.graphql.ts";
+import AccFriendBox from "../../components/friend/AccFriendBox.tsx";
+import NoFriendBox from "../../components/friend/NoFriendBox.tsx";
+
 
 
 export default function User(){
     const { username } = useParams();
     const [user, setUser] = useState<User | null>(null);
     const [isPost, setIsPost] = useState(true);
+    const [friends, setFriends] = useState<Friend[]>([]);
     const [modalState, setModalState] = useState(false);
+    const friendCount = {
+        all: 0,
+        mutuals: 0
+    }
     const { loading } = useQuery(GET_USER, {
        variables: {
            username: username
@@ -36,7 +45,10 @@ export default function User(){
         },
         onError: errorHandler
     });
-    const auth = useContext(AuthContext);
+    const { refetch:getFriends } = useQuery(GET_FRIENDS, {
+        skip: true
+    });
+    const { auth } = useContext(AuthContext);
     const [updateProfile] = useMutation(UPDATE_USER_PROFILE);
     const [updateBackground] = useMutation(UPDATE_USER_BACKGROUND);
     const [addFriend] = useMutation(ADD_FRIEND);
@@ -124,6 +136,21 @@ export default function User(){
             });
         }
     }
+
+    useEffect(() => {
+        if(friends.length == 0 && !isPost) {
+            getFriends({
+                username: username
+            }).
+            then((data) => {
+                setFriends(data.data.getFriends)
+            }).
+            catch(errorHandler)
+        }
+    }, [isPost]);
+
+
+
 
     if(loading) return <></>
     return (
@@ -269,7 +296,7 @@ export default function User(){
                         </button>
                     </div>
                 </header>
-                <div className={styles.content}>
+                <div className={isPost ? styles.content : styles.contentFriend}>
                     {
                         isPost ?
                             <>
@@ -282,7 +309,29 @@ export default function User(){
                                     }
                                 </div>
                             </> :
-                        <></>
+                            <div className={styles.contentBox}>
+                                <h2>
+                                    Friend List
+                                </h2>
+                                <div className={styles.friendList}>
+                                    {
+                                        friends.map((friend, index) => {
+                                            if(friend.accepted){
+                                                friendCount.all += 1;
+                                                return (
+                                                    <AccFriendBox
+                                                        key={index}
+                                                        friend={friend}
+                                                    />
+                                                )
+                                            }
+                                        })
+                                    }
+                                    {
+                                        friendCount.all == 0 && <NoFriendBox description={"You Have no Friends"} />
+                                    }
+                                </div>
+                            </div>
                     }
                 </div>
             </div>

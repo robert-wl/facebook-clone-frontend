@@ -12,6 +12,7 @@ import Loading from "../../components/Loading.tsx";
 import {AuthContext} from "../../components/context/AuthContextProvider.tsx";
 import {debounce} from "../../controller/debouncer.ts";
 import PostSkeleton from "../../components/post/PostSkeleton.tsx";
+import HomeTop from "../../components/home/HomeTop.tsx";
 
 
 export default function Home(){
@@ -36,7 +37,7 @@ export default function Home(){
         skip: start > 3
     });
     const [loading, setLoading] = useState(false);
-    const auth = useContext(AuthContext)
+    const { auth } = useContext(AuthContext)
 
 
 
@@ -61,7 +62,6 @@ export default function Home(){
     let scrollElement: HTMLElement | null;
     const handleScroll = () => {
 
-        console.log(start)
         if(scrollElement) {
             const scrollTop = scrollElement.scrollTop;
             const windowHeight = window.innerHeight || document.documentElement.clientHeight;
@@ -76,10 +76,13 @@ export default function Home(){
     }
 
     useEffect(() => {
-        scrollElement = document.getElementById("page");
-        scrollElement?.addEventListener("scroll", handleScroll);
-        return () => {
-            scrollElement?.addEventListener("scroll", handleScroll);
+        scrollElement = document.getElementById("page")
+
+        if(scrollElement) {
+            scrollElement.addEventListener("scroll", handleScroll);
+            return () => {
+                scrollElement!.addEventListener("scroll", handleScroll);
+            }
         }
     }, []);
     return (
@@ -94,15 +97,16 @@ export default function Home(){
                 data={data}
                 setLoading={setLoading}
             />
-            <div id={"page"} className={styles.page}>
+            <div
+                id={"page"}
+                className={styles.page}
+            >
                 <Navbar />
                 <div className={styles.content}>
-                    <div className={styles.myBox}>
-                        aa
-                    </div>
+                    <HomeTop />
                     <div className={styles.inputBox}>
                         <div className={styles.inputHeader}>
-                            <ProfilePicture src={auth?.profile} />
+                            <ProfilePicture user={auth} showBox={true}/>
                             <button
                                 onClick={() => setModalState(true)}
                             >

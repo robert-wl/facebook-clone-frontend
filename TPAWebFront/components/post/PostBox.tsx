@@ -30,7 +30,7 @@ export default function PostBox({ post } : PostBox){
         skip: true,
         onError: errorHandler
     });
-    const auth = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
     const [createComment] = useMutation(CREATE_COMMENT);
     const [likePost] = useMutation(LIKE_POST)
     const [likeCount, setLikeCount] = useState(post?.likeCount);
@@ -81,7 +81,7 @@ export default function PostBox({ post } : PostBox){
     return (
         <div className={styles.myBox}>
             <header>
-               <ProfilePicture src={post?.user.profile} />
+               <ProfilePicture user={post?.user}/>
                <div className={styles.bio}>
                     <h4>{ post?.user.firstName } { post?.user.lastName }</h4>
                     <p>{ getTimeDiff(post?.createdAt) }</p>
@@ -162,7 +162,7 @@ export default function PostBox({ post } : PostBox){
                 showComment &&
                 <>
                     <div className={styles.commentInput}>
-                        <ProfilePicture src={auth?.profile} />
+                        <ProfilePicture user={auth} />
                         <div className={styles.commentContainer}>
                     <textarea
                         value={comment}

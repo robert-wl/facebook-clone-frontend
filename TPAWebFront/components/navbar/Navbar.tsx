@@ -2,15 +2,41 @@ import styles from "../../src/assets/styles/navbar/navbar.module.scss";
 import HomeButton from "./buttons/HomeButton.tsx";
 import FriendButton from "./buttons/FriendButton.tsx";
 import GroupButton from "./buttons/GroupButton.tsx";
-import {useContext} from "react";
+import {useContext, useEffect, useRef} from "react";
 import {AuthContext} from "../context/AuthContextProvider.tsx";
 import {Link} from "react-router-dom";
 import {AiFillBell} from "react-icons/ai";
-import {BiSolidMessageRoundedDetail} from "react-icons/bi";
+import {BiSolidMessageRoundedDetail, BiUserCircle} from "react-icons/bi";
+import {MdKeyboardArrowRight, MdLogout} from "react-icons/md";
 
 
 export default function Navbar(){
-    const auth = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const handleClick = () => {
+        dropdownRef.current!.style.display = "flex";
+    }
+
+    const handleOutsideClick = (e: MouseEvent) => {
+        if(dropdownRef.current && !dropdownRef.current.contains(e.target as Node)){
+            dropdownRef.current.style.display = "none";
+        }
+    }
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+    }
+
+    useEffect(() => {
+
+        window.addEventListener("mousedown", handleOutsideClick);
+
+        return () => {
+            window.removeEventListener("mousedown", handleOutsideClick);
+        }
+    }, [])
+
     return (
         <>
             <div className={styles.bar}>
@@ -45,11 +71,49 @@ export default function Navbar(){
                             />
                         </div>
                     </Link>
-                    <Link to={"/user/" + auth?.username} >
-                        <div className={styles.imageBox}>
-                            <img src={auth?.profile ? auth?.profile : "../src/assets/default-profile.jpg"} alt={""}/>
+                    <div className={styles.imageBox}>
+                        <img
+                            onClick={() => handleClick()}
+                            src={auth?.profile ? auth?.profile : "../src/assets/default-profile.jpg"}
+                            alt={""}
+                        />
+
+                        <div
+                            ref={dropdownRef}
+                            className={styles.dropDown}
+                        >
+                            <button>
+                                <Link to={"/user/" + auth?.username} >
+                                    <BiUserCircle
+                                        size={"1.4rem"}
+                                    />
+                                    <p>
+                                        My Profile
+                                    </p>
+                                    <MdKeyboardArrowRight
+                                        color={"black"}
+                                        size={"1.5rem"}
+                                    />
+                                </Link>
+                            </button>
+                            <button
+                                onClick={() => handleLogout()}
+                            >
+                                <Link to={"/login"} >
+                                    <MdLogout
+                                        size={"1.4rem"}
+                                    />
+                                    <p>
+                                        Logout
+                                    </p>
+                                    <MdKeyboardArrowRight
+                                        color={"black"}
+                                        size={"1.5rem"}
+                                    />
+                                </Link>
+                            </button>
                         </div>
-                    </Link>
+                    </div>
                 </div>
             </div>
             <div className={styles.navbarSpace} >a</div>

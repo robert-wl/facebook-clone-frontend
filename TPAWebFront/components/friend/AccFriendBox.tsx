@@ -1,16 +1,14 @@
-import styles from "../../src/assets/styles/friends/friendBox.module.scss";
+import styles from "../../src/assets/styles/friends/accFriendBox.module.scss";
 import {Friend} from "../../gql/graphql.ts";
 import {Link} from "react-router-dom";
 
 
-interface FriendBox {
+interface AccFriendBox {
     friend: Friend
-    handleAccept: (friend: Friend) => void
-    handleDeny: (friend: Friend) => void
 }
 
 
-export default function FriendBox({ friend, handleAccept, handleDeny } : FriendBox){
+export default function AccFriendBox({ friend } : AccFriendBox){
 
 
     return (
@@ -24,16 +22,9 @@ export default function FriendBox({ friend, handleAccept, handleDeny } : FriendB
                 <h4>
                     { friend.sender.firstName } { friend.sender.lastName }
                 </h4>
-                <button
-                    onClick={() => handleAccept(friend)}
-                >
-                    Accept
-                </button>
-                <button
-                    onClick={() => handleDeny(friend)}
-                >
-                    Decline
-                </button>
+                <p>
+                    { friend.sender.username }
+                </p>
             </div>
         </div>
     );

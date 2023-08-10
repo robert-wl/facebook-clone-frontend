@@ -42,6 +42,7 @@ func MigrateDatabase() {
 		&model.Comment{},
 		&model.CommentLike{},
 		&model.Friend{},
+		&model.StoryBox{},
 	)
 
 	fmt.Println(err)

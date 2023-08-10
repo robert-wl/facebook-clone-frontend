@@ -8,7 +8,11 @@ export const GET_POSTS = gql`
         user {
           firstName
           lastName
+          username
           profile
+          email
+          gender
+          dob
         }
         content
         privacy

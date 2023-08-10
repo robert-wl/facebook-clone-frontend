@@ -31,18 +31,10 @@ $background-color: #e9ecf1;
       width: 100%;
       margin: 2rem;
       margin-left: 10rem;
+
+      h1 {
+        color: transparent;
+      }
     }
-
-    .friendList {
-      overflow: hidden;
-      display: grid;
-      //grid-template-rows: 1fr 1fr;
-      grid-template-columns: repeat(5, 1fr);
-      grid-column-gap: 0.5rem;
-      grid-gap: 1rem;
-      width: 100%;
-
-    }
-
   }
 }

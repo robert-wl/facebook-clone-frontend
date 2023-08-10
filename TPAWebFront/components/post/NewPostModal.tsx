@@ -22,7 +22,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
     const [content, setContent] = useState("");
     const [visibility, setVisibility] = useState("friend");
     const [createPost] = useMutation(CREATE_POST);
-    const auth = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
 
     const handleInput = () => {
         const fileInput = document.getElementsByClassName("fileInput")[0] as HTMLInputElement;
@@ -91,7 +91,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                 <hr />
                 <main>
                     <div className={styles.profile}>
-                        <ProfilePicture src={auth?.profile} />
+                        <ProfilePicture user={auth} showBox={false} />
                         <div className={styles.name}>
                             { auth?.firstName } { auth?.lastName }
                             <select
@@ -110,7 +110,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                         placeholder="What are you thinking"
                         onChange={(e) => setContent(e.target.value)}
                     />
-                    <div className={files.length > 0 ? styles.attachment : ""}>
+                    <div className={files.length > 0 ? styles.attachment : styles.attachmentHidden}>
                         <ImageList
                             files={files}
                             setFiles={setFiles}

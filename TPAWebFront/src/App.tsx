@@ -13,6 +13,8 @@ import Home from "./pages/Home.tsx";
 import User from "./pages/User.tsx";
 import UnauthenticatedProtector from "../components/middleware/UnauthenticatedProtector.tsx";
 import Friends from "./pages/Friends.tsx";
+import CreateStory from "./pages/CreateStory.tsx";
+import Stories from "./pages/Stories.tsx";
 
 function App() {
 
@@ -43,7 +45,7 @@ function App() {
        <Route path="/activate/:activationID" element={
            <UnauthenticatedProtector>
                <ActivateAccountProtector>
-                <ActivateAccount />
+                    <ActivateAccount />
                </ActivateAccountProtector>
            </UnauthenticatedProtector>
        } />
@@ -60,6 +62,16 @@ function App() {
        <Route path="/friends" element={
            <AuthenticatedProtector>
                <Friends />
+           </AuthenticatedProtector>
+       } />
+       <Route path="/stories/create" element={
+           <AuthenticatedProtector>
+               <CreateStory />
+           </AuthenticatedProtector>
+       } />
+       <Route path="/stories/:username" element={
+           <AuthenticatedProtector>
+               <Stories />
            </AuthenticatedProtector>
        } />
    </Routes>

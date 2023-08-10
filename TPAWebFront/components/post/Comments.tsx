@@ -20,7 +20,7 @@ export default function Comments({ comment } : Comments){
     const [showReply, setShowReply] = useState(false);
     const [commentContent, setCommentContent] = useState("");
     const [currComment, setCurrComment] = useState(comment);
-    const auth = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
     const [createComment] = useMutation(CREATE_COMMENT);
     const [likecomment] = useMutation(LIKE_COMMENT);
 

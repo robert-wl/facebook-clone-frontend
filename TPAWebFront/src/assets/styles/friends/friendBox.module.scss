@@ -13,12 +13,18 @@
     border-top-right-radius: 1rem;
     border-top-left-radius: 1rem;
 
-    img {
+    a {
       width: inherit;
-      height: 15rem;
-      object-fit: cover;
-      border-top-right-radius: 1rem;
-      border-top-left-radius: 1rem;
+      margin: 0;
+      padding: 0;
+
+      img {
+        width: inherit;
+        height: 15rem;
+        object-fit: cover;
+        border-top-right-radius: 1rem;
+        border-top-left-radius: 1rem;
+      }
     }
   }
 
