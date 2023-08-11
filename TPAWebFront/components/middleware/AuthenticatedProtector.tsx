@@ -8,7 +8,6 @@ export default function AuthenticatedProtector({ children } : { children: JSX.El
                 localStorage.getItem("token") ?
                 children :
                 <Navigate to={"/login"} replace={true} />
-
             }
         </>
     )

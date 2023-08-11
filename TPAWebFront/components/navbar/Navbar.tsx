@@ -63,7 +63,7 @@ export default function Navbar(){
                             />
                         </div>
                     </Link>
-                    <Link to={""} >
+                    <Link to={"/messages"} >
                         <div className={styles.circles}>
                             <BiSolidMessageRoundedDetail
                                 color={"black"}

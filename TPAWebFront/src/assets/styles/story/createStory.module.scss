@@ -34,6 +34,14 @@ $background-color: #e9ecf1;
       font-weight: normal;
     }
 
+    .friend {
+
+      img {
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+
     .container {
       display: flex;
       flex-direction: column;

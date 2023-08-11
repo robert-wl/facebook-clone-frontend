@@ -1,10 +1,9 @@
-import {gql} from "@apollo/client";
+import { gql } from "@apollo/client";
 
-
-export const ACCEPT_FRIEND = gql`    
-    mutation acceptFriend($friend: ID!) {
-      acceptFriend(friend: $friend) {
-        accepted
-      }
-    }
-`
+export const ACCEPT_FRIEND = gql`
+	mutation acceptFriend($friend: ID!) {
+		acceptFriend(friend: $friend) {
+			accepted
+		}
+	}
+`;

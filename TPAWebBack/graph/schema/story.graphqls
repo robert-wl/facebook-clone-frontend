@@ -1,7 +1,7 @@
 
 directive @goField(forceResolver: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-type StoryBox {
+type Story {
     id: ID!
     user: User! @goField(forceResolver: true)
     image: String
@@ -22,11 +22,11 @@ input NewImageStory {
 }
 
 extend type Query {
-    getStories(username: String!): [StoryBox] @auth
+    getStories(username: String!): [Story] @auth
     getUserWithStories: [User] @auth
 }
 
 extend type Mutation {
-    createTextStory(input: NewTextStory!): StoryBox! @auth
-    createImageStory(input: NewImageStory!): StoryBox! @auth
+    createTextStory(input: NewTextStory!): Story! @auth
+    createImageStory(input: NewImageStory!): Story! @auth
 }

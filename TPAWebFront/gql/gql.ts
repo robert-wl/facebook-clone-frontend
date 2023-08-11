@@ -13,16 +13,21 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "    \n    mutation acceptFriend($friend: ID!) {\n      acceptFriend(friend: $friend) {\n        accepted\n      }\n    }\n": types.AcceptFriendDocument,
-    "\n    mutation addFriend($friendInput: FriendInput!){\n      addFriend(friendInput: $friendInput){\n        sender {\n          username\n        }\n        receiver {\n          username\n        }\n        accepted\n      }\n    }    \n": types.AddFriendDocument,
-    "    \n    query getFriends{\n      getFriends{\n        sender {\n          id\n          firstName\n          lastName\n          username\n          profile\n        }\n        receiver {\n          id\n          firstName\n          lastName\n          username\n          profile\n        }\n        accepted\n      }\n}\n": types.GetFriendsDocument,
-    "    \n    mutation rejectFriend($friend: ID!){\n      rejectFriend(friend: $friend){\n        accepted\n      }\n    }\n": types.RejectFriendDocument,
+    "\n\tmutation acceptFriend($friend: ID!) {\n\t\tacceptFriend(friend: $friend) {\n\t\t\taccepted\n\t\t}\n\t}\n": types.AcceptFriendDocument,
+    "\n\tmutation addFriend($friendInput: FriendInput!) {\n\t\taddFriend(friendInput: $friendInput) {\n\t\t\tsender {\n\t\t\t\tusername\n\t\t\t}\n\t\t\treceiver {\n\t\t\t\tusername\n\t\t\t}\n\t\t\taccepted\n\t\t}\n\t}\n": types.AddFriendDocument,
+    "\n\tquery getFriends {\n\t\tgetFriends {\n\t\t\tsender {\n\t\t\t\tid\n\t\t\t\tfirstName\n\t\t\t\tlastName\n\t\t\t\tusername\n\t\t\t\tprofile\n\t\t\t}\n\t\t\treceiver {\n\t\t\t\tid\n\t\t\t\tfirstName\n\t\t\t\tlastName\n\t\t\t\tusername\n\t\t\t\tprofile\n\t\t\t}\n\t\t\taccepted\n\t\t}\n\t}\n": types.GetFriendsDocument,
+    "\n\tmutation rejectFriend($friend: ID!) {\n\t\trejectFriend(friend: $friend) {\n\t\t\taccepted\n\t\t}\n\t}\n": types.RejectFriendDocument,
+    "\n\tquery getConversations {\n\t\tgetConversations {\n\t\t\tid\n\t\t\tusers {\n\t\t\t\tuser {\n\t\t\t\t\tid\n\t\t\t\t\tfirstName\n\t\t\t\t\tlastName\n\t\t\t\t\tusername\n\t\t\t\t\tprofile\n\t\t\t\t}\n\t\t\t}\n\t\t\tmessages {\n\t\t\t\tmessage\n\t\t\t}\n\t\t}\n\t}\n": types.GetConversationsDocument,
+    "\n\tmutation sendMessage($convID: ID!, $message: String, $image: String) {\n\t\tsendMessage(conversationID: $convID, message: $message, image: $image) {\n\t\t\tid\n\t\t\tmessage\n\t\t\timage\n\t\t}\n\t}\n": types.SendMessageDocument,
+    "\n     subscription viewConversation($conversation: ID!) {\n          viewConversation(conversationID: $conversation) {\n               sender {\n                    firstName\n                    lastName\n                    username\n               }\n               message\n               image\n               createdAt\n          }\n     }\n": types.ViewConversationDocument,
     "\n    mutation createPost($post: NewPost!){\n       createPost(newPost: $post){\n        id\n        user {\n          firstName\n          lastName\n          profile\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        comments {\n          id\n          content\n        }\n        files\n        createdAt\n      }\n    }\n": types.CreatePostDocument,
     "\n    query getCommentPost($postId: ID!) {\n      getCommentPost(postID: $postId){\n        id\n        user {\n          firstName\n          lastName\n          username\n          profile\n          email\n          gender\n          dob\n        }\n        content\n        liked\n        likeCount\n        comments {\n            id\n            content\n            liked\n            likeCount\n            user {\n              firstName\n              lastName\n              username\n              profile\n              email\n              gender\n              dob\n            }\n        }\n      }\n    }\n": types.GetCommentPostDocument,
     "\n    query getPosts($pagination: Pagination!) {\n      getPosts(pagination: $pagination){\n        id\n        user {\n          firstName\n          lastName\n          username\n          profile\n          email\n          gender\n          dob\n        }\n        content\n        privacy\n        likeCount\n        commentCount\n        shareCount\n        liked\n        comments {\n          id\n          content\n        }\n        files\n        createdAt\n      }\n    }\n": types.GetPostsDocument,
     "\n    mutation likePost($id: ID!){\n      likePost(postID: $id){\n        postId\n      }\n    }    \n": types.LikePostDocument,
     "\n    mutation createImageStory($story: NewImageStory!){\n      createImageStory(input: $story) {\n        id\n        user {\n          firstName\n          lastName\n          username\n        }\n        text\n      } \n    }\n": types.CreateImageStoryDocument,
     "\n    mutation createTextStory($story: NewTextStory!){\n      createTextStory(input: $story) {\n        id\n        user {\n          firstName\n          lastName\n          username\n        }\n        text\n      } \n    }\n": types.CreateTextStoryDocument,
+    "\n    query getStories($username: String!){\n      getStories(username: $username) {\n        id\n        image\n        text\n        font\n        color\n      }\n    }\n": types.GetStoriesDocument,
+    "    \n    query GetUserWithStories{\n      getUserWithStories{\n        id\n        firstName\n        lastName\n        username\n        profile\n      }\n    }\n": types.GetUserWithStoriesDocument,
     "\n    mutation activateUser($id: String!){\n      activateUser(id: $id){\n        id\n      }\n    }\n": types.ActivateUserDocument,
     "\n    mutation authenticateUser($email: String!, $password: String!){\n      authenticateUser(email: $email, password: $password)\n    }\n": types.AuthenticateUserDocument,
     "\n    query checkActivateLink($id: String!){\n      checkActivateLink(id: $id)\n    }    \n": types.CheckActivateLinkDocument,
@@ -53,19 +58,31 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "    \n    mutation acceptFriend($friend: ID!) {\n      acceptFriend(friend: $friend) {\n        accepted\n      }\n    }\n"): (typeof documents)["    \n    mutation acceptFriend($friend: ID!) {\n      acceptFriend(friend: $friend) {\n        accepted\n      }\n    }\n"];
+export function graphql(source: "\n\tmutation acceptFriend($friend: ID!) {\n\t\tacceptFriend(friend: $friend) {\n\t\t\taccepted\n\t\t}\n\t}\n"): (typeof documents)["\n\tmutation acceptFriend($friend: ID!) {\n\t\tacceptFriend(friend: $friend) {\n\t\t\taccepted\n\t\t}\n\t}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation addFriend($friendInput: FriendInput!){\n      addFriend(friendInput: $friendInput){\n        sender {\n          username\n        }\n        receiver {\n          username\n        }\n        accepted\n      }\n    }    \n"): (typeof documents)["\n    mutation addFriend($friendInput: FriendInput!){\n      addFriend(friendInput: $friendInput){\n        sender {\n          username\n        }\n        receiver {\n          username\n        }\n        accepted\n      }\n    }    \n"];
+export function graphql(source: "\n\tmutation addFriend($friendInput: FriendInput!) {\n\t\taddFriend(friendInput: $friendInput) {\n\t\t\tsender {\n\t\t\t\tusername\n\t\t\t}\n\t\t\treceiver {\n\t\t\t\tusername\n\t\t\t}\n\t\t\taccepted\n\t\t}\n\t}\n"): (typeof documents)["\n\tmutation addFriend($friendInput: FriendInput!) {\n\t\taddFriend(friendInput: $friendInput) {\n\t\t\tsender {\n\t\t\t\tusername\n\t\t\t}\n\t\t\treceiver {\n\t\t\t\tusername\n\t\t\t}\n\t\t\taccepted\n\t\t}\n\t}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "    \n    query getFriends{\n      getFriends{\n        sender {\n          id\n          firstName\n          lastName\n          username\n          profile\n        }\n        receiver {\n          id\n          firstName\n          lastName\n          username\n          profile\n        }\n        accepted\n      }\n}\n"): (typeof documents)["    \n    query getFriends{\n      getFriends{\n        sender {\n          id\n          firstName\n          lastName\n          username\n          profile\n        }\n        receiver {\n          id\n          firstName\n          lastName\n          username\n          profile\n        }\n        accepted\n      }\n}\n"];
+export function graphql(source: "\n\tquery getFriends {\n\t\tgetFriends {\n\t\t\tsender {\n\t\t\t\tid\n\t\t\t\tfirstName\n\t\t\t\tlastName\n\t\t\t\tusername\n\t\t\t\tprofile\n\t\t\t}\n\t\t\treceiver {\n\t\t\t\tid\n\t\t\t\tfirstName\n\t\t\t\tlastName\n\t\t\t\tusername\n\t\t\t\tprofile\n\t\t\t}\n\t\t\taccepted\n\t\t}\n\t}\n"): (typeof documents)["\n\tquery getFriends {\n\t\tgetFriends {\n\t\t\tsender {\n\t\t\t\tid\n\t\t\t\tfirstName\n\t\t\t\tlastName\n\t\t\t\tusername\n\t\t\t\tprofile\n\t\t\t}\n\t\t\treceiver {\n\t\t\t\tid\n\t\t\t\tfirstName\n\t\t\t\tlastName\n\t\t\t\tusername\n\t\t\t\tprofile\n\t\t\t}\n\t\t\taccepted\n\t\t}\n\t}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "    \n    mutation rejectFriend($friend: ID!){\n      rejectFriend(friend: $friend){\n        accepted\n      }\n    }\n"): (typeof documents)["    \n    mutation rejectFriend($friend: ID!){\n      rejectFriend(friend: $friend){\n        accepted\n      }\n    }\n"];
+export function graphql(source: "\n\tmutation rejectFriend($friend: ID!) {\n\t\trejectFriend(friend: $friend) {\n\t\t\taccepted\n\t\t}\n\t}\n"): (typeof documents)["\n\tmutation rejectFriend($friend: ID!) {\n\t\trejectFriend(friend: $friend) {\n\t\t\taccepted\n\t\t}\n\t}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n\tquery getConversations {\n\t\tgetConversations {\n\t\t\tid\n\t\t\tusers {\n\t\t\t\tuser {\n\t\t\t\t\tid\n\t\t\t\t\tfirstName\n\t\t\t\t\tlastName\n\t\t\t\t\tusername\n\t\t\t\t\tprofile\n\t\t\t\t}\n\t\t\t}\n\t\t\tmessages {\n\t\t\t\tmessage\n\t\t\t}\n\t\t}\n\t}\n"): (typeof documents)["\n\tquery getConversations {\n\t\tgetConversations {\n\t\t\tid\n\t\t\tusers {\n\t\t\t\tuser {\n\t\t\t\t\tid\n\t\t\t\t\tfirstName\n\t\t\t\t\tlastName\n\t\t\t\t\tusername\n\t\t\t\t\tprofile\n\t\t\t\t}\n\t\t\t}\n\t\t\tmessages {\n\t\t\t\tmessage\n\t\t\t}\n\t\t}\n\t}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n\tmutation sendMessage($convID: ID!, $message: String, $image: String) {\n\t\tsendMessage(conversationID: $convID, message: $message, image: $image) {\n\t\t\tid\n\t\t\tmessage\n\t\t\timage\n\t\t}\n\t}\n"): (typeof documents)["\n\tmutation sendMessage($convID: ID!, $message: String, $image: String) {\n\t\tsendMessage(conversationID: $convID, message: $message, image: $image) {\n\t\t\tid\n\t\t\tmessage\n\t\t\timage\n\t\t}\n\t}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n     subscription viewConversation($conversation: ID!) {\n          viewConversation(conversationID: $conversation) {\n               sender {\n                    firstName\n                    lastName\n                    username\n               }\n               message\n               image\n               createdAt\n          }\n     }\n"): (typeof documents)["\n     subscription viewConversation($conversation: ID!) {\n          viewConversation(conversationID: $conversation) {\n               sender {\n                    firstName\n                    lastName\n                    username\n               }\n               message\n               image\n               createdAt\n          }\n     }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -90,6 +107,14 @@ export function graphql(source: "\n    mutation createImageStory($story: NewImag
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation createTextStory($story: NewTextStory!){\n      createTextStory(input: $story) {\n        id\n        user {\n          firstName\n          lastName\n          username\n        }\n        text\n      } \n    }\n"): (typeof documents)["\n    mutation createTextStory($story: NewTextStory!){\n      createTextStory(input: $story) {\n        id\n        user {\n          firstName\n          lastName\n          username\n        }\n        text\n      } \n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query getStories($username: String!){\n      getStories(username: $username) {\n        id\n        image\n        text\n        font\n        color\n      }\n    }\n"): (typeof documents)["\n    query getStories($username: String!){\n      getStories(username: $username) {\n        id\n        image\n        text\n        font\n        color\n      }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "    \n    query GetUserWithStories{\n      getUserWithStories{\n        id\n        firstName\n        lastName\n        username\n        profile\n      }\n    }\n"): (typeof documents)["    \n    query GetUserWithStories{\n      getUserWithStories{\n        id\n        firstName\n        lastName\n        username\n        profile\n      }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

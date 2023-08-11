@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-type StoryBox struct {
+type Story struct {
 	ID        string    `json:"id"`
 	UserID    string    `json:"userId"`
 	User      *User     `json:"user"`

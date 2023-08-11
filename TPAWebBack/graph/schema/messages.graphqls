@@ -1,0 +1,35 @@
+
+
+type Conversation {
+    id: ID!
+    users: [ConversationUsers!]!
+    messages: [Message]
+}
+
+type Message {
+    id: ID!
+    conversationId: ID!
+    sender: User!
+    message: String
+    image: String
+    post: Post
+    createdAt: Time!
+}
+
+type ConversationUsers {
+    conversationId: ID!
+    user: User!
+}
+
+extend type Query {
+    getConversations: [Conversation] @auth
+}
+
+extend type Mutation {
+    createConversation(username: String!): Conversation @auth
+    sendMessage(conversationID: ID!, message: String, image: String): Message @auth
+}
+
+type Subscription {
+    viewConversation(conversationID: ID!): [Message]
+}

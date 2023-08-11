@@ -3,6 +3,7 @@ import Toastify from "toastify-js";
 
 
 export default function errorHandler(error: ApolloError){
+    console.log(error.message)
     if(error.message.includes("duplicate key value violates unique")) {
         return Toastify({
             text: "Error: Email already exists",
