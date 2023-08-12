@@ -74,6 +74,41 @@ func (r *mutationResolver) CreateComment(ctx context.Context, newComment model.N
 	return comment, nil
 }
 
+// SharePost is the resolver for the sharePost field.
+func (r *mutationResolver) SharePost(ctx context.Context, userID string, postID string) (*string, error) {
+	var user *model.User
+
+	if err := r.DB.First(&user, "id = ?", userID).Error; err != nil {
+		return nil, err
+	}
+
+	conv, err := r.CreateConversation(ctx, user.Username)
+
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = r.SendMessage(ctx, conv.ID, nil, nil, &postID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var post *model.Post
+
+	if err := r.DB.First(&post, "id = ?", postID).Error; err != nil {
+		return nil, err
+	}
+
+	post.ShareCount = post.ShareCount + 1
+
+	if err := r.DB.Save(&post).Error; err != nil {
+		return nil, err
+	}
+
+	return &conv.ID, nil
+}
+
 // LikePost is the resolver for the likePost field.
 func (r *mutationResolver) LikePost(ctx context.Context, postID string) (*model.PostLike, error) {
 	var postLike *model.PostLike

@@ -16,6 +16,33 @@ import (
 
 // CreateConversation is the resolver for the createConversation field.
 func (r *mutationResolver) CreateConversation(ctx context.Context, username string) (*model.Conversation, error) {
+	var user *model.User
+
+	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
+		return nil, err
+	}
+
+	userIDCtx := ctx.Value("UserID").(string)
+	var conversationUsers []*model.ConversationUsers
+
+	if err := r.DB.Find(&conversationUsers, "user_id in (?)", []string{userIDCtx, user.ID}).Error; err != nil {
+		return nil, err
+	}
+
+	var conversationID string = ""
+
+	if err := r.DB.Model(&model.ConversationUsers{}).
+		Group("conversation_id").
+		Where("user_id in (?)", []string{userIDCtx, user.ID}).
+		Having("COUNT(user_id) = 2").Pluck("conversation_id", &conversationID).Error; err == nil && conversationID != "nil" {
+		var conversation *model.Conversation
+
+		if err := r.DB.First(&conversation, "id = ?", conversationID).Error; err != nil {
+			return nil, err
+		}
+		return conversation, nil
+	}
+
 	conversation := &model.Conversation{
 		ID: uuid.NewString(),
 	}
@@ -24,20 +51,12 @@ func (r *mutationResolver) CreateConversation(ctx context.Context, username stri
 		return nil, err
 	}
 
-	userIDCtx := ctx.Value("UserID").(string)
-
 	conversationUser1 := &model.ConversationUsers{
 		ConversationID: conversation.ID,
 		UserID:         userIDCtx,
 	}
 
 	if err := r.DB.Save(&conversationUser1).Error; err != nil {
-		return nil, err
-	}
-
-	var user *model.User
-
-	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
 		return nil, err
 	}
 
@@ -69,7 +88,7 @@ func (r *mutationResolver) CreateConversation(ctx context.Context, username stri
 }
 
 // SendMessage is the resolver for the sendMessage field.
-func (r *mutationResolver) SendMessage(ctx context.Context, conversationID string, message *string, image *string) (*model.Message, error) {
+func (r *mutationResolver) SendMessage(ctx context.Context, conversationID string, message *string, image *string, postID *string) (*model.Message, error) {
 	userIDCtx := ctx.Value("UserID").(string)
 
 	messageModel := &model.Message{
@@ -78,6 +97,7 @@ func (r *mutationResolver) SendMessage(ctx context.Context, conversationID strin
 		SenderID:       userIDCtx,
 		Message:        message,
 		Image:          image,
+		PostID:         postID,
 		CreatedAt:      time.Now(),
 	}
 
@@ -94,6 +114,7 @@ func (r *mutationResolver) SendMessage(ctx context.Context, conversationID strin
 					Order("created_at desc").
 					Preload("Sender").
 					Preload("Post").
+					Preload("Post.User").
 					Find(&messages, "conversation_id = ?", conversationID).Error; err != nil {
 					continue
 				}
@@ -144,6 +165,7 @@ func (r *subscriptionResolver) ViewConversation(ctx context.Context, conversatio
 		Order("created_at desc").
 		Preload("Sender").
 		Preload("Post").
+		Preload("Post.User").
 		Find(&message, "conversation_id = ?", conversationID).Error; err != nil {
 		close(channel)
 		return nil, err

@@ -27,7 +27,7 @@ extend type Query {
 
 extend type Mutation {
     createConversation(username: String!): Conversation @auth
-    sendMessage(conversationID: ID!, message: String, image: String): Message @auth
+    sendMessage(conversationID: ID!, message: String, image: String, postID: ID): Message @auth
 }
 
 type Subscription {

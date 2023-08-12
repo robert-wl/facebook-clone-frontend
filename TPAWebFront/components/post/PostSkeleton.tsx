@@ -1,6 +1,6 @@
 import styles from "../../src/assets/styles/post/postSkeleton.module.scss";
 
-export default function PostSkeleton(){
+export default function PostSkeleton() {
     return (
         <div className={styles.myBox}>
             <header>
@@ -11,18 +11,10 @@ export default function PostSkeleton(){
                 </div>
             </header>
             <div className={styles.content}>
-                <p>
-                    a
-                </p>
-                <p>
-                    a
-                </p>
-                <p>
-                    a
-                </p>
-                <div className={styles.image}>
-                    a
-                </div>
+                <p>a</p>
+                <p>a</p>
+                <p>a</p>
+                <div className={styles.image}>a</div>
             </div>
         </div>
     );

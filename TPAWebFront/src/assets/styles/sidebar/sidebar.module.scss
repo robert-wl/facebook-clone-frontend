@@ -1,55 +1,53 @@
-
 .barSpace {
-  display: flex;
-  flex-direction: column;
-  width: 20rem;
-  height: 100%;
-  overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    height: 100%;
+    overflow: hidden;
 }
 
-
 .bar {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: white;
-  width: 20rem;
-  height: 100vh;
-  overflow: hidden;
-  margin-top: -0.5rem;
-  box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
-  color: black;
-
-  header {
-    margin: 0.5rem 1rem;
-    padding-top: 0.5rem;
+    position: fixed;
     display: flex;
-    flex-direction: row;
-    align-self: start;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    width: 20rem;
+    height: 100vh;
+    overflow: hidden;
+    margin-top: -0.5rem;
+    box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
+    color: black;
 
-    .bio {
-      display: flex;
-      flex-direction: column;
-      text-align: start;
-      margin-left: 0.5rem;
+    header {
+        margin: 0.5rem 1rem;
+        padding-top: 0.5rem;
+        display: flex;
+        flex-direction: row;
+        align-self: start;
 
-      h2{
-        margin: 0;
-      }
+        .bio {
+            display: flex;
+            flex-direction: column;
+            text-align: start;
+            margin-left: 0.5rem;
+
+            h2 {
+                margin: 0;
+            }
+        }
     }
-  }
 
-  hr {
-    width: 80%;
-    background-color: rgb(100, 100, 100, 0.1);
-    border-color: transparent;
-    padding: 0 1rem;
-    margin: 0.2rem 0;
-  }
+    hr {
+        width: 80%;
+        background-color: rgb(100, 100, 100, 0.1);
+        border-color: transparent;
+        padding: 0 1rem;
+        margin: 0.2rem 0;
+    }
 
-  .content {
-    margin: 0;
-    width: 100%;
-  }
+    .content {
+        margin: 0;
+        width: 100%;
+    }
 }

@@ -1,40 +1,44 @@
 $background-color: #e9ecf1;
 
 .page {
-  color: black;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  background-color: $background-color;
-
-  &::-webkit-scrollbar {
-    width: 0.5rem;
     color: black;
-    background-color: $background-color;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: gray;
-    border-radius: 0.5rem;
-  }
-
-  .content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     height: 100vh;
-    overflow-x: hidden;
+    width: 100vw;
     background-color: $background-color;
 
-    .contentBox {
-      text-align: start;
-      width: 100%;
-      margin: 2rem;
-      margin-left: 10rem;
-
-      h1 {
-        color: transparent;
-      }
+    &::-webkit-scrollbar {
+        width: 0.5rem;
+        color: black;
+        background-color: $background-color;
     }
-  }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: gray;
+        border-radius: 0.5rem;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        overflow-x: hidden;
+        background-color: $background-color;
+
+        .contentBox {
+            text-align: start;
+            width: 100%;
+            margin: 2rem 2rem 2rem 10rem;
+
+            h1 {
+                color: transparent;
+            }
+
+            .friendList {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    }
 }

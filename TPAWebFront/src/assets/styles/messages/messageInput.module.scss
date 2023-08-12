@@ -1,73 +1,73 @@
 .inputBoxHolder {
-     position: relative;
-     display: block;
-     flex-direction: row;
-     width: 100%;
-     color: transparent;
-     height: fit-content;
-     font-size: 1.7rem;
+    position: relative;
+    display: block;
+    flex-direction: row;
+    width: 100%;
+    color: transparent;
+    height: fit-content;
+    font-size: 1.7rem;
 }
 
 .imageHolder {
-     height: 8rem;
-     font-size: 5rem;
-     color: transparent;
-     user-select: none;
+    height: 8rem;
+    font-size: 5rem;
+    color: transparent;
+    user-select: none;
 }
 
 .inputBox {
-     position: fixed;
-     display: flex;
-     align-items: center;
-     width: inherit;
-     justify-content: space-between;
-     background-color: white;
-     height: 3rem;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    width: inherit;
+    justify-content: space-between;
+    background-color: white;
+    height: 3rem;
 
-     svg {
-          margin: 0 0.5rem;
-          display: flex;
+    svg {
+        margin: 0 0.5rem;
+        display: flex;
 
-          &:hover {
-               cursor: pointer;
-          }
-     }
+        &:hover {
+            cursor: pointer;
+        }
+    }
 
-     input {
-          color: black;
-          height: 1.75rem;
-          //margin: 0 1rem;
-          font-size: 1.1rem;
-          width: 100%;
-          background-color: rgb(100, 100, 100, 0.2);
-          border: none;
-          outline: none;
-          border-radius: 1rem;
-          padding: 0.25rem 1rem;
-     }
+    input {
+        color: black;
+        height: 1.75rem;
+        //margin: 0 1rem;
+        font-size: 1.1rem;
+        width: 100%;
+        background-color: rgb(100, 100, 100, 0.2);
+        border: none;
+        outline: none;
+        border-radius: 1rem;
+        padding: 0.25rem 1rem;
+    }
 
-     .imageUpload {
-          position: absolute;
-          right: 5%;
-          border: 1px solid gray;
-          width: 5rem;
-          height: 5rem;
-          top: -175%;
+    .imageUpload {
+        position: absolute;
+        right: 5%;
+        border: 1px solid gray;
+        width: 5rem;
+        height: 5rem;
+        top: -175%;
 
-          img {
-               object-fit: cover;
-               width: 5rem;
-               height: 5rem;
-          }
+        img {
+            object-fit: cover;
+            width: 5rem;
+            height: 5rem;
+        }
 
-          svg {
-               position: absolute;
-               top: -20%;
-               right: -30%;
-               padding: 0.3rem;
-               background-color: lightgray;
-               border-radius: 20rem;
-               //border: 1px solid black;
-          }
-     }
+        svg {
+            position: absolute;
+            top: -20%;
+            right: -30%;
+            padding: 0.3rem;
+            background-color: lightgray;
+            border-radius: 20rem;
+            //border: 1px solid black;
+        }
+    }
 }

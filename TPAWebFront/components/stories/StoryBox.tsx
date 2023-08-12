@@ -15,7 +15,7 @@ export default function StoryBox({ stories } : StoryBox){
 
     const handlePageChange = (num: number) => {
         if(num == -1 && page > 0) {
-            setPage(page - 1)
+            setPage(page - 1);
         }
         else if(num == 1 && page < stories.length - 1) {
             setPage(page + 1)

@@ -1,15 +1,12 @@
 import styles from "../../src/assets/styles/friends/noFriendBox.module.scss";
 
 interface NoFriendBox {
-    description: string
+    description: string;
 }
-export default function NoFriendBox({ description } : NoFriendBox){
-
+export default function NoFriendBox({ description }: NoFriendBox) {
     return (
         <div className={styles.container}>
-            <h3>
-                { description }
-            </h3>
+            <h3>{description}</h3>
         </div>
     );
 }

@@ -1,14 +1,16 @@
-import {Navigate} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-export default function AuthenticatedProtector({ children } : { children: JSX.Element }){
-
+export default function AuthenticatedProtector({ children }: { children: JSX.Element }) {
     return (
         <>
-            {
-                localStorage.getItem("token") ?
-                children :
-                <Navigate to={"/login"} replace={true} />
-            }
+            {localStorage.getItem("token") ? (
+                children
+            ) : (
+                <Navigate
+                    to={"/login"}
+                    replace={true}
+                />
+            )}
         </>
-    )
+    );
 }

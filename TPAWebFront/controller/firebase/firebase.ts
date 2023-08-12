@@ -12,7 +12,7 @@ const firebaseConfig = {
     storageBucket: "tpaweb-da706.appspot.com",
     messagingSenderId: "841613723808",
     appId: "1:841613723808:web:55aed7b67868aff2dd61c5",
-    measurementId: "G-9CXDTH8L6Y"
+    measurementId: "G-9CXDTH8L6Y",
 };
 
 // Initialize Firebase

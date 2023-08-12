@@ -1,353 +1,347 @@
-
-
 .background {
-  display: flex;
-  position: fixed;
-  background-color: rgba(255, 255, 255, 0.8);
-  height: 100vh;
-  width: 100vw;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-
-  .box {
     display: flex;
-    flex-direction: column;
-    width: 30rem;
-    height: 30rem;
-    border-radius: 0.5rem;
-    background-color: white;
-    box-shadow: 1px 1px 10px rgb(100, 100, 100, 0.3);
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.8);
+    height: 100vh;
+    width: 100vw;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
 
-
-    header {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-
-      h2 {
-        color: black;
-        margin-left: 5rem;
-        flex: 100;
-      }
-
-      svg {
+    .box {
         display: flex;
-        align-self: center;
-        flex: 1;
-        padding: 0.5rem;
-        border-radius: 10rem;
-        margin: 1rem;
-        background-color: rgb(100, 100, 100, 0.2);
-
-        &:hover {
-          background-color: rgb(100, 100, 100, 0.3);
-          cursor: pointer;
-        }
-      }
-    }
-
-    hr {
-      width: 90%;
-      background-color: rgb(100, 100, 100, 0.1);
-      margin-top: 0;
-      border-color: transparent;
-      padding: 0 1rem;
-    }
-
-    main {
-      color: black;
-      height: 28rem;
-      overflow-y: auto;
-      overflow-x: hidden;
-
-
-      .profile {
-        margin: 0 1rem;
-        display: flex;
-        flex-direction: row;
-
-        .name {
-          display: flex;
-          flex-direction: column;
-          margin-left: 1rem;
-          align-content: start;
-          text-align: start;
-
-          select {
-            width: 5rem;
-            background-color: rgb(100, 100, 100, 0.1);
-            color: black;
-            border: none;
-            padding: 0.25rem;
-            border-radius: 0.5rem;
-            font-weight: bold;
-          }
-        }
-      }
-
-      textarea {
-        width: 93%;
-        height: 5rem;
-        border-color: transparent;
-        background-color: rgb(100, 100, 100, 0.025);
-        padding: 1rem;
-        border-radius: 0.25rem;
-        color: black;
-        font-family: Arial, serif;
-        font-size: 1.5rem;
-        outline: none;
-        margin: 1rem 1rem 1rem 0;
-        max-width: 93%;
-
-        &:focus {
-          border-color: transparent;
-        }
-
-        &::placeholder {
-          color: gray;
-        }
-
-        &::-webkit-scrollbar {
-          background-color: rgb(100, 100, 100, 0.025);
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-color: lightgray;
-        }
-      }
-
-      .attachment {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        margin: 0 1rem;
-        background-color: white;
-        border: 0.025rem solid rgb(100, 100, 100, 0.5);
+        flex-direction: column;
+        width: 30rem;
+        height: 30rem;
         border-radius: 0.5rem;
-      }
-    }
-
-    .attachmentInput {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      background-color: white;
-      margin: 1rem;
-      padding: 1rem;
-      border: 0.025rem solid rgb(100, 100, 100, 0.5);
-      border-radius: 0.5rem;
-      color: black;
-
-      p {
-        flex: 10;
-        margin: 0;
-        text-align: start;
-      }
-
-      .buttons {
-        display: flex;
-        flex-direction: row;
-        flex: 2;
-
-        .button {
-          margin-left: 1rem;
-          padding: 0.4rem 0.4rem 0;
-          border-radius: 1rem;
-
-          &:hover {
-            background-color: rgb(100, 100, 100, 0.5);
-            cursor: pointer;
-          }
-        }
-      }
-    }
-
-    .postButton {
-      margin: 0 1rem 1rem;
-      background-color: #1877f2;
-      border: none;
-      padding: 0.6em 1.2em;
-      border-radius: 0.5rem;
-
-
-      &:disabled {
-        background-color: lightgray;
-        color: black;
-
-        &:hover {
-          cursor: default;
-        }
-      }
-      
-      &:hover {
-        cursor: pointer;
-      }
-    }
-  }
-
-  .boxImage {
-    display: flex;
-    flex-direction: column;
-    width: 30rem;
-    height: 40rem;
-    border-radius: 0.5rem;
-    background-color: white;
-    box-shadow: 1px 1px 10px rgb(100, 100, 100, 0.3);
-
-    header {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-
-      h2 {
-        color: black;
-        margin-left: 5rem;
-        flex: 100;
-      }
-
-      svg {
-        display: flex;
-        align-self: center;
-        flex: 1;
-        padding: 0.5rem;
-        border-radius: 10rem;
-        margin: 1rem;
-        background-color: rgb(100, 100, 100, 0.2);
-
-        &:hover {
-          background-color: rgb(100, 100, 100, 0.3);
-          cursor: pointer;
-        }
-      }
-    }
-
-    hr {
-      width: 90%;
-      background-color: rgb(100, 100, 100, 0.1);
-      margin-top: 0;
-      border-color: transparent;
-      padding: 0 1rem;
-    }
-
-    main {
-      color: black;
-      height: 28rem;
-      overflow-y: auto;
-      overflow-x: hidden;
-
-      .profile {
-        margin: 0 1rem;
-        display: flex;
-        flex-direction: row;
-
-        .name {
-          display: flex;
-          flex-direction: column;
-          margin-left: 1rem;
-          align-content: start;
-          text-align: start;
-
-          select {
-            width: 5rem;
-            background-color: rgb(100, 100, 100, 0.1);
-            color: black;
-            border: none;
-            padding: 0.25rem;
-            border-radius: 0.5rem;
-            font-weight: bold;
-          }
-        }
-      }
-
-      textarea {
-        width: 90%;
-        height: 5rem;
-        border-color: transparent;
-        background-color: rgb(100, 100, 100, 0.025);
-        padding: 1rem;
-        border-radius: 0.25rem;
-        color: black;
-        font-family: Arial, serif;
-        font-size: 1.5rem;
-        outline: none;
-        margin: 1rem 1rem;
-
-        &:focus {
-          border-color: transparent;
-        }
-
-        &::placeholder {
-          color: gray;
-        }
-      }
-
-      .attachment {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        margin: 0 1rem;
         background-color: white;
-        border: 0.025rem solid rgb(100, 100, 100, 0.5);
-        border-radius: 0.5rem;
-      }
+        box-shadow: 1px 1px 10px rgb(100, 100, 100, 0.3);
+
+        header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            h2 {
+                color: black;
+                margin-left: 5rem;
+                flex: 100;
+            }
+
+            svg {
+                display: flex;
+                align-self: center;
+                flex: 1;
+                padding: 0.5rem;
+                border-radius: 10rem;
+                margin: 1rem;
+                background-color: rgb(100, 100, 100, 0.2);
+
+                &:hover {
+                    background-color: rgb(100, 100, 100, 0.3);
+                    cursor: pointer;
+                }
+            }
+        }
+
+        hr {
+            width: 90%;
+            background-color: rgb(100, 100, 100, 0.1);
+            margin-top: 0;
+            border-color: transparent;
+            padding: 0 1rem;
+        }
+
+        main {
+            color: black;
+            height: 28rem;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            .profile {
+                margin: 0 1rem;
+                display: flex;
+                flex-direction: row;
+
+                .name {
+                    display: flex;
+                    flex-direction: column;
+                    margin-left: 1rem;
+                    align-content: start;
+                    text-align: start;
+
+                    select {
+                        width: 5rem;
+                        background-color: rgb(100, 100, 100, 0.1);
+                        color: black;
+                        border: none;
+                        padding: 0.25rem;
+                        border-radius: 0.5rem;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            textarea {
+                width: 93%;
+                height: 5rem;
+                border-color: transparent;
+                background-color: rgb(100, 100, 100, 0.025);
+                padding: 1rem;
+                border-radius: 0.25rem;
+                color: black;
+                font-family: Arial, serif;
+                font-size: 1.5rem;
+                outline: none;
+                margin: 1rem 1rem 1rem 0;
+                max-width: 93%;
+
+                &:focus {
+                    border-color: transparent;
+                }
+
+                &::placeholder {
+                    color: gray;
+                }
+
+                &::-webkit-scrollbar {
+                    background-color: rgb(100, 100, 100, 0.025);
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background-color: lightgray;
+                }
+            }
+
+            .attachment {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin: 0 1rem;
+                background-color: white;
+                border: 0.025rem solid rgb(100, 100, 100, 0.5);
+                border-radius: 0.5rem;
+            }
+        }
+
+        .attachmentInput {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background-color: white;
+            margin: 1rem;
+            padding: 1rem;
+            border: 0.025rem solid rgb(100, 100, 100, 0.5);
+            border-radius: 0.5rem;
+            color: black;
+
+            p {
+                flex: 10;
+                margin: 0;
+                text-align: start;
+            }
+
+            .buttons {
+                display: flex;
+                flex-direction: row;
+                flex: 2;
+
+                .button {
+                    margin-left: 1rem;
+                    padding: 0.4rem 0.4rem 0;
+                    border-radius: 1rem;
+
+                    &:hover {
+                        background-color: rgb(100, 100, 100, 0.5);
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+
+        .postButton {
+            margin: 0 1rem 1rem;
+            background-color: #1877f2;
+            border: none;
+            padding: 0.6em 1.2em;
+            border-radius: 0.5rem;
+
+            &:disabled {
+                background-color: lightgray;
+                color: black;
+
+                &:hover {
+                    cursor: default;
+                }
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
     }
 
-    .attachmentInput {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      background-color: white;
-      margin: 1rem;
-      padding: 1rem;
-      border: 0.025rem solid rgb(100, 100, 100, 0.5);
-      border-radius: 0.5rem;
-      color: black;
-
-      p {
-        flex: 10;
-        margin: 0;
-        text-align: start;
-      }
-
-      .buttons {
+    .boxImage {
         display: flex;
-        flex-direction: row;
-        flex: 2;
+        flex-direction: column;
+        width: 30rem;
+        height: 40rem;
+        border-radius: 0.5rem;
+        background-color: white;
+        box-shadow: 1px 1px 10px rgb(100, 100, 100, 0.3);
 
-        .button {
-          margin-left: 1rem;
-          padding: 0.4rem 0.4rem 0;
-          border-radius: 1rem;
+        header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
 
-          &:hover {
-            background-color: rgb(100, 100, 100, 0.5);
-            cursor: pointer;
-          }
+            h2 {
+                color: black;
+                margin-left: 5rem;
+                flex: 100;
+            }
+
+            svg {
+                display: flex;
+                align-self: center;
+                flex: 1;
+                padding: 0.5rem;
+                border-radius: 10rem;
+                margin: 1rem;
+                background-color: rgb(100, 100, 100, 0.2);
+
+                &:hover {
+                    background-color: rgb(100, 100, 100, 0.3);
+                    cursor: pointer;
+                }
+            }
         }
-      }
-    }
 
-    .postButton {
-      margin: 0 1rem 1rem;
-      background-color: #1877f2;
-      border: none;
-      padding: 0.6em 1.2em;
-      border-radius: 0.5rem;
-
-
-      &:disabled {
-        background-color: lightgray;
-        color: black;
-
-        &:hover {
-          cursor: default;
+        hr {
+            width: 90%;
+            background-color: rgb(100, 100, 100, 0.1);
+            margin-top: 0;
+            border-color: transparent;
+            padding: 0 1rem;
         }
-      }
 
-      &:hover {
-        cursor: pointer;
-      }
+        main {
+            color: black;
+            height: 28rem;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            .profile {
+                margin: 0 1rem;
+                display: flex;
+                flex-direction: row;
+
+                .name {
+                    display: flex;
+                    flex-direction: column;
+                    margin-left: 1rem;
+                    align-content: start;
+                    text-align: start;
+
+                    select {
+                        width: 5rem;
+                        background-color: rgb(100, 100, 100, 0.1);
+                        color: black;
+                        border: none;
+                        padding: 0.25rem;
+                        border-radius: 0.5rem;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            textarea {
+                width: 90%;
+                height: 5rem;
+                border-color: transparent;
+                background-color: rgb(100, 100, 100, 0.025);
+                padding: 1rem;
+                border-radius: 0.25rem;
+                color: black;
+                font-family: Arial, serif;
+                font-size: 1.5rem;
+                outline: none;
+                margin: 1rem 1rem;
+
+                &:focus {
+                    border-color: transparent;
+                }
+
+                &::placeholder {
+                    color: gray;
+                }
+            }
+
+            .attachment {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin: 0 1rem;
+                background-color: white;
+                border: 0.025rem solid rgb(100, 100, 100, 0.5);
+                border-radius: 0.5rem;
+            }
+        }
+
+        .attachmentInput {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background-color: white;
+            margin: 1rem;
+            padding: 1rem;
+            border: 0.025rem solid rgb(100, 100, 100, 0.5);
+            border-radius: 0.5rem;
+            color: black;
+
+            p {
+                flex: 10;
+                margin: 0;
+                text-align: start;
+            }
+
+            .buttons {
+                display: flex;
+                flex-direction: row;
+                flex: 2;
+
+                .button {
+                    margin-left: 1rem;
+                    padding: 0.4rem 0.4rem 0;
+                    border-radius: 1rem;
+
+                    &:hover {
+                        background-color: rgb(100, 100, 100, 0.5);
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+
+        .postButton {
+            margin: 0 1rem 1rem;
+            background-color: #1877f2;
+            border: none;
+            padding: 0.6em 1.2em;
+            border-radius: 0.5rem;
+
+            &:disabled {
+                background-color: lightgray;
+                color: black;
+
+                &:hover {
+                    cursor: default;
+                }
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
     }
-  }
 }

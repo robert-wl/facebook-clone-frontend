@@ -1,61 +1,59 @@
-
-
 .content {
-  display: flex;
-  flex-direction: row;
-  width: 80%;
-  justify-content: center;
-
-  .container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    width: 80%;
     justify-content: center;
 
-    .boxContainer {
-      display: flex;
-      flex-direction: row;
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
 
-      .box {
-        position: relative;
-        background: linear-gradient(to bottom right, #1F4D7B, #77A7FF, #75A5FD, #77A7FF, #ECF3FF);
-        margin: 1rem;
-        width: 17.5rem;
-        height: 27.5rem;
-        border-radius: 1rem;
-        box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
-        opacity: 85%;
+        .boxContainer {
+            display: flex;
+            flex-direction: row;
 
-        .button {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          position: absolute;
-          top: 50%;
-          right: 50%;
-          transform: translate(50%, -50%);
+            .box {
+                position: relative;
+                background: linear-gradient(to bottom right, #1f4d7b, #77a7ff, #75a5fd, #77a7ff, #ecf3ff);
+                margin: 1rem;
+                width: 17.5rem;
+                height: 27.5rem;
+                border-radius: 1rem;
+                box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
+                opacity: 85%;
 
-          svg {
-            padding: 0.75rem;
-            background-color: white;
-            border-radius: 10rem;
-            box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.2);
-          }
+                .button {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    position: absolute;
+                    top: 50%;
+                    right: 50%;
+                    transform: translate(50%, -50%);
 
-          h4 {
-            color: white;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-          }
+                    svg {
+                        padding: 0.75rem;
+                        background-color: white;
+                        border-radius: 10rem;
+                        box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.2);
+                    }
+
+                    h4 {
+                        color: white;
+                        font-size: 0.8rem;
+                        margin-top: 0.5rem;
+                    }
+                }
+                &:nth-child(2) {
+                    background: linear-gradient(to bottom right, #fa383e, #f35369, #f35369, #f35369, #fbccd2);
+                }
+
+                &:hover {
+                    opacity: 100%;
+                    cursor: pointer;
+                }
+            }
         }
-        &:nth-child(2) {
-          background: linear-gradient(to bottom right, #FA383E, #F35369, #F35369, #F35369, #FBCCD2);
-        }
-
-        &:hover {
-          opacity: 100%;
-          cursor: pointer;
-        }
-      }
     }
-  }
 }

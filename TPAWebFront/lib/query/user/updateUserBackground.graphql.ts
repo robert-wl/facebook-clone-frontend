@@ -1,10 +1,9 @@
-import {gql} from "@apollo/client";
-
+import { gql } from "@apollo/client";
 
 export const UPDATE_USER_BACKGROUND = gql`
-    mutation updateUserBackground($background: String!){
-      updateUserBackground(background: $background){
-        id
-      }
-    }    
-`
+    mutation updateUserBackground($background: String!) {
+        updateUserBackground(background: $background) {
+            id
+        }
+    }
+`;

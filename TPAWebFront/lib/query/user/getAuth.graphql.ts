@@ -1,17 +1,16 @@
-import {gql} from "@apollo/client";
-
+import { gql } from "@apollo/client";
 
 export const GET_AUTH = gql`
     query {
-      getAuth {
-        id
-        firstName
-        lastName
-        username
-        profile
-        dob
-        gender
-        email
-      }
+        getAuth {
+            id
+            firstName
+            lastName
+            username
+            profile
+            dob
+            gender
+            email
+        }
     }
-`
+`;

@@ -1,43 +1,39 @@
-import {createContext, useEffect, useState} from "react";
-import {User} from "../../gql/graphql";
-import {useQuery} from "@apollo/client";
-import {GET_AUTH} from "../../lib/query/user/getAuth.graphql.ts";
-import errorHandler from "../../controller/errorHandler.ts";
-
+import { createContext, useEffect, useState } from "react";
+import { User } from "../../gql/graphql";
+import { useQuery } from "@apollo/client";
+import { GET_AUTH } from "../../lib/query/user/getAuth.graphql.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 
 interface AuthContext {
-    auth: User | null,
-    getUser: (() => void) | null
+    auth: User | null;
+    getUser: (() => void) | null;
 }
 
 export const AuthContext = createContext<AuthContext>({
     auth: null,
-    getUser: null
+    getUser: null,
 });
-export default function AuthContextProvider({ children } : { children : JSX.Element }){
+export default function AuthContextProvider({ children }: { children: JSX.Element }) {
     const { refetch } = useQuery(GET_AUTH, {
         onCompleted: (data) => {
-            setAuth(data.getAuth)
+            setAuth(data.getAuth);
         },
-        onError: (errorHandler)
-    })
+        onError: debouncedError,
+        skip: location.pathname == "",
+    });
     const [auth, setAuth] = useState<User | null>(null);
 
     const getUser = () => {
-        refetch().
-        then((data) => {
-            setAuth(data.data.getAuth)
-        }).
-        catch(errorHandler)
-    }
+        refetch()
+            .then((data) => {
+                setAuth(data.data.getAuth);
+            })
+            .catch(debouncedError);
+    };
 
     useEffect(() => {
         getUser();
     }, []);
 
-    return (
-        <AuthContext.Provider value={{ auth, getUser }}>
-            {children}
-        </AuthContext.Provider>
-    )
+    return <AuthContext.Provider value={{ auth, getUser }}>{children}</AuthContext.Provider>;
 }

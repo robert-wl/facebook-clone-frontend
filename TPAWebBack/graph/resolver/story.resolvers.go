@@ -74,7 +74,8 @@ func (r *queryResolver) GetUserWithStories(ctx context.Context) ([]*model.User, 
 
 	// Retrieve user IDs from friends' records
 	var friendIDs []string
-	if err := r.DB.Model(&model.Friend{}).
+	if err := r.DB.
+		Model(&model.Friend{}).
 		Where("sender_id = ? OR receiver_id = ?", userID, userID).
 		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).
 		Find(&friendIDs).Error; err != nil {

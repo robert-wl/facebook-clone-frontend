@@ -4,13 +4,13 @@ import "time"
 
 type Post struct {
 	ID           string      `json:"id"`
-	UserID       string      `json:"userId" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	User         *User       `json:"user"`
+	UserID       string      `json:"userId"`
+	User         *User       `json:"user" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Content      string      `json:"content"`
 	Privacy      string      `json:"privacy"`
 	LikeCount    int         `json:"likeCount" gorm:"-"`
 	CommentCount int         `json:"commentCount" gorm:"-"`
-	ShareCount   int         `json:"shareCount" gorm:"-"`
+	ShareCount   int         `json:"shareCount"`
 	Files        []*string   `json:"files,omitempty" gorm:"json"`
 	Likes        []*PostLike `json:"likes,omitempty"`
 	Comments     []*Comment  `json:"comments,omitempty" gorm:"foreignKey:ParentPostID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`

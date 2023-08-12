@@ -64,6 +64,7 @@ extend type Query {
 extend type Mutation {
     createPost(newPost: NewPost!): Post @auth
     createComment(newComment: NewComment!): Comment @auth
+    sharePost(userID: ID!, postID: ID!): String @auth
     likePost(postID: ID!): PostLike @auth
     likecomment(commentID: ID!): CommentLike @auth
 }
