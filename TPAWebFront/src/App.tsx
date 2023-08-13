@@ -18,6 +18,7 @@ import Stories from "./pages/Stories.tsx";
 import Messages from "./pages/Messages.tsx";
 import CreateReels from "./pages/CreateReels.tsx";
 import Reels from "./pages/Reels.tsx";
+import CreateGroup from "./pages/CreateGroup.tsx";
 
 function App() {
     return (
@@ -135,6 +136,14 @@ function App() {
                 element={
                     <AuthenticatedProtector>
                         <Reels key={Date.now()} />
+                    </AuthenticatedProtector>
+                }
+            />
+            <Route
+                path="/group/create"
+                element={
+                    <AuthenticatedProtector>
+                        <CreateGroup key={Date.now()} />
                     </AuthenticatedProtector>
                 }
             />

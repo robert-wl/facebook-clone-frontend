@@ -41,6 +41,7 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
+	ReelComment() ReelCommentResolver
 	Story() StoryResolver
 	Subscription() SubscriptionResolver
 }
@@ -277,6 +278,13 @@ type QueryResolver interface {
 	GetReelComments(ctx context.Context, reelID string) ([]*model.ReelComment, error)
 	GetStories(ctx context.Context, username string) ([]*model.Story, error)
 	GetUserWithStories(ctx context.Context) ([]*model.User, error)
+}
+type ReelCommentResolver interface {
+	LikeCount(ctx context.Context, obj *model.ReelComment) (int, error)
+	ReplyCount(ctx context.Context, obj *model.ReelComment) (int, error)
+
+	Comments(ctx context.Context, obj *model.ReelComment) ([]*model.ReelComment, error)
+	Liked(ctx context.Context, obj *model.ReelComment) (*bool, error)
 }
 type StoryResolver interface {
 	User(ctx context.Context, obj *model.Story) (*model.User, error)
@@ -8704,7 +8712,7 @@ func (ec *executionContext) _ReelComment_likeCount(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.LikeCount, nil
+		return ec.resolvers.ReelComment().LikeCount(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8725,8 +8733,8 @@ func (ec *executionContext) fieldContext_ReelComment_likeCount(ctx context.Conte
 	fc = &graphql.FieldContext{
 		Object:     "ReelComment",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
 		},
@@ -8748,7 +8756,7 @@ func (ec *executionContext) _ReelComment_replyCount(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ReplyCount, nil
+		return ec.resolvers.ReelComment().ReplyCount(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8769,8 +8777,8 @@ func (ec *executionContext) fieldContext_ReelComment_replyCount(ctx context.Cont
 	fc = &graphql.FieldContext{
 		Object:     "ReelComment",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
 		},
@@ -8969,7 +8977,7 @@ func (ec *executionContext) _ReelComment_comments(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Comments, nil
+		return ec.resolvers.ReelComment().Comments(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8987,8 +8995,8 @@ func (ec *executionContext) fieldContext_ReelComment_comments(ctx context.Contex
 	fc = &graphql.FieldContext{
 		Object:     "ReelComment",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -9034,7 +9042,7 @@ func (ec *executionContext) _ReelComment_liked(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Liked, nil
+		return ec.resolvers.ReelComment().Liked(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9052,8 +9060,8 @@ func (ec *executionContext) fieldContext_ReelComment_liked(ctx context.Context, 
 	fc = &graphql.FieldContext{
 		Object:     "ReelComment",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
 		},
@@ -13738,28 +13746,90 @@ func (ec *executionContext) _ReelComment(ctx context.Context, sel ast.SelectionS
 		case "id":
 			out.Values[i] = ec._ReelComment_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "user":
 			out.Values[i] = ec._ReelComment_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "content":
 			out.Values[i] = ec._ReelComment_content(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "likeCount":
-			out.Values[i] = ec._ReelComment_likeCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ReelComment_likeCount(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "replyCount":
-			out.Values[i] = ec._ReelComment_replyCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ReelComment_replyCount(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "parentReel":
 			out.Values[i] = ec._ReelComment_parentReel(ctx, field, obj)
 		case "parentComment":
@@ -13767,13 +13837,75 @@ func (ec *executionContext) _ReelComment(ctx context.Context, sel ast.SelectionS
 		case "likes":
 			out.Values[i] = ec._ReelComment_likes(ctx, field, obj)
 		case "comments":
-			out.Values[i] = ec._ReelComment_comments(ctx, field, obj)
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ReelComment_comments(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "liked":
-			out.Values[i] = ec._ReelComment_liked(ctx, field, obj)
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ReelComment_liked(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "createdAt":
 			out.Values[i] = ec._ReelComment_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))

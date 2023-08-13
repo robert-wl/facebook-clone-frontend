@@ -6,11 +6,12 @@ import createToast from "../../controller/toast/handler.ts";
 
 interface ReelsSidebar {
     setVideo: Dispatch<SetStateAction<File | null>>;
+    content: string;
     setContent: Dispatch<SetStateAction<string>>;
     handleSubmit: () => void;
 }
 
-export default function ReelsSidebar({ setVideo, setContent, handleSubmit }: ReelsSidebar) {
+export default function ReelsSidebar({ setVideo, content, setContent, handleSubmit }: ReelsSidebar) {
     const { auth } = useContext(AuthContext);
     const videoInputRef = useRef<HTMLInputElement>(null);
     const [currVideo, setCurrVideo] = useState<File | null>(null);
@@ -85,7 +86,12 @@ export default function ReelsSidebar({ setVideo, setContent, handleSubmit }: Ree
                     <hr />
                     <div className={styles.buttons}>
                         <button>Cancel</button>
-                        <button onClick={() => handleSubmit()}>Post</button>
+                        <button
+                            disabled={content == ""}
+                            onClick={() => handleSubmit()}
+                        >
+                            Post
+                        </button>
                     </div>
                 </footer>
             </div>

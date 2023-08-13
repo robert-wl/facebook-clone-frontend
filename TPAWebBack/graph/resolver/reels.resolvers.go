@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/yahkerobertkertasnya/TPAWebBack/graph"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 )
 
@@ -113,6 +114,15 @@ func (r *mutationResolver) LikeReelComment(ctx context.Context, reelCommentID st
 		UserID:        userID,
 	}
 
+	if err := r.DB.First(&model.ReelCommentLike{}, "reel_comment_id = ? and user_id = ?", reelCommentID, userID).Error; err == nil {
+
+		if err := r.DB.Delete(&reelCommentLike).Error; err != nil {
+			return nil, err
+		}
+
+		return reelCommentLike, nil
+	}
+
 	if err := r.DB.Save(&reelCommentLike).Error; err != nil {
 		return nil, err
 	}
@@ -180,11 +190,54 @@ func (r *queryResolver) GetReelComments(ctx context.Context, reelID string) ([]*
 		Preload("Likes").
 		Preload("Comments").
 		Preload("Comments.User").
-		First(&comments, "parent_reel_id = ?", reelID).Error; err != nil {
+		Find(&comments, "parent_reel_id = ?", reelID).Error; err != nil {
 		return nil, err
 	}
 
-	fmt.Println(r.DB.Model(&comments).Association("Likes").Count())
-
-	return nil, nil
+	return comments, nil
 }
+
+// LikeCount is the resolver for the likeCount field.
+func (r *reelCommentResolver) LikeCount(ctx context.Context, obj *model.ReelComment) (int, error) {
+
+	return int(r.DB.Model(obj).Association("Likes").Count()), nil
+}
+
+// ReplyCount is the resolver for the replyCount field.
+func (r *reelCommentResolver) ReplyCount(ctx context.Context, obj *model.ReelComment) (int, error) {
+
+	return int(r.DB.Model(obj).Association("Comments").Count()), nil
+}
+
+// Comments is the resolver for the comments field.
+func (r *reelCommentResolver) Comments(ctx context.Context, obj *model.ReelComment) ([]*model.ReelComment, error) {
+	var comments []*model.ReelComment
+
+	fmt.Println(obj.ID)
+	if err := r.DB.Preload("User").Find(&comments, "parent_comment_id = ?", obj.ID).Error; err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	fmt.Println(comments)
+
+	return comments, nil
+}
+
+// Liked is the resolver for the liked field.
+func (r *reelCommentResolver) Liked(ctx context.Context, obj *model.ReelComment) (*bool, error) {
+	var count int64
+	boolean := false
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.Find(&model.ReelCommentLike{}, "reel_comment_id = ? and user_id = ?", obj.ID, userID).Count(&count).Error; err == nil && count != 0 {
+		boolean = true
+	}
+
+	return &boolean, nil
+}
+
+// ReelComment returns graph.ReelCommentResolver implementation.
+func (r *Resolver) ReelComment() graph.ReelCommentResolver { return &reelCommentResolver{r} }
+
+type reelCommentResolver struct{ *Resolver }

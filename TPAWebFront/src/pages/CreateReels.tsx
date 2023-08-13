@@ -31,14 +31,12 @@ export default function CreateReels() {
     };
     return (
         <>
-            <div
-                id={"page"}
-                className={styles.page}
-            >
+            <div className={styles.page}>
                 <Navbar />
                 <div className={styles.content}>
                     <ReelsSidebar
                         setVideo={setVideo}
+                        content={content}
                         setContent={setContent}
                         handleSubmit={handleSubmit}
                     />
@@ -48,7 +46,7 @@ export default function CreateReels() {
                                 <div className={styles.story}>
                                     <div className={video ? styles.storyView : styles.storyEmpty}>
                                         <div className={styles.background}>
-                                            {!video && <h3>Insert your video</h3>}
+                                            {!video && <h3>Insert a video</h3>}
                                             {video && (
                                                 <video
                                                     autoPlay={true}

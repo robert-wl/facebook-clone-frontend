@@ -136,6 +136,12 @@
                     border: 1px solid transparent;
                     color: white;
                 }
+
+                &:disabled {
+                    background-color: lightgray;
+                    color: black;
+                    cursor: not-allowed;
+                }
             }
         }
     }
