@@ -1,0 +1,51 @@
+
+
+type Group {
+    id: ID!
+    name: String!
+    about: String!
+    privacy: String!
+    background: String!
+    members: [Member!]!
+    memberCount: Int! @goField(forceResolver: true)
+    joined: Boolean! @goField(forceResolver: true)
+    isAdmin: Boolean! @goField(forceResolver: true)
+    chat: Conversation
+    posts: [Post]
+    files: [GroupFile]
+    createdAt: Time!
+}
+
+type Member {
+    groupId: ID!
+    user: User!
+    approved: Boolean!
+    role: String!
+}
+
+type GroupFile {
+    id: ID!
+    groupID: ID!
+    name: String!
+    type: String!
+    url: String!
+    uploadedBy: User!
+    uploadedAt: Time!
+}
+
+input NewGroup {
+    name: String!
+    about: String!
+    privacy: String!
+}
+
+extend type Mutation {
+    createGroup(group: NewGroup!): Group! @auth
+}
+
+extend type Query {
+    getGroup(id: ID!): Group @auth
+    getGroupInvite(id: ID!): [User] @auth
+    getGroups: [Group] @auth
+    getJoinedGroups: [Group] @auth
+}

@@ -1,5 +1,5 @@
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { app } from "./firebase";
+import { app } from "./firebase.ts";
 
 const storage = getStorage(app);
 export default async function uploadStorage(directory: string, file: File) {

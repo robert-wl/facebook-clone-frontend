@@ -32,6 +32,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, newPost model.NewPost
 		LikeCount:    0,
 		CommentCount: 0,
 		ShareCount:   0,
+		GroupID:      newPost.GroupID,
 		Files:        newPost.Files,
 		Liked:        &boolVar,
 		CreatedAt:    time.Now(),
@@ -187,6 +188,24 @@ func (r *queryResolver) GetPosts(ctx context.Context, pagination model.Paginatio
 
 		//fmt.Println(temp)
 		post.Liked = &temp
+	}
+
+	return posts, nil
+}
+
+// GetGroupPosts is the resolver for the getGroupPosts field.
+func (r *queryResolver) GetGroupPosts(ctx context.Context, groupID string, pagination model.Pagination) ([]*model.Post, error) {
+	var posts []*model.Post
+
+	if err := r.DB.
+		Order("created_at desc").
+		Preload("User").
+		Preload("Likes").
+		Preload("Comments").
+		Offset(pagination.Start).
+		Limit(pagination.Limit).
+		Find(&posts, "group_id = ?", groupID).Error; err != nil {
+		return nil, err
 	}
 
 	return posts, nil

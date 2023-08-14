@@ -50,6 +50,9 @@ func MigrateDatabase() {
 		&model.ReelLike{},
 		&model.ReelComment{},
 		&model.ReelCommentLike{},
+		&model.Group{},
+		&model.Member{},
+		&model.GroupFile{},
 	)
 
 	fmt.Println(err)

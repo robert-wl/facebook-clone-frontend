@@ -1,0 +1,144 @@
+@use "../mixins.scss" as *;
+
+.barSpace {
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    height: calc(100vw - 20rem);
+    overflow: hidden;
+}
+
+.bar {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    width: 20rem;
+    height: calc(100% - 3rem);
+    overflow: hidden;
+    margin-top: -0.5rem;
+    box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
+    color: black;
+
+    header {
+        margin: 0.5rem 1rem;
+        padding-top: 0.5rem;
+        display: flex;
+        flex-direction: row;
+        align-self: start;
+        width: 100%;
+        border-top: var(--border);
+
+        img {
+            width: 2.5rem;
+            height: 2.5rem;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+        .bio {
+            display: flex;
+            flex-direction: column;
+            text-align: start;
+            margin-left: 0.5rem;
+            height: 3rem;
+
+            h4 {
+                margin: 0;
+                height: auto;
+            }
+
+            p {
+                margin: 0;
+                height: auto;
+                font-size: 0.9rem,;
+            }
+
+        }
+    }
+
+    > button {
+        width: calc(100% - 2rem);
+        background-color: var(--blue-button);
+        border-radius: var(--border-radius);
+        outline: none;
+        border: none;
+        padding: 0.5rem;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+
+        > nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+
+            .tab {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 3rem;
+                width: 100%;
+                margin: 0.5rem;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+            .tabActive {
+                @extend .tab;
+                color: var(--blue-color);
+                border-bottom: var(--border-tab-active);
+            }
+        }
+
+        h3 {
+            display: flex;
+            width: calc(100% - 3rem);
+            align-items: start;
+            margin: 0 0 1rem;
+            font-size: 0.9rem;
+        }
+
+        a {
+            width: 100%;
+            color: black;
+            text-decoration: none;
+
+            .group {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: start;
+                width: 100%;
+                padding: 0.5rem 0.5rem 0.5rem;
+
+                img {
+                    width: 3rem;
+                    height: 3rem;
+
+                    object-fit: cover;
+                    border-radius: 0.5rem;
+                }
+
+                h4 {
+                    margin: 0;
+                    margin-left: 0.5rem;
+                }
+
+                &:hover {
+                    background-color: var(--hover-color);
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

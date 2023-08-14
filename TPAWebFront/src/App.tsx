@@ -1,24 +1,26 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import Login from "./pages/Login.tsx";
-import Register from "./pages/Register.tsx";
+import Login from "./pages/auth/Login.tsx";
+import Register from "./pages/auth/Register.tsx";
 import "toastify-js/src/toastify.css";
-import ActivateAccountProtector from "../components/middleware/ActivateAccountProtector.tsx";
-import ActivateAccount from "./pages/ActivateAccount.tsx";
-import ForgotAccount from "./pages/ForgotAccount.tsx";
-import ResetPassword from "./pages/ResetPassword.tsx";
-import ResetPasswordProtector from "../components/middleware/ResetPasswordProtector.tsx";
-import AuthenticatedProtector from "../components/middleware/AuthenticatedProtector.tsx";
-import Home from "./pages/Home.tsx";
-import User from "./pages/User.tsx";
-import UnauthenticatedProtector from "../components/middleware/UnauthenticatedProtector.tsx";
-import Friends from "./pages/Friends.tsx";
-import CreateStory from "./pages/CreateStory.tsx";
-import Stories from "./pages/Stories.tsx";
-import Messages from "./pages/Messages.tsx";
-import CreateReels from "./pages/CreateReels.tsx";
-import Reels from "./pages/Reels.tsx";
-import CreateGroup from "./pages/CreateGroup.tsx";
+import ActivateAccountProtector from "./components/middleware/ActivateAccountProtector";
+import ActivateAccount from "./pages/auth/ActivateAccount.tsx";
+import ForgotAccount from "./pages/auth/ForgotAccount.tsx";
+import ResetPassword from "./pages/auth/ResetPassword.tsx";
+import ResetPasswordProtector from "./components/middleware/ResetPasswordProtector.tsx";
+import AuthenticatedProtector from "./components/middleware/AuthenticatedProtector.tsx";
+import Home from "./pages/home/Home.tsx";
+import User from "./pages/user/User.tsx";
+import UnauthenticatedProtector from "./components/middleware/UnauthenticatedProtector.tsx";
+import Friends from "./pages/friends/Friends.tsx";
+import CreateStory from "./pages/story/CreateStory.tsx";
+import Stories from "./pages/story/Stories.tsx";
+import Messages from "./pages/messages/Messages.tsx";
+import CreateReels from "./pages/reels/CreateReels.tsx";
+import Reels from "./pages/reels/Reels.tsx";
+import CreateGroup from "./pages/group/CreateGroup.tsx";
+import Group from "./pages/group/Group.tsx";
+import GroupDetail from "./pages/group/GroupDetail.tsx";
 
 function App() {
     return (
@@ -136,6 +138,22 @@ function App() {
                 element={
                     <AuthenticatedProtector>
                         <Reels key={Date.now()} />
+                    </AuthenticatedProtector>
+                }
+            />
+            <Route
+                path="/group"
+                element={
+                    <AuthenticatedProtector>
+                        <Group key={Date.now()} />
+                    </AuthenticatedProtector>
+                }
+            />
+            <Route
+                path="/group/:groupId"
+                element={
+                    <AuthenticatedProtector>
+                        <GroupDetail key={Date.now()} />
                     </AuthenticatedProtector>
                 }
             />

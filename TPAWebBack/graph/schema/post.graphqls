@@ -7,6 +7,7 @@ type Post {
     likeCount: Int!
     commentCount: Int!
     shareCount: Int!
+    groupId: String
     files: [String]
     likes: [PostLike]
     comments: [Comment]
@@ -42,6 +43,7 @@ input NewPost {
     content: String!
     privacy: String!
     files: [String]
+    groupId: String
 }
 
 input NewComment {
@@ -58,6 +60,7 @@ input Pagination {
 extend type Query {
     getPost(id: ID!): Post @auth
     getPosts(pagination: Pagination!): [Post] @auth
+    getGroupPosts(groupId: ID!, pagination: Pagination!): [Post] @auth
     getCommentPost(postID: ID!): [Comment] @auth
 }
 

@@ -199,13 +199,11 @@ func (r *queryResolver) GetReelComments(ctx context.Context, reelID string) ([]*
 
 // LikeCount is the resolver for the likeCount field.
 func (r *reelCommentResolver) LikeCount(ctx context.Context, obj *model.ReelComment) (int, error) {
-
 	return int(r.DB.Model(obj).Association("Likes").Count()), nil
 }
 
 // ReplyCount is the resolver for the replyCount field.
 func (r *reelCommentResolver) ReplyCount(ctx context.Context, obj *model.ReelComment) (int, error) {
-
 	return int(r.DB.Model(obj).Association("Comments").Count()), nil
 }
 

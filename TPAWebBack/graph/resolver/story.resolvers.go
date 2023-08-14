@@ -72,7 +72,6 @@ func (r *queryResolver) GetStories(ctx context.Context, username string) ([]*mod
 func (r *queryResolver) GetUserWithStories(ctx context.Context) ([]*model.User, error) {
 	userID := ctx.Value("UserID").(string)
 
-	// Retrieve user IDs from friends' records
 	var friendIDs []string
 	if err := r.DB.
 		Model(&model.Friend{}).

@@ -11,6 +11,7 @@ type Post struct {
 	LikeCount    int         `json:"likeCount" gorm:"-"`
 	CommentCount int         `json:"commentCount" gorm:"-"`
 	ShareCount   int         `json:"shareCount"`
+	GroupID      *string     `json:"groupId,omitempty"`
 	Files        []*string   `json:"files,omitempty" gorm:"json"`
 	Likes        []*PostLike `json:"likes,omitempty"`
 	Comments     []*Comment  `json:"comments,omitempty" gorm:"foreignKey:ParentPostID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
@@ -45,6 +46,7 @@ type NewPost struct {
 	Content string    `json:"content"`
 	Privacy string    `json:"privacy"`
 	Files   []*string `json:"files,omitempty"`
+	GroupID *string   `json:"groupId,omitempty"`
 }
 
 type NewComment struct {

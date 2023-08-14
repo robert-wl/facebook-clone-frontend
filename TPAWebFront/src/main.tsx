@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import "./index.css";
+import "./index.scss";
 import { BrowserRouter } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
-import { client } from "../apollo/handler.ts";
-import AuthContextProvider from "../components/context/AuthContextProvider.tsx";
+import { client } from "../controller/apollo/handler.ts";
+import AuthContextProvider from "./components/context/AuthContextProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
