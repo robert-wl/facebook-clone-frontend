@@ -16,6 +16,7 @@ export default function Group() {
             setGroups(data.getGroups);
             setFilteredGroups(data.getGroups);
         },
+        fetchPolicy: "network-only",
         onError: debouncedError,
     });
 
@@ -35,12 +36,21 @@ export default function Group() {
         <div className={styles.page}>
             <Navbar />
             <div className={styles.content}>
-                <GroupSidebar handleFilter={handleFilter} />
+                <GroupSidebar
+                    key={1}
+                    handleFilter={handleFilter}
+                    redirect={false}
+                />
                 <div className={styles.main}>
                     <div className={styles.grid}>
                         {filteredGroups.length > 0 &&
                             filteredGroups.map((group) => {
-                                return <GroupBox group={group} />;
+                                return (
+                                    <GroupBox
+                                        key={group.id}
+                                        group={group}
+                                    />
+                                );
                             })}
                     </div>
                 </div>

@@ -7,6 +7,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "../../../lib/query/post/createPost.graphql.ts";
 import { Post } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
+import RichText from "../richText/RichText.tsx";
 
 interface NewPostModal {
     modalState: boolean;
@@ -104,10 +105,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                             </select>
                         </div>
                     </div>
-                    <textarea
-                        placeholder="What are you thinking"
-                        onChange={(e) => setContent(e.target.value)}
-                    />
+                    <RichText setText={setContent} />
                     <div className={files.length > 0 ? styles.attachment : styles.attachmentHidden}>
                         <ImageList
                             files={files}

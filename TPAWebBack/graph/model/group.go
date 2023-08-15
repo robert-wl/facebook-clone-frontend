@@ -10,7 +10,7 @@ type Group struct {
 	Background  string        `json:"background"`
 	Members     []*Member     `json:"members" gorm:"foreignKey:GroupID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	MemberCount int           `json:"memberCount" gorm:"-"`
-	Joined      bool          `json:"joined" gorm:"-"`
+	Joined      string        `json:"joined" gorm:"-"`
 	IsAdmin     bool          `json:"isAdmin" gorm:"-"`
 	ChatID      *string       `json:"chatId,omitempty"`
 	Chat        *Conversation `json:"chat" gorm:"foreignKey:ChatID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -20,11 +20,12 @@ type Group struct {
 }
 
 type Member struct {
-	GroupID  string `json:"groupId" gorm:"primaryKey;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	UserID   string `json:"userId" gorm:"primaryKey;foreignKey:ConversationID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	User     *User  `json:"user"`
-	Approved bool   `json:"approved"`
-	Role     string `json:"role"`
+	GroupID   string `json:"groupId" gorm:"primaryKey;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserID    string `json:"userId" gorm:"primaryKey;foreignKey:ConversationID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	User      *User  `json:"user"`
+	Requested bool   `json:"requested"`
+	Approved  bool   `json:"approved"`
+	Role      string `json:"role"`
 }
 
 type GroupFile struct {
@@ -42,4 +43,10 @@ type NewGroup struct {
 	Name    string `json:"name"`
 	About   string `json:"about"`
 	Privacy string `json:"privacy"`
+}
+
+type NewGroupFile struct {
+	Name string `json:"name"`
+	Type string `json:"type"`
+	URL  string `json:"url"`
 }

@@ -110,7 +110,8 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                     </div>
                 </header>
                 <div className={styles.content}>
-                    <p>{post?.content}</p>
+                    <div dangerouslySetInnerHTML={{ __html: post?.content }} />
+                    {/*<p>{post?.content}</p>*/}
                     {post?.files && post?.files.length > 0 && <ImageCarousel files={post.files} />}
                     <div className={styles.stats}>
                         <div className={styles.left}>

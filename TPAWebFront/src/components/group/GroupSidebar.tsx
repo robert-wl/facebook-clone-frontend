@@ -3,7 +3,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { HiMiniHome } from "react-icons/hi2";
 import { FaCompass } from "react-icons/fa";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_JOINED_GROUPS } from "../../../lib/query/group/getJoinedGroups.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
@@ -11,14 +11,23 @@ import { Group } from "../../../gql/graphql.ts";
 import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
 
 interface GroupSidebar {
+    redirect: boolean;
     handleFilter: (filter: string) => void;
 }
 
-export default function GroupSidebar({ handleFilter }: GroupSidebar) {
-    const [currentTab, setCurrentTab] = useState("feed");
+export default function GroupSidebar({ handleFilter, redirect }: GroupSidebar) {
+    const [currentTab, setCurrentTab] = useState(redirect ? "discover" : "feed");
     const { data } = useQuery(GET_JOINED_GROUPS, {
         onError: debouncedError,
     });
+    const nav = useNavigate();
+
+    const handleTab = (tab: string) => {
+        setCurrentTab(tab);
+        if (redirect) {
+            nav("/group");
+        }
+    };
     return (
         <>
             <div className={styles.barSpace} />
@@ -39,7 +48,7 @@ export default function GroupSidebar({ handleFilter }: GroupSidebar) {
                 <div className={styles.content}>
                     <div
                         className={currentTab == "feed" ? styles.containerActive : styles.container}
-                        onClick={() => setCurrentTab("feed")}
+                        onClick={() => handleTab("feed")}
                     >
                         <div className={styles.logo}>
                             <HiMiniHome size={"1.5rem"} />
@@ -48,7 +57,7 @@ export default function GroupSidebar({ handleFilter }: GroupSidebar) {
                     </div>
                     <div
                         className={currentTab == "discover" ? styles.containerActive : styles.container}
-                        onClick={() => setCurrentTab("discover")}
+                        onClick={() => handleTab("discover")}
                     >
                         <div className={styles.logo}>
                             <FaCompass size={"1.5rem"} />

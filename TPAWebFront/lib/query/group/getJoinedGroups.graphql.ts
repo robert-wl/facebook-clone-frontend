@@ -7,6 +7,9 @@ export const GET_JOINED_GROUPS = gql`
             name
             about
             privacy
+            chat {
+                id
+            }
             background
         }
     }

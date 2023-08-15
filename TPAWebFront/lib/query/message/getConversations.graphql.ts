@@ -13,6 +13,19 @@ export const GET_CONVERSATIONS = gql`
                     profile
                 }
             }
+            group {
+                name
+                background
+                members {
+                    user {
+                        firstName
+                        lastName
+                        username
+                    }
+                    approved
+                    role
+                }
+            }
             messages {
                 message
             }

@@ -9,6 +9,7 @@ export const GET_GROUP = gql`
             privacy
             background
             isAdmin
+            joined
             posts {
                 id
                 user {
@@ -35,9 +36,11 @@ export const GET_GROUP = gql`
             }
             members {
                 user {
+                    id
                     firstName
                     lastName
                     username
+                    profile
                 }
                 approved
                 role

@@ -16,6 +16,7 @@
   --background-color: #e9ecf1;
   --main-color: white;
   --blue-color: rgb(0, 100, 254);
+  --gray-color: rgb(200, 200, 200, 0.5);
   --box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
   --border-radius: 0.5rem;
   --border-color: rgb(200, 200, 200, 0.5);
@@ -27,7 +28,8 @@
   --button-color-hover: rgb(100, 100, 100, 0.2);
   --hover-color: rgb(100, 100, 100, 0.1);
   --blue-light-button: rgb(119, 165, 254, 0.5);
-  --blue-button: rgb(0, 100, 254);
+  --blue-button: rgb(0, 100, 244);
+  --blue-button-hover: rgb(0, 100, 2546);
 }
 
 body {
@@ -44,6 +46,12 @@ hr {
   border-color: transparent;
 }
 
+.wysiwyg-mention{
+  color: rgb(0, 100, 244);
+  background-color: rgba(24, 119, 242, 0.2);
+  cursor: pointer;
+  text-decoration: none;
+}
 
 button:hover {
   cursor: pointer;

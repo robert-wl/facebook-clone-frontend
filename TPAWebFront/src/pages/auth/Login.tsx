@@ -2,7 +2,7 @@ import styles from "../../assets/styles/login/login.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { AUTHENTICATE_USER } from "../../../lib/query/user/authenticateUser.graphql.ts";
-import { useContext, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import Toastify from "toastify-js";
 import errorHandler from "../../../controller/errorHandler.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
@@ -13,7 +13,8 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const { getUser } = useContext(AuthContext);
-    const handleSubmit = () => {
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
         let error = "Unknown error";
         if (email.length == 0) {
             error = "Error: Email cannot be empty";
@@ -52,12 +53,13 @@ export default function Login() {
             />
             <div className={styles.loginBox}>
                 <p>Log in to Facebook</p>
-                <div className={styles.inputBox}>
+                <form className={styles.inputBox}>
                     <input
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className={styles.email}
                         placeholder={"Email address"}
+                        autoComplete={"on"}
                     />
                     <input
                         type={"password"}
@@ -65,8 +67,9 @@ export default function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                         className={styles.password}
                         placeholder={"Password"}
+                        autoComplete={"on"}
                     />
-                    <button onClick={() => handleSubmit()}>
+                    <button onClick={(e) => handleSubmit(e)}>
                         <h3>Log in</h3>
                     </button>
                     <p>
@@ -76,7 +79,7 @@ export default function Login() {
                     <button className={styles.newAccount}>
                         <Link to={"/register"}>Create new account</Link>
                     </button>
-                </div>
+                </form>
             </div>
         </div>
     );

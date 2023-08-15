@@ -8,7 +8,7 @@ type Group {
     background: String!
     members: [Member!]!
     memberCount: Int! @goField(forceResolver: true)
-    joined: Boolean! @goField(forceResolver: true)
+    joined: String! @goField(forceResolver: true)
     isAdmin: Boolean! @goField(forceResolver: true)
     chat: Conversation
     posts: [Post]
@@ -33,6 +33,12 @@ type GroupFile {
     uploadedAt: Time!
 }
 
+input NewGroupFile {
+    name: String!
+    type: String!
+    url: String!
+}
+
 input NewGroup {
     name: String!
     about: String!
@@ -41,6 +47,16 @@ input NewGroup {
 
 extend type Mutation {
     createGroup(group: NewGroup!): Group! @auth
+    inviteToGroup(groupId: ID!, userId: ID!): Member! @auth
+    handleRequest(groupId: ID!): Member! @auth
+    updateGroupBackground(groupId: ID!, background: String!): Group! @auth
+    uploadFile(groupId: ID!, file: NewGroupFile!): GroupFile! @auth
+    deleteFile(fileId: ID!): Boolean @auth
+    approveMember(groupId: ID!, userId: ID!): Member! @auth
+    denyMember(groupId: ID!, userId: ID!): Member! @auth
+    kickMember(groupId: ID!, userId: ID!): Boolean @auth
+    leaveGroup(groupId: ID!): Boolean @auth
+    promoteMember(groupId: ID!, userId: ID!): Member! @auth
 }
 
 extend type Query {
@@ -48,4 +64,6 @@ extend type Query {
     getGroupInvite(id: ID!): [User] @auth
     getGroups: [Group] @auth
     getJoinedGroups: [Group] @auth
+    getGroupFiles(groupId: ID!): [GroupFile] @auth
+    getJoinRequests(groupId: ID!): [Member] @auth
 }

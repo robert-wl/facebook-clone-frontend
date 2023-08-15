@@ -131,18 +131,24 @@ func (r *mutationResolver) SendMessage(ctx context.Context, conversationID strin
 func (r *queryResolver) GetConversations(ctx context.Context) ([]*model.Conversation, error) {
 	var conversations []*model.Conversation
 	var conversationUsers []*string
+	var groupIDs []*string
 
 	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.Model(&model.Member{}).Where("user_id = ? AND approved = ?", userID, true).Select("group_id").Find(&groupIDs).Error; err != nil {
+		return nil, err
+	}
 
 	if err := r.DB.Model(&model.ConversationUsers{}).Where("user_id = ?", userID).Select("conversation_id").Find(&conversationUsers).Error; err != nil {
 		return nil, err
 	}
 
 	if err := r.DB.
+		Preload("Group").
 		Preload("Users").
 		Preload("Users.User").
 		Preload("Messages").
-		Find(&conversations, "id in (?)", conversationUsers).Error; err != nil {
+		Find(&conversations, "id in (?) OR group_id IN (?)", conversationUsers, groupIDs).Error; err != nil {
 		return nil, err
 	}
 
@@ -162,7 +168,7 @@ func (r *subscriptionResolver) ViewConversation(ctx context.Context, conversatio
 	}
 
 	if err := r.DB.
-		Order("created_at desc").
+		Order("created_at DESC").
 		Preload("Sender").
 		Preload("Post").
 		Preload("Post.User").

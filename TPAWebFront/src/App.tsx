@@ -21,6 +21,8 @@ import Reels from "./pages/reels/Reels.tsx";
 import CreateGroup from "./pages/group/CreateGroup.tsx";
 import Group from "./pages/group/Group.tsx";
 import GroupDetail from "./pages/group/GroupDetail.tsx";
+import RichText from "./components/richText/RichText.tsx";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 function App() {
     return (
@@ -162,6 +164,14 @@ function App() {
                 element={
                     <AuthenticatedProtector>
                         <CreateGroup key={Date.now()} />
+                    </AuthenticatedProtector>
+                }
+            />{" "}
+            <Route
+                path="/rich"
+                element={
+                    <AuthenticatedProtector>
+                        <RichText key={Date.now()} />
                     </AuthenticatedProtector>
                 }
             />

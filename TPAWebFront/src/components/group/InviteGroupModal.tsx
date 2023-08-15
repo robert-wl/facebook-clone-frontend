@@ -1,15 +1,14 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import { Post, User } from "../../../gql/graphql.ts";
+import { User } from "../../../gql/graphql.ts";
 import { useMutation, useQuery } from "@apollo/client";
-import { SHARE_POST } from "../../../lib/query/post/sharePost.graphql.ts";
-import { GET_FRIENDS } from "../../../lib/query/friend/getFriends.graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
-import errorHandler, { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
 import styles from "../../assets/styles/shareModal.module.scss";
 import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 import { GET_GROUP_INVITE } from "../../../lib/query/group/getGroupInvite.graphql.ts";
 import { useParams } from "react-router-dom";
+import { INVITE_TO_GROUP } from "../../../lib/query/group/inviteToGroup.graphql.ts";
 
 interface InviteGroupModal {
     inviteModalState: boolean;
@@ -26,6 +25,7 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
         },
         onError: debouncedError,
     });
+    const [inviteToGroup] = useMutation(INVITE_TO_GROUP);
     const { auth } = useContext(AuthContext);
 
     useEffect(() => {
@@ -35,7 +35,6 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
         }
     }, [data]);
 
-    console.log("hai");
     const handleFilter = (filter: string) => {
         const filtered = friends.filter((user) => {
             const name = user.firstName + " " + user.lastName;
@@ -45,7 +44,16 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
         setFilteredFriends(filtered);
     };
 
-    const handleShare = (userID: string) => {};
+    const handleInvite = (userID: string) => {
+        inviteToGroup({
+            variables: {
+                groupId: groupId,
+                userId: userID,
+            },
+        })
+            .then(() => console.log("hai"))
+            .catch(debouncedError);
+    };
 
     return (
         <>
@@ -53,7 +61,7 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
                 <div className={styles.background}>
                     <div className={styles.box}>
                         <header>
-                            <h2>Send in Messenger</h2>
+                            <h2>Invite to group</h2>
                             <AiOutlineClose
                                 size={"1.5rem"}
                                 onClick={() => setInviteModalState(false)}
@@ -74,7 +82,7 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
                                     <div
                                         key={index}
                                         className={styles.friend}
-                                        onClick={() => handleShare(user.id)}
+                                        onClick={() => handleInvite(user.id)}
                                     >
                                         <div>
                                             <img

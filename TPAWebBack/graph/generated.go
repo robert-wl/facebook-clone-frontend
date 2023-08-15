@@ -133,31 +133,41 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AcceptFriend         func(childComplexity int, friend string) int
-		ActivateUser         func(childComplexity int, id string) int
-		AddFriend            func(childComplexity int, friendInput model.FriendInput) int
-		AuthenticateUser     func(childComplexity int, email string, password string) int
-		CreateComment        func(childComplexity int, newComment model.NewComment) int
-		CreateConversation   func(childComplexity int, username string) int
-		CreateGroup          func(childComplexity int, group model.NewGroup) int
-		CreateImageStory     func(childComplexity int, input model.NewImageStory) int
-		CreatePost           func(childComplexity int, newPost model.NewPost) int
-		CreateReel           func(childComplexity int, reel model.NewReel) int
-		CreateReelComment    func(childComplexity int, comment model.NewReelComment) int
-		CreateTextStory      func(childComplexity int, input model.NewTextStory) int
-		CreateUser           func(childComplexity int, input model.NewUser) int
-		ForgotPassword       func(childComplexity int, email string) int
-		LikePost             func(childComplexity int, postID string) int
-		LikeReel             func(childComplexity int, reelID string) int
-		LikeReelComment      func(childComplexity int, reelCommentID string) int
-		Likecomment          func(childComplexity int, commentID string) int
-		RejectFriend         func(childComplexity int, friend string) int
-		ResetPassword        func(childComplexity int, id string, password string) int
-		SendMessage          func(childComplexity int, conversationID string, message *string, image *string, postID *string) int
-		SharePost            func(childComplexity int, userID string, postID string) int
-		UpdateUser           func(childComplexity int, input model.UpdateUser) int
-		UpdateUserBackground func(childComplexity int, background string) int
-		UpdateUserProfile    func(childComplexity int, profile string) int
+		AcceptFriend          func(childComplexity int, friend string) int
+		ActivateUser          func(childComplexity int, id string) int
+		AddFriend             func(childComplexity int, friendInput model.FriendInput) int
+		ApproveMember         func(childComplexity int, groupID string, userID string) int
+		AuthenticateUser      func(childComplexity int, email string, password string) int
+		CreateComment         func(childComplexity int, newComment model.NewComment) int
+		CreateConversation    func(childComplexity int, username string) int
+		CreateGroup           func(childComplexity int, group model.NewGroup) int
+		CreateImageStory      func(childComplexity int, input model.NewImageStory) int
+		CreatePost            func(childComplexity int, newPost model.NewPost) int
+		CreateReel            func(childComplexity int, reel model.NewReel) int
+		CreateReelComment     func(childComplexity int, comment model.NewReelComment) int
+		CreateTextStory       func(childComplexity int, input model.NewTextStory) int
+		CreateUser            func(childComplexity int, input model.NewUser) int
+		DeleteFile            func(childComplexity int, fileID string) int
+		DenyMember            func(childComplexity int, groupID string, userID string) int
+		ForgotPassword        func(childComplexity int, email string) int
+		HandleRequest         func(childComplexity int, groupID string) int
+		InviteToGroup         func(childComplexity int, groupID string, userID string) int
+		KickMember            func(childComplexity int, groupID string, userID string) int
+		LeaveGroup            func(childComplexity int, groupID string) int
+		LikePost              func(childComplexity int, postID string) int
+		LikeReel              func(childComplexity int, reelID string) int
+		LikeReelComment       func(childComplexity int, reelCommentID string) int
+		Likecomment           func(childComplexity int, commentID string) int
+		PromoteMember         func(childComplexity int, groupID string, userID string) int
+		RejectFriend          func(childComplexity int, friend string) int
+		ResetPassword         func(childComplexity int, id string, password string) int
+		SendMessage           func(childComplexity int, conversationID string, message *string, image *string, postID *string) int
+		SharePost             func(childComplexity int, userID string, postID string) int
+		UpdateGroupBackground func(childComplexity int, groupID string, background string) int
+		UpdateUser            func(childComplexity int, input model.UpdateUser) int
+		UpdateUserBackground  func(childComplexity int, background string) int
+		UpdateUserProfile     func(childComplexity int, profile string) int
+		UploadFile            func(childComplexity int, groupID string, file model.NewGroupFile) int
 	}
 
 	Post struct {
@@ -189,9 +199,11 @@ type ComplexityRoot struct {
 		GetConversations   func(childComplexity int) int
 		GetFriends         func(childComplexity int) int
 		GetGroup           func(childComplexity int, id string) int
+		GetGroupFiles      func(childComplexity int, groupID string) int
 		GetGroupInvite     func(childComplexity int, id string) int
 		GetGroupPosts      func(childComplexity int, groupID string, pagination model.Pagination) int
 		GetGroups          func(childComplexity int) int
+		GetJoinRequests    func(childComplexity int, groupID string) int
 		GetJoinedGroups    func(childComplexity int) int
 		GetPost            func(childComplexity int, id string) int
 		GetPosts           func(childComplexity int, pagination model.Pagination) int
@@ -278,7 +290,7 @@ type ComplexityRoot struct {
 
 type GroupResolver interface {
 	MemberCount(ctx context.Context, obj *model.Group) (int, error)
-	Joined(ctx context.Context, obj *model.Group) (bool, error)
+	Joined(ctx context.Context, obj *model.Group) (string, error)
 	IsAdmin(ctx context.Context, obj *model.Group) (bool, error)
 }
 type MutationResolver interface {
@@ -294,6 +306,16 @@ type MutationResolver interface {
 	AcceptFriend(ctx context.Context, friend string) (*model.Friend, error)
 	RejectFriend(ctx context.Context, friend string) (*model.Friend, error)
 	CreateGroup(ctx context.Context, group model.NewGroup) (*model.Group, error)
+	InviteToGroup(ctx context.Context, groupID string, userID string) (*model.Member, error)
+	HandleRequest(ctx context.Context, groupID string) (*model.Member, error)
+	UpdateGroupBackground(ctx context.Context, groupID string, background string) (*model.Group, error)
+	UploadFile(ctx context.Context, groupID string, file model.NewGroupFile) (*model.GroupFile, error)
+	DeleteFile(ctx context.Context, fileID string) (*bool, error)
+	ApproveMember(ctx context.Context, groupID string, userID string) (*model.Member, error)
+	DenyMember(ctx context.Context, groupID string, userID string) (*model.Member, error)
+	KickMember(ctx context.Context, groupID string, userID string) (*bool, error)
+	LeaveGroup(ctx context.Context, groupID string) (*bool, error)
+	PromoteMember(ctx context.Context, groupID string, userID string) (*model.Member, error)
 	CreateConversation(ctx context.Context, username string) (*model.Conversation, error)
 	SendMessage(ctx context.Context, conversationID string, message *string, image *string, postID *string) (*model.Message, error)
 	CreatePost(ctx context.Context, newPost model.NewPost) (*model.Post, error)
@@ -321,6 +343,8 @@ type QueryResolver interface {
 	GetGroupInvite(ctx context.Context, id string) ([]*model.User, error)
 	GetGroups(ctx context.Context) ([]*model.Group, error)
 	GetJoinedGroups(ctx context.Context) ([]*model.Group, error)
+	GetGroupFiles(ctx context.Context, groupID string) ([]*model.GroupFile, error)
+	GetJoinRequests(ctx context.Context, groupID string) ([]*model.Member, error)
 	GetConversations(ctx context.Context) ([]*model.Conversation, error)
 	GetPost(ctx context.Context, id string) (*model.Post, error)
 	GetPosts(ctx context.Context, pagination model.Pagination) ([]*model.Post, error)
@@ -768,6 +792,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddFriend(childComplexity, args["friendInput"].(model.FriendInput)), true
 
+	case "Mutation.approveMember":
+		if e.complexity.Mutation.ApproveMember == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_approveMember_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ApproveMember(childComplexity, args["groupId"].(string), args["userId"].(string)), true
+
 	case "Mutation.authenticateUser":
 		if e.complexity.Mutation.AuthenticateUser == nil {
 			break
@@ -888,6 +924,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.NewUser)), true
 
+	case "Mutation.deleteFile":
+		if e.complexity.Mutation.DeleteFile == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteFile_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteFile(childComplexity, args["fileId"].(string)), true
+
+	case "Mutation.denyMember":
+		if e.complexity.Mutation.DenyMember == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_denyMember_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DenyMember(childComplexity, args["groupId"].(string), args["userId"].(string)), true
+
 	case "Mutation.forgotPassword":
 		if e.complexity.Mutation.ForgotPassword == nil {
 			break
@@ -899,6 +959,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ForgotPassword(childComplexity, args["email"].(string)), true
+
+	case "Mutation.handleRequest":
+		if e.complexity.Mutation.HandleRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_handleRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.HandleRequest(childComplexity, args["groupId"].(string)), true
+
+	case "Mutation.inviteToGroup":
+		if e.complexity.Mutation.InviteToGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_inviteToGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InviteToGroup(childComplexity, args["groupId"].(string), args["userId"].(string)), true
+
+	case "Mutation.kickMember":
+		if e.complexity.Mutation.KickMember == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_kickMember_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.KickMember(childComplexity, args["groupId"].(string), args["userId"].(string)), true
+
+	case "Mutation.leaveGroup":
+		if e.complexity.Mutation.LeaveGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_leaveGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LeaveGroup(childComplexity, args["groupId"].(string)), true
 
 	case "Mutation.likePost":
 		if e.complexity.Mutation.LikePost == nil {
@@ -948,6 +1056,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Likecomment(childComplexity, args["commentID"].(string)), true
 
+	case "Mutation.promoteMember":
+		if e.complexity.Mutation.PromoteMember == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_promoteMember_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.PromoteMember(childComplexity, args["groupId"].(string), args["userId"].(string)), true
+
 	case "Mutation.rejectFriend":
 		if e.complexity.Mutation.RejectFriend == nil {
 			break
@@ -996,6 +1116,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.SharePost(childComplexity, args["userID"].(string), args["postID"].(string)), true
 
+	case "Mutation.updateGroupBackground":
+		if e.complexity.Mutation.UpdateGroupBackground == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGroupBackground_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGroupBackground(childComplexity, args["groupId"].(string), args["background"].(string)), true
+
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
 			break
@@ -1031,6 +1163,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateUserProfile(childComplexity, args["profile"].(string)), true
+
+	case "Mutation.uploadFile":
+		if e.complexity.Mutation.UploadFile == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_uploadFile_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UploadFile(childComplexity, args["groupId"].(string), args["file"].(model.NewGroupFile)), true
 
 	case "Post.commentCount":
 		if e.complexity.Post.CommentCount == nil {
@@ -1206,6 +1350,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetGroup(childComplexity, args["id"].(string)), true
 
+	case "Query.getGroupFiles":
+		if e.complexity.Query.GetGroupFiles == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getGroupFiles_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetGroupFiles(childComplexity, args["groupId"].(string)), true
+
 	case "Query.getGroupInvite":
 		if e.complexity.Query.GetGroupInvite == nil {
 			break
@@ -1236,6 +1392,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetGroups(childComplexity), true
+
+	case "Query.getJoinRequests":
+		if e.complexity.Query.GetJoinRequests == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getJoinRequests_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetJoinRequests(childComplexity, args["groupId"].(string)), true
 
 	case "Query.getJoinedGroups":
 		if e.complexity.Query.GetJoinedGroups == nil {
@@ -1713,6 +1881,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputFriendInput,
 		ec.unmarshalInputNewComment,
 		ec.unmarshalInputNewGroup,
+		ec.unmarshalInputNewGroupFile,
 		ec.unmarshalInputNewImageStory,
 		ec.unmarshalInputNewPost,
 		ec.unmarshalInputNewReel,
@@ -1905,6 +2074,30 @@ func (ec *executionContext) field_Mutation_addFriend_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_approveMember_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_authenticateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2064,6 +2257,45 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteFile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["fileId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fileId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_denyMember_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_forgotPassword_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2076,6 +2308,84 @@ func (ec *executionContext) field_Mutation_forgotPassword_args(ctx context.Conte
 		}
 	}
 	args["email"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_handleRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_inviteToGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_kickMember_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_leaveGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
 	return args, nil
 }
 
@@ -2136,6 +2446,30 @@ func (ec *executionContext) field_Mutation_likecomment_args(ctx context.Context,
 		}
 	}
 	args["commentID"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_promoteMember_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
 	return args, nil
 }
 
@@ -2244,6 +2578,30 @@ func (ec *executionContext) field_Mutation_sharePost_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateGroupBackground_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["background"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("background"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["background"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateUserBackground_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2286,6 +2644,30 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_uploadFile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	var arg1 model.NewGroupFile
+	if tmp, ok := rawArgs["file"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
+		arg1, err = ec.unmarshalNNewGroupFile2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNewGroupFile(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["file"] = arg1
 	return args, nil
 }
 
@@ -2349,6 +2731,21 @@ func (ec *executionContext) field_Query_getCommentPost_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_getGroupFiles_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_getGroupInvite_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2400,6 +2797,21 @@ func (ec *executionContext) field_Query_getGroup_args(ctx context.Context, rawAr
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getJoinRequests_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
 	return args, nil
 }
 
@@ -4149,9 +4561,9 @@ func (ec *executionContext) _Group_joined(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_joined(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4161,7 +4573,7 @@ func (ec *executionContext) fieldContext_Group_joined(ctx context.Context, field
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6350,6 +6762,841 @@ func (ec *executionContext) fieldContext_Mutation_createGroup(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_inviteToGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_inviteToGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().InviteToGroup(rctx, fc.Args["groupId"].(string), fc.Args["userId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Member); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Member`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Member)
+	fc.Result = res
+	return ec.marshalNMember2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_inviteToGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "groupId":
+				return ec.fieldContext_Member_groupId(ctx, field)
+			case "user":
+				return ec.fieldContext_Member_user(ctx, field)
+			case "approved":
+				return ec.fieldContext_Member_approved(ctx, field)
+			case "role":
+				return ec.fieldContext_Member_role(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Member", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_inviteToGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_handleRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_handleRequest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().HandleRequest(rctx, fc.Args["groupId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Member); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Member`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Member)
+	fc.Result = res
+	return ec.marshalNMember2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_handleRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "groupId":
+				return ec.fieldContext_Member_groupId(ctx, field)
+			case "user":
+				return ec.fieldContext_Member_user(ctx, field)
+			case "approved":
+				return ec.fieldContext_Member_approved(ctx, field)
+			case "role":
+				return ec.fieldContext_Member_role(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Member", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_handleRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateGroupBackground(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateGroupBackground(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateGroupBackground(rctx, fc.Args["groupId"].(string), fc.Args["background"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Group); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Group`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Group)
+	fc.Result = res
+	return ec.marshalNGroup2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateGroupBackground(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Group_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Group_name(ctx, field)
+			case "about":
+				return ec.fieldContext_Group_about(ctx, field)
+			case "privacy":
+				return ec.fieldContext_Group_privacy(ctx, field)
+			case "background":
+				return ec.fieldContext_Group_background(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
+			case "memberCount":
+				return ec.fieldContext_Group_memberCount(ctx, field)
+			case "joined":
+				return ec.fieldContext_Group_joined(ctx, field)
+			case "isAdmin":
+				return ec.fieldContext_Group_isAdmin(ctx, field)
+			case "chat":
+				return ec.fieldContext_Group_chat(ctx, field)
+			case "posts":
+				return ec.fieldContext_Group_posts(ctx, field)
+			case "files":
+				return ec.fieldContext_Group_files(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Group_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateGroupBackground_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_uploadFile(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UploadFile(rctx, fc.Args["groupId"].(string), fc.Args["file"].(model.NewGroupFile))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.GroupFile); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.GroupFile`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GroupFile)
+	fc.Result = res
+	return ec.marshalNGroupFile2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐGroupFile(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GroupFile_id(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupFile_groupID(ctx, field)
+			case "name":
+				return ec.fieldContext_GroupFile_name(ctx, field)
+			case "type":
+				return ec.fieldContext_GroupFile_type(ctx, field)
+			case "url":
+				return ec.fieldContext_GroupFile_url(ctx, field)
+			case "uploadedBy":
+				return ec.fieldContext_GroupFile_uploadedBy(ctx, field)
+			case "uploadedAt":
+				return ec.fieldContext_GroupFile_uploadedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupFile", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_uploadFile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteFile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteFile(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteFile(rctx, fc.Args["fileId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteFile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteFile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_approveMember(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_approveMember(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().ApproveMember(rctx, fc.Args["groupId"].(string), fc.Args["userId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Member); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Member`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Member)
+	fc.Result = res
+	return ec.marshalNMember2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_approveMember(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "groupId":
+				return ec.fieldContext_Member_groupId(ctx, field)
+			case "user":
+				return ec.fieldContext_Member_user(ctx, field)
+			case "approved":
+				return ec.fieldContext_Member_approved(ctx, field)
+			case "role":
+				return ec.fieldContext_Member_role(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Member", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_approveMember_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_denyMember(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_denyMember(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DenyMember(rctx, fc.Args["groupId"].(string), fc.Args["userId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Member); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Member`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Member)
+	fc.Result = res
+	return ec.marshalNMember2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_denyMember(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "groupId":
+				return ec.fieldContext_Member_groupId(ctx, field)
+			case "user":
+				return ec.fieldContext_Member_user(ctx, field)
+			case "approved":
+				return ec.fieldContext_Member_approved(ctx, field)
+			case "role":
+				return ec.fieldContext_Member_role(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Member", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_denyMember_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_kickMember(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_kickMember(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().KickMember(rctx, fc.Args["groupId"].(string), fc.Args["userId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_kickMember(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_kickMember_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_leaveGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_leaveGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LeaveGroup(rctx, fc.Args["groupId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_leaveGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_leaveGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_promoteMember(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_promoteMember(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().PromoteMember(rctx, fc.Args["groupId"].(string), fc.Args["userId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Member); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Member`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Member)
+	fc.Result = res
+	return ec.marshalNMember2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_promoteMember(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "groupId":
+				return ec.fieldContext_Member_groupId(ctx, field)
+			case "user":
+				return ec.fieldContext_Member_user(ctx, field)
+			case "approved":
+				return ec.fieldContext_Member_approved(ctx, field)
+			case "role":
+				return ec.fieldContext_Member_role(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Member", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_promoteMember_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -9209,6 +10456,176 @@ func (ec *executionContext) fieldContext_Query_getJoinedGroups(ctx context.Conte
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getGroupFiles(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getGroupFiles(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetGroupFiles(rctx, fc.Args["groupId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.GroupFile); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/yahkerobertkertasnya/TPAWebBack/graph/model.GroupFile`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GroupFile)
+	fc.Result = res
+	return ec.marshalOGroupFile2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐGroupFile(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getGroupFiles(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GroupFile_id(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupFile_groupID(ctx, field)
+			case "name":
+				return ec.fieldContext_GroupFile_name(ctx, field)
+			case "type":
+				return ec.fieldContext_GroupFile_type(ctx, field)
+			case "url":
+				return ec.fieldContext_GroupFile_url(ctx, field)
+			case "uploadedBy":
+				return ec.fieldContext_GroupFile_uploadedBy(ctx, field)
+			case "uploadedAt":
+				return ec.fieldContext_GroupFile_uploadedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupFile", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getGroupFiles_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getJoinRequests(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getJoinRequests(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetJoinRequests(rctx, fc.Args["groupId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Member); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Member`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Member)
+	fc.Result = res
+	return ec.marshalOMember2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getJoinRequests(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "groupId":
+				return ec.fieldContext_Member_groupId(ctx, field)
+			case "user":
+				return ec.fieldContext_Member_user(ctx, field)
+			case "approved":
+				return ec.fieldContext_Member_approved(ctx, field)
+			case "role":
+				return ec.fieldContext_Member_role(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Member", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getJoinRequests_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -14543,6 +15960,53 @@ func (ec *executionContext) unmarshalInputNewGroup(ctx context.Context, obj inte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewGroupFile(ctx context.Context, obj interface{}) (model.NewGroupFile, error) {
+	var it model.NewGroupFile
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "type", "url"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		case "url":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.URL = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewImageStory(ctx context.Context, obj interface{}) (model.NewImageStory, error) {
 	var it model.NewImageStory
 	asMap := map[string]interface{}{}
@@ -15664,6 +17128,67 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "inviteToGroup":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_inviteToGroup(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "handleRequest":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_handleRequest(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateGroupBackground":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateGroupBackground(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "uploadFile":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_uploadFile(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteFile":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteFile(ctx, field)
+			})
+		case "approveMember":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_approveMember(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "denyMember":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_denyMember(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "kickMember":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_kickMember(ctx, field)
+			})
+		case "leaveGroup":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_leaveGroup(ctx, field)
+			})
+		case "promoteMember":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_promoteMember(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createConversation":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createConversation(ctx, field)
@@ -16132,6 +17657,44 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getJoinedGroups(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getGroupFiles":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGroupFiles(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getJoinRequests":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getJoinRequests(ctx, field)
 				return res
 			}
 
@@ -17351,6 +18914,20 @@ func (ec *executionContext) marshalNGroup2ᚖgithubᚗcomᚋyahkerobertkertasnya
 	return ec._Group(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNGroupFile2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐGroupFile(ctx context.Context, sel ast.SelectionSet, v model.GroupFile) graphql.Marshaler {
+	return ec._GroupFile(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGroupFile2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐGroupFile(ctx context.Context, sel ast.SelectionSet, v *model.GroupFile) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GroupFile(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -17379,6 +18956,10 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNMember2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v model.Member) graphql.Marshaler {
+	return ec._Member(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNMember2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMemberᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Member) graphql.Marshaler {
@@ -17442,6 +19023,11 @@ func (ec *executionContext) unmarshalNNewComment2githubᚗcomᚋyahkerobertkerta
 
 func (ec *executionContext) unmarshalNNewGroup2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNewGroup(ctx context.Context, v interface{}) (model.NewGroup, error) {
 	res, err := ec.unmarshalInputNewGroup(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNNewGroupFile2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNewGroupFile(ctx context.Context, v interface{}) (model.NewGroupFile, error) {
+	res, err := ec.unmarshalInputNewGroupFile(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -18250,6 +19836,54 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 	}
 	res := graphql.MarshalID(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOMember2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v []*model.Member) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOMember2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOMember2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v *model.Member) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Member(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOMessage2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐMessage(ctx context.Context, sel ast.SelectionSet, v []*model.Message) graphql.Marshaler {

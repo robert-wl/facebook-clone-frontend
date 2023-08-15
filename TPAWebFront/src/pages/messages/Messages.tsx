@@ -83,28 +83,49 @@ export default function Messages() {
                                 <div className={styles.messageContainer}>
                                     {filteredConversations.length > 0 &&
                                         filteredConversations.map((conv, index) => {
-                                            if (!(conv.users[0] && conv.users[1])) return;
-                                            const user = conv.users[0].user.username == auth?.username ? conv.users[1].user : conv.users[0].user;
+                                            console.log(conv.group);
+                                            if (conv.users[0] && conv.users[1]) {
+                                                const user = conv.users[0].user.username == auth?.username ? conv.users[1].user : conv.users[0].user;
 
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}
-                                                >
-                                                    <Link to={"/messages/" + conv.id}>
-                                                        <img
-                                                            src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
-                                                            alt={"profile picture"}
-                                                        />
-                                                        <div className={styles.content}>
-                                                            <h3>
-                                                                {user.firstName} {user.lastName}
-                                                            </h3>
-                                                            <p>{conv.messages ? conv.messages[conv.messages.length - 1]?.message : ""}</p>
-                                                        </div>
-                                                    </Link>
-                                                </div>
-                                            );
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}
+                                                    >
+                                                        <Link to={"/messages/" + conv.id}>
+                                                            <img
+                                                                src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
+                                                                alt={"profile picture"}
+                                                            />
+                                                            <div className={styles.content}>
+                                                                <h3>
+                                                                    {user.firstName} {user.lastName}
+                                                                </h3>
+                                                                <p>{conv.messages ? conv.messages[conv.messages.length - 1]?.message : ""}</p>
+                                                            </div>
+                                                        </Link>
+                                                    </div>
+                                                );
+                                            }
+                                            if (conv.group) {
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}
+                                                    >
+                                                        <Link to={"/messages/" + conv.id}>
+                                                            <img
+                                                                src={conv.group.background ? conv.group.background : "../src/assets/default-profile.jpg"}
+                                                                alt={"profile picture"}
+                                                            />
+                                                            <div className={styles.content}>
+                                                                <h3>{conv.group.name}</h3>
+                                                                <p>{conv.messages ? conv.messages[conv.messages.length - 1]?.message : ""}</p>
+                                                            </div>
+                                                        </Link>
+                                                    </div>
+                                                );
+                                            }
                                         })}
                                 </div>
                             </div>
