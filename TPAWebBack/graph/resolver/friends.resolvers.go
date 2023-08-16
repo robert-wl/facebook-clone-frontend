@@ -6,8 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 )
 
@@ -58,7 +56,7 @@ func (r *mutationResolver) RejectFriend(ctx context.Context, friend string) (*mo
 		Accepted:   false,
 	}
 
-	if err := r.DB.Delete(&friendModel).Error; err != nil {
+	if err := r.DB.Delete(&model.Friend{}, "(sender_id = ? AND receiver_id = ?)", friend, userID).Error; err != nil {
 		return nil, err
 	}
 
@@ -66,34 +64,126 @@ func (r *mutationResolver) RejectFriend(ctx context.Context, friend string) (*mo
 }
 
 // GetFriends is the resolver for the getFriends field.
-func (r *queryResolver) GetFriends(ctx context.Context) ([]*model.Friend, error) {
-	var friends []*model.Friend
-
-	userID := ctx.Value("UserID").(string)
-	if err := r.DB.Preload("Receiver").Preload("Sender").Find(&friends, "sender_id = ? or receiver_id = ?", userID, userID).Error; err != nil {
-		return nil, err
-	}
-
-	return friends, nil
-}
-
-// GetUserFriends is the resolver for the getUserFriends field.
-func (r *queryResolver) GetUserFriends(ctx context.Context, username string) ([]*model.Friend, error) {
-	var friends []*model.Friend
+func (r *queryResolver) GetFriends(ctx context.Context, username string) ([]*model.User, error) {
 	var user *model.User
+	var users []*model.User
 
 	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
 		return nil, err
 	}
 
-	if err := r.DB.Preload("Receiver").Preload("Sender").Find(&friends, "sender_id = ? or receiver_id = ?", user.ID, user.ID).Error; err != nil {
+	subQuery := r.DB.
+		Model(&model.Friend{}).
+		Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", user.ID, user.ID, true).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID)
+
+	if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
 		return nil, err
 	}
 
-	return friends, nil
+	return users, nil
+}
+
+// GetFriendRequests is the resolver for the getFriendRequests field.
+func (r *queryResolver) GetFriendRequests(ctx context.Context) ([]*model.User, error) {
+	var users []*model.User
+
+	userID := ctx.Value("UserID").(string)
+
+	subQuery := r.DB.
+		Model(&model.Friend{}).
+		Where("receiver_id = ? AND accepted = ?", userID, false).
+		Select("DISTINCT sender_id")
+
+	if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+// GetUserFriends is the resolver for the getUserFriends field.
+func (r *queryResolver) GetUserFriends(ctx context.Context, username string) ([]*model.User, error) {
+	var userIds []string
+	var user *model.User
+	var users []*model.User
+
+	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.
+		Model(&model.Friend{}).
+		Where("sender_id = ? OR receiver_id = ? AND accepted = ?", user.ID, user.ID, true).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID).
+		Find(&userIds).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.Find(&users, "id IN (?)", userIds).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 // GetUserMutuals is the resolver for the getUserMutuals field.
-func (r *queryResolver) GetUserMutuals(ctx context.Context, username string) ([]*model.Friend, error) {
-	panic(fmt.Errorf("not implemented: GetUserMutuals - getUserMutuals"))
+func (r *queryResolver) GetUserMutuals(ctx context.Context, username string) ([]*model.User, error) {
+	var users []*model.User
+	var user *model.User
+	var friendIDs []string
+	var myFriendIDs []string
+
+	if err := r.DB.Find(&user, "username = ?", username).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.
+		Model(&model.Friend{}).
+		Where("sender_id = ? OR receiver_id = ?", user.ID, user.ID).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID).
+		Find(&friendIDs).Error; err != nil {
+		return nil, err
+	}
+
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.Model(&model.Friend{}).
+		Where("sender_id = ? OR receiver_id = ? AND accepted = ?", userID, userID, true).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&myFriendIDs).Error; err != nil {
+		return nil, err
+	}
+	if err := r.DB.Find(&users, "id IN (?) AND id IN (?)", friendIDs, myFriendIDs).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+// GetPeopleMightKnow is the resolver for the getPeopleMightKnow field.
+func (r *queryResolver) GetPeopleMightKnow(ctx context.Context) ([]*model.User, error) {
+	var userIds []string
+	var userFriendIds []string
+	var users []*model.User
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.Model(&model.Friend{}).
+		Where("sender_id = ? OR receiver_id = ? AND accepted = ?", userID, userID, true).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&userIds).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.Model(&model.Friend{}).
+		Where("sender_id IN (?) OR receiver_id IN (?) AND accepted = ?", userIds, userIds, true).
+		Select("DISTINCT CASE WHEN sender_id IN (?) THEN receiver_id ELSE sender_id END", userIds).Find(&userFriendIds).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.
+		Limit(5).
+		Find(&users, "id IN (?) AND id NOT IN (?) AND id != ?", userFriendIds, userIds, userID).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }

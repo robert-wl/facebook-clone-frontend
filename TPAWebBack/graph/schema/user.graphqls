@@ -16,8 +16,9 @@ type User {
     background: String
     createdAt: Time!
     posts: [Post]
-    friendCount: Int!
-    friended: String!
+    friendCount: Int! @goField(forceResolver: true)
+    mutualCount: Int! @goField(forceResolver: true)
+    friended: String! @goField(forceResolver: true)
 }
 
 input NewUser {

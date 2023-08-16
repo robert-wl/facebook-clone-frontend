@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import PostBox from "../../components/post/PostBox.tsx";
 import { GET_POSTS } from "../../../lib/query/post/getPosts.graphql.ts";
 import { useQuery } from "@apollo/client";
-import { Post } from "../../../gql/graphql.ts";
+import { Post, User } from "../../../gql/graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import Loading from "../../components/Loading.tsx";
 import { debounce } from "../../../controller/debouncer.ts";
@@ -14,13 +14,19 @@ import PostSkeleton from "../../components/post/PostSkeleton.tsx";
 import ShareModal from "../../components/ShareModal.tsx";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import HomeTop from "../../components/home/HomeTop.tsx";
+import TagFriendModal from "../../components/post/TagFriendModal.tsx";
+import VisibilityModal from "../../components/post/VisibilityModal.tsx";
 
 export default function Home() {
     const [modalState, setModalState] = useState(false);
     const [shareModalState, setShareModalState] = useState(false);
+    const [tagModalState, setTagModalState] = useState(false);
+    const [visibilityModalState, setVisibilityModalState] = useState(false);
     const [data, setData] = useState<Post[]>([]);
     const [hideSkeleton, setHideSkeleton] = useState(false);
     const [currPost, setCurrPost] = useState<Post | null>(null);
+    const [tagList, setTagList] = useState<User[]>([]);
+    const [visibilityList, setVisibilityList] = useState<User[]>([]);
     let start = 3;
     const { refetch: getPosts } = useQuery(GET_POSTS, {
         variables: {
@@ -29,6 +35,7 @@ export default function Home() {
                 limit: 3,
             },
         },
+        fetchPolicy: "cache-and-network",
         onCompleted: (dat) => {
             const result = dat.getPosts;
 
@@ -90,11 +97,29 @@ export default function Home() {
                 setData={setData}
                 data={data}
                 setLoading={setLoading}
+                setTagModalState={setTagModalState}
+                setTagList={setTagList}
+                tagList={tagList}
+                setVisibilityModalState={setVisibilityModalState}
+                setVisibilityList={setVisibilityList}
+                visibilityList={visibilityList}
             />
             <ShareModal
                 shareModalState={shareModalState}
                 setShareModalState={setShareModalState}
                 currPost={currPost}
+            />
+            <TagFriendModal
+                tagModalState={tagModalState}
+                setTagModalState={setTagModalState}
+                tagList={tagList}
+                setTagList={setTagList}
+            />
+            <VisibilityModal
+                visibilityModalState={visibilityModalState}
+                setVisibilityModalState={setVisibilityModalState}
+                visibilityList={visibilityList}
+                setVisibilityList={setVisibilityList}
             />
             <div
                 id={"page"}

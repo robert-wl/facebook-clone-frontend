@@ -12,10 +12,7 @@ export default function SidebarButton({ text, active, children }: SidebarButton)
         <div className={active ? styles.containerActive : styles.container}>
             <div className={styles.logo}>{children}</div>
             <h4>{text}</h4>
-            <MdKeyboardArrowRight
-                color={"black"}
-                size={"1.5rem"}
-            />
+            <MdKeyboardArrowRight size={"1.5rem"} />
         </div>
     );
 }

@@ -4,15 +4,27 @@ type Post {
     user: User!
     content: String!
     privacy: String!
-    likeCount: Int!
-    commentCount: Int!
+    visibility: [PostVisibility]
+    postTags: [PostTag]
+    likeCount: Int! @goField(forceResolver: true)
+    commentCount: Int! @goField(forceResolver: true)
     shareCount: Int!
     groupId: String
     files: [String]
     likes: [PostLike]
     comments: [Comment]
-    liked: Boolean
+    liked: Boolean @goField(forceResolver: true)
     createdAt: Time!
+}
+
+type PostTag {
+    postId: ID!
+    user: User!
+}
+
+type PostVisibility {
+    postId: ID!
+    user: User!
 }
 
 type PostLike {
@@ -24,13 +36,13 @@ type Comment {
     id: ID!
     user: User!
     content: String!
-    likeCount: Int!
-    replyCount: Int!
+    likeCount: Int! @goField(forceResolver: true)
+    replyCount: Int! @goField(forceResolver: true)
     parentPost: Post
     parentComment: Comment
     likes: [CommentLike]
     comments: [Comment]
-    liked: Boolean
+    liked: Boolean @goField(forceResolver: true)
     createdAt: Time!
 }
 
@@ -44,6 +56,8 @@ input NewPost {
     privacy: String!
     files: [String]
     groupId: String
+    visibility: [String]
+    tags: [String]
 }
 
 input NewComment {

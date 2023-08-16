@@ -19,6 +19,12 @@ export const GET_POSTS = gql`
             commentCount
             shareCount
             liked
+            postTags {
+                user {
+                    firstName
+                    lastName
+                }
+            }
             comments {
                 id
                 content

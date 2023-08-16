@@ -1,43 +1,40 @@
 import Loading from "../../components/Loading.tsx";
 import styles from "../../assets/styles/user/user.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import { LiaBirthdayCakeSolid, LiaUserFriendsSolid } from "react-icons/lia";
 import { BsFillPersonPlusFill, BsGenderAmbiguous } from "react-icons/bs";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
-import { Friend, FriendInput, Maybe, Post } from "../../../gql/graphql.ts";
+import { FriendInput, Maybe, Post } from "../../../gql/graphql.ts";
 import { User } from "../../../gql/graphql.ts";
 import PostBox from "../../components/post/PostBox.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER } from "../../../lib/query/user/getUser.graphql.ts";
 import { BiSolidMessageRoundedDetail, BiSolidPencil } from "react-icons/bi";
-import { IoMdReverseCamera } from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowUp, IoMdReverseCamera } from "react-icons/io";
 import uploadStorage from "../../../controller/firebase/storage.ts";
 import { UPDATE_USER_PROFILE } from "../../../lib/query/user/updateUserProfile.graphql.ts";
 import { UPDATE_USER_BACKGROUND } from "../../../lib/query/user/updateUserBackground.graphql.ts";
-import errorHandler from "../../../controller/errorHandler.ts";
+import errorHandler, { debouncedError } from "../../../controller/errorHandler.ts";
 import EditUserModal from "../../components/user/EditUserModal.tsx";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import { ADD_FRIEND } from "../../../lib/query/friend/addFriend.graphql.ts";
-import { GET_FRIENDS } from "../../../lib/query/friend/getFriends.graphql.ts";
-import AccFriendBox from "../../components/friend/AccFriendBox.tsx";
-import NoFriendBox from "../../components/friend/NoFriendBox.tsx";
 import { CREATE_CONVERSATION } from "../../../lib/query/message/createConversation.graphql.ts";
 import ShareModal from "../../components/ShareModal.tsx";
+import UserFriend from "../../components/user/UserFriend.tsx";
+import PeopleMightKnowContainer from "../../components/friend/PeopleMightKnowContainer.tsx";
+import { IoPeopleCircleOutline } from "react-icons/io5";
 
 export default function User() {
     const { username } = useParams();
     const [user, setUser] = useState<User | null>(null);
     const [isPost, setIsPost] = useState(true);
-    const [friends, setFriends] = useState<Friend[]>([]);
     const [modalState, setModalState] = useState(false);
     const [currPost, setCurrPost] = useState<Post | null>(null);
     const [shareModalState, setShareModalState] = useState(false);
-    const friendCount = {
-        all: 0,
-        mutuals: 0,
-    };
+    const [peopleMightKnowState, setPeopleMightKnowState] = useState(false);
+
     const { loading } = useQuery(GET_USER, {
         variables: {
             username: username,
@@ -45,10 +42,7 @@ export default function User() {
         onCompleted: (dat) => {
             setUser(dat.getUser);
         },
-        onError: errorHandler,
-    });
-    const { refetch: getFriends } = useQuery(GET_FRIENDS, {
-        skip: true,
+        onError: debouncedError,
     });
     const { auth } = useContext(AuthContext);
     const [updateProfile] = useMutation(UPDATE_USER_PROFILE);
@@ -111,7 +105,7 @@ export default function User() {
                     profile: url,
                 });
 
-            updateProfile({
+            await updateProfile({
                 variables: {
                     profile: url,
                 },
@@ -131,7 +125,7 @@ export default function User() {
                     background: url,
                 });
 
-            updateBackground({
+            await updateBackground({
                 variables: {
                     background: url,
                 },
@@ -152,18 +146,6 @@ export default function User() {
         // navigate("/message/" + data.data.createConversation.id)
     };
 
-    useEffect(() => {
-        if (friends.length == 0 && !isPost) {
-            getFriends({
-                username: username,
-            })
-                .then((data) => {
-                    setFriends(data.data.getFriends);
-                })
-                .catch(errorHandler);
-        }
-    }, [isPost]);
-
     if (loading) return <></>;
     return (
         <>
@@ -182,16 +164,20 @@ export default function User() {
             {loading && <Loading />}
             <div
                 id={"page"}
-                className={styles.page}
+                className={styles.pageUser}
             >
                 <Navbar />
                 <header className={styles.header}>
                     <div className={styles.headerContent}>
-                        <IoMdReverseCamera
-                            onClick={() => handleBackgroundInput()}
-                            color={"black"}
-                            size={"1.5rem"}
-                        />
+                        {auth?.username == username ? (
+                            <IoMdReverseCamera
+                                onClick={() => handleBackgroundInput()}
+                                color={"black"}
+                                size={"1.5rem"}
+                            />
+                        ) : (
+                            <div></div>
+                        )}
                         <input
                             id={"backgroundInput"}
                             className={"fileInput"}
@@ -210,11 +196,13 @@ export default function User() {
                             alt={""}
                         />
                         <div className={styles.circular}>
-                            <IoMdReverseCamera
-                                onClick={() => handleProfileInput()}
-                                color={"black"}
-                                size={"1.5rem"}
-                            />
+                            {auth?.username == username && (
+                                <IoMdReverseCamera
+                                    onClick={() => handleProfileInput()}
+                                    color={"black"}
+                                    size={"1.5rem"}
+                                />
+                            )}
                             <input
                                 id={"profileInput"}
                                 className={"fileInput"}
@@ -233,41 +221,45 @@ export default function User() {
                                 {user?.firstName} {user?.lastName}
                             </p>
                         </div>
-                        {auth?.username == username ? (
-                            <button onClick={() => setModalState(true)}>
-                                <BiSolidPencil />
-                                Edit Profile
-                            </button>
-                        ) : (
-                            <div className={styles.container}>
-                                {user?.friended == "friends" && (
-                                    <button onClick={() => handleFriend()}>
-                                        <BsFillPersonPlusFill />
-                                        Remove Friend
-                                    </button>
-                                )}
-                                {user?.friended == "not friends" && (
-                                    <button onClick={() => handleFriend()}>
-                                        <BsFillPersonPlusFill />
-                                        Add Friend
-                                    </button>
-                                )}
-                                {user?.friended == "pending" && (
-                                    <button onClick={() => handleFriend()}>
-                                        <BsFillPersonPlusFill />
-                                        Cancel Request
-                                    </button>
-                                )}
-                                <button onClick={() => handleSendMessage()}>
-                                    <BiSolidMessageRoundedDetail
-                                        color={"black"}
-                                        size={"1rem"}
-                                    />
-                                    Message
+                        <span>
+                            {auth?.username == username ? (
+                                <button onClick={() => setModalState(true)}>
+                                    <BiSolidPencil size={"1.2rem"} />
+                                    Edit Profile
                                 </button>
-                            </div>
-                        )}
+                            ) : (
+                                <div className={styles.container}>
+                                    {user?.friended == "friends" && (
+                                        <button onClick={() => handleFriend()}>
+                                            <BsFillPersonPlusFill />
+                                            Remove Friend
+                                        </button>
+                                    )}
+                                    {user?.friended == "not friends" && (
+                                        <button onClick={() => handleFriend()}>
+                                            <BsFillPersonPlusFill />
+                                            Add Friend
+                                        </button>
+                                    )}
+                                    {user?.friended == "pending" && (
+                                        <button onClick={() => handleFriend()}>
+                                            <BsFillPersonPlusFill />
+                                            Cancel Request
+                                        </button>
+                                    )}
+                                    <button onClick={() => handleSendMessage()}>
+                                        <BiSolidMessageRoundedDetail
+                                            color={"black"}
+                                            size={"1rem"}
+                                        />
+                                        Message
+                                    </button>
+                                </div>
+                            )}
+                            <button onClick={() => setPeopleMightKnowState(!peopleMightKnowState)}>{peopleMightKnowState ? <IoIosArrowDown size={"1.2rem"} /> : <IoIosArrowUp size={"1.2rem"} />}</button>
+                        </span>
                     </div>
+                    {peopleMightKnowState && <PeopleMightKnowContainer key={"pplMightKnow"} />}
                     <div className={styles.info}>
                         <p>
                             <BsGenderAmbiguous
@@ -301,6 +293,15 @@ export default function User() {
                             />
                             {user?.friendCount}
                         </p>
+                        {user?.id != auth?.id && (
+                            <p>
+                                <IoPeopleCircleOutline
+                                    color={"black"}
+                                    size={"1.3rem"}
+                                />
+                                {user?.mutualCount}
+                            </p>
+                        )}
                     </div>
                     <div className={styles.buttons}>
                         <button
@@ -336,23 +337,7 @@ export default function User() {
                             </div>
                         </>
                     ) : (
-                        <div className={styles.contentBox}>
-                            <h2>Friend List</h2>
-                            <div className={styles.friendList}>
-                                {friends.map((friend, index) => {
-                                    if (friend.accepted) {
-                                        friendCount.all += 1;
-                                        return (
-                                            <AccFriendBox
-                                                key={index}
-                                                friend={friend}
-                                            />
-                                        );
-                                    }
-                                })}
-                                {friendCount.all == 0 && <NoFriendBox description={"You Have no Friends"} />}
-                            </div>
-                        </div>
+                        <UserFriend />
                     )}
                 </div>
             </div>

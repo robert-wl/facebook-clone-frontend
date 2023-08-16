@@ -15,6 +15,7 @@ export const GET_USER = gql`
             background
             friended
             friendCount
+            mutualCount
             posts {
                 id
                 user {

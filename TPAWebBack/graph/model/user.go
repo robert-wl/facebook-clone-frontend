@@ -30,6 +30,7 @@ type User struct {
 	CreatedAt   time.Time `json:"createdAt"`
 	Posts       []*Post   `json:"posts,omitempty" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	FriendCount int       `json:"friendCount" gorm:"-"`
+	MutualCount int       `json:"mutualCount" gorm:"-"`
 	Friended    string    `json:"friended" gorm:"-"`
 }
 

@@ -10,8 +10,32 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/yahkerobertkertasnya/TPAWebBack/graph"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 )
+
+// LikeCount is the resolver for the likeCount field.
+func (r *commentResolver) LikeCount(ctx context.Context, obj *model.Comment) (int, error) {
+	return int(r.DB.Model(obj).Association("Likes").Count()), nil
+}
+
+// ReplyCount is the resolver for the replyCount field.
+func (r *commentResolver) ReplyCount(ctx context.Context, obj *model.Comment) (int, error) {
+	return int(r.DB.Model(obj).Association("Comments").Count()), nil
+}
+
+// Liked is the resolver for the liked field.
+func (r *commentResolver) Liked(ctx context.Context, obj *model.Comment) (*bool, error) {
+	boolean := false
+
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.First(&model.CommentLike{}, "comment_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil {
+		boolean = true
+	}
+
+	return &boolean, nil
+}
 
 // CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, newPost model.NewPost) (*model.Post, error) {
@@ -39,6 +63,38 @@ func (r *mutationResolver) CreatePost(ctx context.Context, newPost model.NewPost
 	}
 
 	if err := r.DB.Save(&post).Error; err != nil {
+		return nil, err
+	}
+
+	for _, vsb := range newPost.Visibility {
+		visibility := &model.PostVisibility{
+			PostID: post.ID,
+			UserID: *vsb,
+		}
+		fmt.Println(vsb)
+
+		if err := r.DB.Save(visibility).Error; err != nil {
+			return nil, err
+		}
+	}
+
+	for i, _ := range newPost.Tags {
+		fmt.Println(i)
+		tagModel := &model.PostTag{
+			PostID: post.ID,
+			UserID: *newPost.Tags[i],
+		}
+
+		if err := r.DB.Create(tagModel).Error; err != nil {
+			return nil, err
+		}
+		fmt.Println(tagModel.UserID)
+	}
+
+	if err := r.DB.
+		Preload("PostTags.User").
+		Preload("Visibility.User").
+		First(&post).Error; err != nil {
 		return nil, err
 	}
 
@@ -154,6 +210,29 @@ func (r *mutationResolver) Likecomment(ctx context.Context, commentID string) (*
 	return commentLike, nil
 }
 
+// LikeCount is the resolver for the likeCount field.
+func (r *postResolver) LikeCount(ctx context.Context, obj *model.Post) (int, error) {
+	return int(r.DB.Model(obj).Association("Likes").Count()), nil
+}
+
+// CommentCount is the resolver for the commentCount field.
+func (r *postResolver) CommentCount(ctx context.Context, obj *model.Post) (int, error) {
+	return int(r.DB.Model(obj).Association("Comments").Count()), nil
+}
+
+// Liked is the resolver for the liked field.
+func (r *postResolver) Liked(ctx context.Context, obj *model.Post) (*bool, error) {
+	boolean := false
+
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.First(&model.PostLike{}, "post_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil {
+		boolean = true
+	}
+
+	return &boolean, nil
+}
+
 // GetPost is the resolver for the getPost field.
 func (r *queryResolver) GetPost(ctx context.Context, id string) (*model.Post, error) {
 	panic(fmt.Errorf("not implemented: GetPost - getPost"))
@@ -163,33 +242,33 @@ func (r *queryResolver) GetPost(ctx context.Context, id string) (*model.Post, er
 func (r *queryResolver) GetPosts(ctx context.Context, pagination model.Pagination) ([]*model.Post, error) {
 	var posts []*model.Post
 
+	userID := ctx.Value("UserID").(string)
+
+	subQueryFriend := r.DB.
+		Select("*").
+		Where("(sender_id = ? AND receiver_id = posts.user_id) or (sender_id = posts.user_id AND receiver_id = ?)", userID, userID).
+		Table("friends")
+
+	subQueryPrivate := r.DB.
+		Select("user_id").
+		Where("(post_id = posts.id)").
+		Table("post_visibilities")
+
 	if err := r.DB.
 		Order("created_at desc").
 		Preload("User").
+		Preload("User").
 		Preload("Likes").
 		Preload("Comments").
+		Preload("Visibility.User").
+		Preload("PostTags.User").
 		Offset(pagination.Start).
 		Limit(pagination.Limit).
-		Find(&posts).Error; err != nil {
+		Find(&posts, "privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?))", "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate).Error; err != nil {
 		return nil, err
 	}
 
-	userID := ctx.Value("UserID").(string)
-
-	for _, post := range posts {
-		temp := false
-
-		post.CommentCount = int(r.DB.Model(post).Association("Comments").Count())
-		post.LikeCount = int(r.DB.Model(post).Association("Likes").Count())
-
-		if err := r.DB.First(&model.PostLike{}, "post_id = ? AND user_id = ?", post.ID, userID).Error; err == nil {
-			temp = true
-		}
-
-		//fmt.Println(temp)
-		post.Liked = &temp
-	}
-
+	//
 	return posts, nil
 }
 
@@ -224,31 +303,14 @@ func (r *queryResolver) GetCommentPost(ctx context.Context, postID string) ([]*m
 		return nil, err
 	}
 
-	userID := ctx.Value("UserID").(string)
-
-	for _, comment := range comments {
-		temp := false
-
-		comment.LikeCount = int(r.DB.Model(comment).Association("Likes").Count())
-
-		for _, replies := range comment.Comments {
-			temp := false
-
-			replies.LikeCount = int(r.DB.Model(replies).Association("Likes").Count())
-
-			if err := r.DB.First(&model.CommentLike{}, "comment_id = ? AND user_id = ?", replies.ID, userID).Error; err == nil {
-				temp = true
-			}
-
-			replies.Liked = &temp
-		}
-
-		if err := r.DB.First(&model.CommentLike{}, "comment_id = ? AND user_id = ?", comment.ID, userID).Error; err == nil {
-			temp = true
-		}
-
-		comment.Liked = &temp
-	}
-
 	return comments, nil
 }
+
+// Comment returns graph.CommentResolver implementation.
+func (r *Resolver) Comment() graph.CommentResolver { return &commentResolver{r} }
+
+// Post returns graph.PostResolver implementation.
+func (r *Resolver) Post() graph.PostResolver { return &postResolver{r} }
+
+type commentResolver struct{ *Resolver }
+type postResolver struct{ *Resolver }

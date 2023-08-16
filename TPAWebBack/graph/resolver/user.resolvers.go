@@ -186,30 +186,38 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUse
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
 	var user *model.User
-	var friendCount int64
-	var friend *model.Friend
+
+	var posts []*model.Post
 
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.Preload("Posts").Preload("Posts.User").First(&user, "username = ?", username).Error; err != nil {
+	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
 		return nil, err
 	}
 
-	if err := r.DB.Find(&model.Friend{}, "(sender_id = ? or receiver_id = ?) and accepted = true", userID, userID).Count(&friendCount).Error; err != nil {
+	subQueryFriend := r.DB.
+		Select("*").
+		Where("(sender_id = ? AND receiver_id = posts.user_id) or (sender_id = posts.user_id AND receiver_id = ?)", userID, userID).
+		Table("friends")
 
+	subQueryPrivate := r.DB.
+		Select("user_id").
+		Where("(post_id = posts.id)").
+		Table("post_visibilities")
+
+	if err := r.DB.
+		Order("created_at desc").
+		Preload("User").
+		Preload("User").
+		Preload("Likes").
+		Preload("Comments").
+		Preload("Visibility.User").
+		Preload("PostTags.User").
+		Find(&posts, "user_id = ? AND (privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?)) OR ?)", user.ID, "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate, user.ID == userID).Error; err != nil {
+		return nil, err
 	}
 
-	user.FriendCount = int(friendCount)
-
-	if err := r.DB.First(&friend, "(sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?)", userID, user.ID, user.ID, userID).Error; err != nil {
-		user.Friended = "not friends"
-	} else {
-		if friend.Accepted {
-			user.Friended = "friends"
-		} else {
-			user.Friended = "pending"
-		}
-	}
+	user.Posts = posts
 
 	return user, nil
 }
@@ -254,11 +262,75 @@ func (r *queryResolver) GetAuth(ctx context.Context) (*model.User, error) {
 	return user, nil
 }
 
+// FriendCount is the resolver for the friendCount field.
+func (r *userResolver) FriendCount(ctx context.Context, obj *model.User) (int, error) {
+	var friendCount int64
+
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.Find(&model.Friend{}, "(sender_id = ? or receiver_id = ?) and accepted = true", userID, userID).Count(&friendCount).Error; err != nil {
+		return 0, err
+	}
+
+	return int(friendCount), nil
+}
+
+// MutualCount is the resolver for the mutualCount field.
+func (r *userResolver) MutualCount(ctx context.Context, obj *model.User) (int, error) {
+	var friendIDs []string
+	var myFriendIDs []string
+	var mutualCount int64
+
+	if err := r.DB.
+		Model(&model.Friend{}).
+		Where("sender_id = ? OR receiver_id = ?", obj.ID, obj.ID).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", obj.ID).
+		Find(&friendIDs).Error; err != nil {
+		return 0, err
+	}
+
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.Model(&model.Friend{}).
+		Where("sender_id = ? OR receiver_id = ? AND accepted = ?", userID, userID, true).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&myFriendIDs).Error; err != nil {
+		return 0, err
+	}
+	if err := r.DB.Find(&model.User{}, "id IN (?) AND id IN (?)", friendIDs, myFriendIDs).Count(&mutualCount).Error; err != nil {
+		return 0, err
+	}
+
+	return int(mutualCount), nil
+}
+
+// Friended is the resolver for the friended field.
+func (r *userResolver) Friended(ctx context.Context, obj *model.User) (string, error) {
+	var friend *model.Friend
+	var status string
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.First(&friend, "(sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?)", userID, obj.ID, obj.ID, userID).Error; err != nil {
+		status = "not friends"
+	} else {
+		if friend.Accepted {
+			status = "friends"
+		} else {
+			status = "pending"
+		}
+	}
+
+	return status, nil
+}
+
 // Mutation returns graph.MutationResolver implementation.
 func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
 
 // Query returns graph.QueryResolver implementation.
 func (r *Resolver) Query() graph.QueryResolver { return &queryResolver{r} }
 
+// User returns graph.UserResolver implementation.
+func (r *Resolver) User() graph.UserResolver { return &userResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type userResolver struct{ *Resolver }

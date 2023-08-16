@@ -11,7 +11,7 @@ import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react
 import Comments from "./Comments.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_COMMENT_POST } from "../../../lib/query/post/getCommentPost.graphql.ts";
-import errorHandler from "../../../controller/errorHandler.ts";
+import errorHandler, { debouncedError } from "../../../controller/errorHandler.ts";
 import { CREATE_COMMENT } from "../../../lib/query/post/createComment.graphql.ts";
 import { LIKE_POST } from "../../../lib/query/post/likePost.graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
@@ -46,7 +46,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                 setComments(comments);
                 setShowComment(true);
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
     };
 
     const handleComment = () => {
@@ -63,7 +63,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                 const comment = data.data.createComment;
                 setComments([...comments, comment]);
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
     };
 
     useEffect(() => {
@@ -78,7 +78,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
             .then(() => {
                 setLiked(!liked);
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
         if (liked) setLikeCount(likeCount - 1);
         else setLikeCount(likeCount + 1);
     };
@@ -93,7 +93,6 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                 shareCount: post.shareCount + 1,
             });
     };
-
     if (post)
         return (
             <div className={styles.myBox}>
@@ -105,13 +104,23 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                     <div className={styles.bio}>
                         <h4>
                             {post?.user.firstName} {post?.user.lastName}
+                            {post.postTags?.length != undefined && post.postTags[0] != undefined && (
+                                <>
+                                    {post.postTags?.length > 0 && <span> is with </span>}
+                                    {post.postTags?.length == 1 && <>{post.postTags[0].user.firstName + " " + post.postTags[0].user.lastName}</>}
+                                    {post.postTags.length > 1 && (
+                                        <>
+                                            <b>{post.postTags[0].user.firstName + " " + post.postTags[0].user.lastName} </b> <span>and {post.postTags.length - 1} others</span>
+                                        </>
+                                    )}
+                                </>
+                            )}
                         </h4>
                         <p>{getTimeDiff(post?.createdAt)}</p>
                     </div>
                 </header>
                 <div className={styles.content}>
                     <div dangerouslySetInnerHTML={{ __html: post?.content }} />
-                    {/*<p>{post?.content}</p>*/}
                     {post?.files && post?.files.length > 0 && <ImageCarousel files={post.files} />}
                     <div className={styles.stats}>
                         <div className={styles.left}>

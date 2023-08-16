@@ -121,11 +121,11 @@ export default function Register() {
                             />
                         </label>
                         <label>
-                            <p>Walmart</p>
+                            <p>Other</p>
                             <input
                                 type="radio"
-                                checked={user.gender == "walmart"}
-                                onChange={() => setUser({ ...user, gender: "walmart" })}
+                                checked={user.gender == "other"}
+                                onChange={() => setUser({ ...user, gender: "other" })}
                             />
                         </label>
                     </div>

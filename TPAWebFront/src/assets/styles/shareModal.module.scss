@@ -43,22 +43,38 @@
             margin: 0.5rem 0;
         }
 
-        .content {
+        > div {
             display: flex;
             flex-direction: row;
-            align-items: center;
-            padding: 1rem;
-            background-color: rgb(100, 100, 100, 0.1);
-            border-radius: 2rem;
+            width: 100%;
 
-            > input {
-                font-size: 1rem;
-                border: none;
-                color: black;
-                outline: none;
-                padding-left: 1rem;
-                width: 100%;
-                background-color: transparent;
+            .content {
+                display: flex;
+                flex-direction: row;
+                flex: 1;
+                align-items: center;
+                padding: 0.5rem;
+                background-color: rgb(100, 100, 100, 0.1);
+                border-radius: 2rem;
+
+                > input {
+                    font-size: 1rem;
+                    border: none;
+                    color: black;
+                    outline: none;
+                    padding-left: 1rem;
+                    width: 100%;
+                    background-color: transparent;
+                }
+            }
+
+            h4 {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 0 0 0.5rem;
+                color: var(--blue-button);
+                cursor: pointer;
             }
         }
 
@@ -88,6 +104,7 @@
                     > img {
                         width: 3rem;
                         height: 3rem;
+                        margin-left: 0.5rem;
                         border-radius: 20rem;
                         object-fit: cover;
                     }
@@ -99,6 +116,15 @@
 
                 &:hover {
                     background-color: rgb(100, 100, 100, 0.1);
+                }
+
+                >input {
+                    margin-right: 1rem;
+                    background-color: white;
+
+                    &:checked {
+                        background-color: white;
+                    }
                 }
             }
         }

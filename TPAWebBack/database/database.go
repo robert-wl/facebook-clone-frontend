@@ -38,6 +38,8 @@ func MigrateDatabase() {
 	err := db.AutoMigrate(
 		&model.User{},
 		&model.Post{},
+		&model.PostVisibility{},
+		&model.PostTag{},
 		&model.PostLike{},
 		&model.Comment{},
 		&model.CommentLike{},

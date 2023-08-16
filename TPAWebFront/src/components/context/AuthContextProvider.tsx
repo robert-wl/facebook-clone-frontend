@@ -6,15 +6,17 @@ import { debouncedError } from "../../../controller/errorHandler.ts";
 
 interface AuthContext {
     auth: User | null;
-    getUser: (() => void) | null;
+    loading: boolean;
+    getUser: (() => Promise<void>) | null;
 }
 
 export const AuthContext = createContext<AuthContext>({
     auth: null,
+    loading: false,
     getUser: null,
 });
 export default function AuthContextProvider({ children }: { children: JSX.Element }) {
-    const { refetch } = useQuery(GET_AUTH, {
+    const { refetch, loading } = useQuery(GET_AUTH, {
         onCompleted: (data) => {
             setAuth(data.getAuth);
         },
@@ -23,8 +25,8 @@ export default function AuthContextProvider({ children }: { children: JSX.Elemen
     });
     const [auth, setAuth] = useState<User | null>(null);
 
-    const getUser = () => {
-        refetch()
+    const getUser = async () => {
+        await refetch()
             .then((data) => {
                 setAuth(data.data.getAuth);
             })
@@ -35,5 +37,9 @@ export default function AuthContextProvider({ children }: { children: JSX.Elemen
         getUser();
     }, []);
 
-    return <AuthContext.Provider value={{ auth, getUser }}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={{ auth, loading, getUser }}>
+            <>{children}</>
+        </AuthContext.Provider>
+    );
 }

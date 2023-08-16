@@ -5,9 +5,11 @@ import ImageList from "../ImageList.tsx";
 import uploadStorage from "../../../controller/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "../../../lib/query/post/createPost.graphql.ts";
-import { Post } from "../../../gql/graphql.ts";
+import { Post, User } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import RichText from "../richText/RichText.tsx";
+import { debouncedError } from "../../../controller/errorHandler.ts";
+import { HiPencilSquare } from "react-icons/hi2";
 
 interface NewPostModal {
     modalState: boolean;
@@ -15,13 +17,20 @@ interface NewPostModal {
     setData: Dispatch<SetStateAction<Post[]>>;
     data: Post[];
     setLoading: Dispatch<SetStateAction<boolean>>;
+    setTagModalState: Dispatch<SetStateAction<boolean>>;
+    setVisibilityModalState: Dispatch<SetStateAction<boolean>>;
+    setTagList: Dispatch<SetStateAction<User[]>>;
+    tagList: User[];
+    setVisibilityList: Dispatch<SetStateAction<User[]>>;
+    visibilityList: User[];
 }
 
-export default function NewPostModal({ modalState, setModalState, data, setData, setLoading }: NewPostModal) {
+export default function NewPostModal({ modalState, setModalState, data, setData, setLoading, setTagModalState, setVisibilityModalState, setTagList, tagList, setVisibilityList, visibilityList }: NewPostModal) {
     const [files, setFiles] = useState<File[]>([]);
     const [content, setContent] = useState("");
-    const [visibility, setVisibility] = useState("friend");
+    const [visibility, setVisibility] = useState("public");
     const [createPost] = useMutation(CREATE_POST);
+    const [index, setIndex] = useState(0);
     const { auth } = useContext(AuthContext);
 
     const handleInput = () => {
@@ -34,36 +43,46 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
         const fileL = e.target.files as FileList;
 
         setFiles([...files, ...Array.from(fileL)]);
+        setIndex(index + 1);
     };
 
     const handleClose = () => {
+        setTagList([]);
+        setVisibilityList([]);
         setFiles([]);
         setContent("");
-        setVisibility("friend");
+        setVisibility("public");
         setModalState(false);
     };
 
     const handleSubmit = async () => {
         if (content.length === 0) return;
         setLoading(true);
-        handleClose();
         const urlList: string[] = [];
         for (const file of files) {
             const url = await uploadStorage("post", file);
             urlList.push(url);
         }
 
+        const tagUserList = tagList.map((user) => user.id);
+        const visibilityUserList = visibilityList.map((user) => user.id);
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const { data: dat } = await createPost({
             variables: {
                 post: {
                     content: content,
                     privacy: visibility,
                     files: urlList,
+                    tags: tagUserList,
+                    visibility: visibilityUserList,
                 },
             },
-        });
+        }).catch(debouncedError);
 
         setData([dat.createPost, ...data]);
+        handleClose();
         setLoading(false);
     };
 
@@ -98,11 +117,29 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                             showBox={false}
                         />
                         <div className={styles.name}>
-                            {auth?.firstName} {auth?.lastName}
-                            <select onChange={(e) => setVisibility(e.target.value)}>
-                                <option value="friend">Friend</option>
-                                <option value="public">Public</option>
-                            </select>
+                            <div>
+                                <b>
+                                    {auth?.firstName} {auth?.lastName}
+                                </b>
+                                {tagList.length > 0 && " is with "}
+                                {tagList.length == 1 && <div>{tagList[0].firstName + " " + tagList[0].lastName}</div>}
+                                {tagList.length > 1 && (
+                                    <div>
+                                        <b>{tagList[0].firstName + " " + tagList[0].lastName} </b> <span>and {tagList.length - 1} others</span>
+                                    </div>
+                                )}
+                            </div>
+                            <div className={styles.select}>
+                                <select
+                                    value={visibility}
+                                    onChange={(e) => setVisibility(e.target.value)}
+                                >
+                                    <option value="public">Public</option>
+                                    <option value="friend">Friend</option>
+                                    <option value="specific">Specific</option>
+                                </select>
+                                {visibility == "specific" && <HiPencilSquare onClick={() => setVisibilityModalState(true)} />}
+                            </div>
                         </div>
                     </div>
                     <RichText setText={setContent} />
@@ -126,6 +163,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                                 multiple={true}
                                 hidden={true}
                                 onChange={handleFiles}
+                                key={index}
                                 accept={"image/*, video/*"}
                             />
                             <svg
@@ -140,7 +178,10 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                                 <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
                             </svg>
                         </div>
-                        <div className={styles.button}>
+                        <div
+                            className={styles.button}
+                            onClick={() => setTagModalState(true)}
+                        >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -157,7 +198,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                 </div>
                 <button
                     className={styles.postButton}
-                    disabled={content.length === 0}
+                    disabled={content.length === 8 || content == "<p></p>"}
                     onClick={() => handleSubmit()}
                 >
                     Post

@@ -1,7 +1,7 @@
 .background {
     display: flex;
     position: fixed;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: var(--modal-background-color);
     height: 100vh;
     width: 100vw;
     align-items: center;
@@ -13,9 +13,9 @@
         flex-direction: column;
         width: 30rem;
         height: 30rem;
-        border-radius: 0.5rem;
-        background-color: white;
-        box-shadow: 1px 1px 10px rgb(100, 100, 100, 0.3);
+        border-radius: var(--border-radius);
+        background-color: var(--main-color);
+        box-shadow: var(--box-shadow);
 
         header {
             display: flex;
@@ -23,7 +23,7 @@
             align-items: center;
 
             h2 {
-                color: black;
+                color: var(--color);
                 margin-left: 5rem;
                 flex: 100;
             }
@@ -35,10 +35,10 @@
                 padding: 0.5rem;
                 border-radius: 10rem;
                 margin: 1rem;
-                background-color: rgb(100, 100, 100, 0.2);
+                background-color: var(--button-color);
 
                 &:hover {
-                    background-color: rgb(100, 100, 100, 0.3);
+                    background-color: var(--button-color-hover);
                     cursor: pointer;
                 }
             }
@@ -53,13 +53,13 @@
         }
 
         main {
-            color: black;
+            color: var(--color);
             height: 28rem;
             overflow-y: auto;
             overflow-x: hidden;
 
             .profile {
-                margin: 0 1rem;
+                margin: 0 1rem 0.5rem;
                 display: flex;
                 flex-direction: row;
 
@@ -69,15 +69,66 @@
                     margin-left: 1rem;
                     align-content: start;
                     text-align: start;
+                    width: 200rem;
 
-                    select {
-                        width: 5rem;
-                        background-color: rgb(100, 100, 100, 0.1);
-                        color: black;
-                        border: none;
-                        padding: 0.25rem;
-                        border-radius: 0.5rem;
-                        font-weight: bold;
+                    > div {
+
+                        margin: 0;
+
+                        b {
+                            margin: 0;
+                        }
+
+                        >div {
+                            margin: 0;
+
+                        }
+
+
+                        > span {
+                            font-size: 0.75rem;
+                            text-overflow: ellipsis;
+                        }
+                    }
+
+                    .select {
+                        display: flex;
+                        flex-direction: row;
+
+                        select {
+                            width: 5rem;
+                            background-color: var(--button-color);
+                            color: var(--color);
+                            border: none;
+                            padding: 0.25rem;
+                            border-radius: 0.5rem;
+                            font-weight: bold;
+                        }
+
+                        > svg {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            padding: 0.2rem;
+                            margin: 0 0 0 0.5rem;
+                            border-radius: var(--border-radius);
+                            cursor: pointer;
+
+                            &:hover {
+                                background-color: var(--button-color-hover);
+                            }
+                        }
+
+                        select {
+                            width: 5rem;
+                            background-color: var(--button-color);
+                            color: var(--color);
+                            outline: none;
+                            border: none;
+                            padding: 0.25rem;
+                            border-radius: var(--border-radius);
+                            font-weight: bold;
+                        }
                     }
                 }
             }
@@ -86,10 +137,10 @@
                 width: 93%;
                 height: 5rem;
                 border-color: transparent;
-                background-color: rgb(100, 100, 100, 0.025);
+                background-color: var(--button-color);
                 padding: 1rem;
                 border-radius: 0.25rem;
-                color: black;
+                color: var(--color);
                 font-family: Arial, serif;
                 font-size: 1.5rem;
                 outline: none;
@@ -118,8 +169,8 @@
                 flex-direction: row;
                 align-items: center;
                 margin: 0 1rem;
-                background-color: white;
-                border: 0.025rem solid rgb(100, 100, 100, 0.5);
+                background-color: var(--main-color);
+                border: var(--border);
                 border-radius: 0.5rem;
             }
         }
@@ -128,12 +179,12 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            background-color: white;
+            background-color: var(--main-color);
             margin: 1rem;
             padding: 1rem;
-            border: 0.025rem solid rgb(100, 100, 100, 0.5);
+            border: var(--border);
             border-radius: 0.5rem;
-            color: black;
+            color: var(--color);
 
             p {
                 flex: 10;
@@ -152,7 +203,7 @@
                     border-radius: 1rem;
 
                     &:hover {
-                        background-color: rgb(100, 100, 100, 0.5);
+                        background-color: var(--hover-color);
                         cursor: pointer;
                     }
                 }
@@ -161,13 +212,14 @@
 
         .postButton {
             margin: 0 1rem 1rem;
-            background-color: #1877f2;
+            background-color: var(--blue-button);
             border: none;
             padding: 0.6em 1.2em;
-            border-radius: 0.5rem;
+            border-radius: var(--border-radius);
+            color: white;
 
             &:disabled {
-                background-color: lightgray;
+                background-color: var(--button-color);
                 color: black;
 
                 &:hover {
@@ -187,8 +239,8 @@
         width: 30rem;
         height: 40rem;
         border-radius: 0.5rem;
-        background-color: white;
-        box-shadow: 1px 1px 10px rgb(100, 100, 100, 0.3);
+        background-color: var(--main-color);
+        box-shadow: var(--box-shadow);
 
         header {
             display: flex;
@@ -196,7 +248,7 @@
             align-items: center;
 
             h2 {
-                color: black;
+                color: var(--color);
                 margin-left: 5rem;
                 flex: 100;
             }
@@ -208,10 +260,10 @@
                 padding: 0.5rem;
                 border-radius: 10rem;
                 margin: 1rem;
-                background-color: rgb(100, 100, 100, 0.2);
+                background-color: var(--button-color);
 
                 &:hover {
-                    background-color: rgb(100, 100, 100, 0.3);
+                    background-color: var(--button-color-hover);
                     cursor: pointer;
                 }
             }
@@ -226,7 +278,7 @@
         }
 
         main {
-            color: black;
+            color: var(--color);
             height: 28rem;
             overflow-y: auto;
             overflow-x: hidden;
@@ -243,14 +295,23 @@
                     align-content: start;
                     text-align: start;
 
-                    select {
-                        width: 5rem;
-                        background-color: rgb(100, 100, 100, 0.1);
-                        color: black;
-                        border: none;
-                        padding: 0.25rem;
-                        border-radius: 0.5rem;
-                        font-weight: bold;
+                    .select {
+                        display: flex;
+                        flex-direction: row;
+
+                        select {
+                            width: 5rem;
+                            background-color: var(--button-color);
+                            color: var(--color);
+                            border: none;
+                            padding: 0.25rem;
+                            border-radius: 0.5rem;
+                            font-weight: bold;
+                        }
+
+                        h4 {
+                            margin: 0;
+                        }
                     }
                 }
             }
@@ -259,10 +320,10 @@
                 width: 90%;
                 height: 5rem;
                 border-color: transparent;
-                background-color: rgb(100, 100, 100, 0.025);
+                background-color: var(--button-color);
                 padding: 1rem;
                 border-radius: 0.25rem;
-                color: black;
+                color: var(--color);
                 font-family: Arial, serif;
                 font-size: 1.5rem;
                 outline: none;
@@ -282,8 +343,8 @@
                 flex-direction: row;
                 align-items: center;
                 margin: 0 1rem;
-                background-color: white;
-                border: 0.025rem solid rgb(100, 100, 100, 0.5);
+                background-color: var(--main-color);
+                border: var(--border);
                 border-radius: 0.5rem;
             }
         }
@@ -292,12 +353,12 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            background-color: white;
+            background-color: var(--main-color);
             margin: 1rem;
             padding: 1rem;
-            border: 0.025rem solid rgb(100, 100, 100, 0.5);
+            border: var(--border);
             border-radius: 0.5rem;
-            color: black;
+            color: var(--color);
 
             p {
                 flex: 10;
@@ -316,7 +377,7 @@
                     border-radius: 1rem;
 
                     &:hover {
-                        background-color: rgb(100, 100, 100, 0.5);
+                        background-color: var(--button-color-hover);
                         cursor: pointer;
                     }
                 }
@@ -325,14 +386,14 @@
 
         .postButton {
             margin: 0 1rem 1rem;
-            background-color: #1877f2;
+            background-color: var(--blue-button);
             border: none;
             padding: 0.6em 1.2em;
             border-radius: 0.5rem;
 
             &:disabled {
-                background-color: lightgray;
-                color: black;
+                background-color: var(--button-color);
+                color: var(--color);
 
                 &:hover {
                     cursor: default;

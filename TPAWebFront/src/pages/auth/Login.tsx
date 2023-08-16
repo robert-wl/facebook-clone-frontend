@@ -4,7 +4,7 @@ import { useMutation } from "@apollo/client";
 import { AUTHENTICATE_USER } from "../../../lib/query/user/authenticateUser.graphql.ts";
 import { FormEvent, useContext, useState } from "react";
 import Toastify from "toastify-js";
-import errorHandler from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 
 export default function Login() {
@@ -27,15 +27,15 @@ export default function Login() {
                     password: password,
                 },
             })
-                .then((token) => {
+                .then(async (token) => {
                     localStorage.setItem("token", token.data.authenticateUser);
 
                     if (getUser) {
-                        getUser();
+                        await getUser();
                     }
                     return navigate("/");
                 })
-                .catch((err) => errorHandler(err));
+                .catch(debouncedError);
         }
         Toastify({
             text: error,

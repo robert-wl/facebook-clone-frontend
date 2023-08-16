@@ -12,9 +12,11 @@ input FriendInput {
 }
 
 extend type Query {
-    getFriends: [Friend] @auth
-    getUserFriends(username: String!): [Friend] @auth
-    getUserMutuals(username: String!): [Friend] @auth
+    getFriends(username: String!): [User] @auth
+    getFriendRequests: [User] @auth
+    getUserFriends(username: String!): [User] @auth
+    getUserMutuals(username: String!): [User] @auth
+    getPeopleMightKnow: [User] @auth
 }
 
 extend type Mutation {

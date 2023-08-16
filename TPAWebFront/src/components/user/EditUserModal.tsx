@@ -1,4 +1,4 @@
-import styles from "../../assets/styles/user/editUser.module.scss";
+import styles from "../../assets/styles/user/user.module.scss";
 import { Dispatch, SetStateAction, useState } from "react";
 import { User } from "../../../gql/graphql.ts";
 import { useMutation } from "@apollo/client";
@@ -46,7 +46,7 @@ export default function EditUserModal({ userDat, setUserDat, setModalState }: Ed
     };
 
     return (
-        <div className={styles.page}>
+        <div className={styles.modalEditUser}>
             <div className={styles.registerBox}>
                 <header>
                     <h2>Update Profile</h2>

@@ -15,6 +15,12 @@ export const CREATE_POST = gql`
             commentCount
             shareCount
             liked
+            postTags {
+                user {
+                    firstName
+                    lastName
+                }
+            }
             comments {
                 id
                 content

@@ -26,18 +26,23 @@
         object-fit: cover;
     }
 
+    video {
+        width: 100%;
+        object-fit: cover;
+    }
+
     .close {
         position: absolute;
         top: 1%;
         right: 1%;
         padding: 0.25rem 0.4rem 0;
-        background-color: white;
+        background-color: var(--main-color);
         border-radius: 20rem;
 
         &:hover {
-            background-color: rgb(100, 100, 100, 0.5);
+            background-color: var(--gray-color);
             cursor: pointer;
-            transition: background-color 0.2s;
+            //transition: background-color 0.2s;
         }
     }
 }

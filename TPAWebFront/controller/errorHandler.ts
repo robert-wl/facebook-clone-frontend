@@ -24,6 +24,7 @@ export default function errorHandler(error: ApolloError) {
         localStorage.removeItem("token");
     }
 
+    console.log(error);
     Toastify({
         text: "Error: " + error.message,
         style: {

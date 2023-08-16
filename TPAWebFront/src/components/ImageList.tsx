@@ -18,10 +18,17 @@ export default function ImageList({ files, setFiles }: { files: File[]; setFiles
                             key={i}
                             className={styles.image}
                         >
-                            <img
-                                src={URL.createObjectURL(file)}
-                                alt={""}
-                            />
+                            {file.type == "video/mp4" ? (
+                                <video
+                                    src={URL.createObjectURL(file)}
+                                    autoPlay={true}
+                                />
+                            ) : (
+                                <img
+                                    src={URL.createObjectURL(file)}
+                                    alt={""}
+                                />
+                            )}
                             <div
                                 className={styles.close}
                                 onClick={() => handleFile(i)}

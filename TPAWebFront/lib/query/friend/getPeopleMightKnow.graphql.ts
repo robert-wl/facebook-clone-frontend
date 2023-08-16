@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const GET_FRIENDS = gql`
-    query getFriends($username: String!) {
-        getFriends(username: $username) {
+export const GET_PEOPLE_MIGHT_KNOW = gql`
+    query getPeopleMightKnow {
+        getPeopleMightKnow {
             id
             firstName
             lastName
@@ -10,6 +10,7 @@ export const GET_FRIENDS = gql`
             email
             dob
             gender
+            profile
             active
         }
     }
