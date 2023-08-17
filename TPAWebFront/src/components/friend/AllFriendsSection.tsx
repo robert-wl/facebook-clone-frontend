@@ -14,10 +14,12 @@ export default function AllFriendsSection({ friends }: AllFriendsSection) {
             <div className={styles.friendList}>
                 {friends.map((req, index) => {
                     return (
-                        <AccFriendBox
-                            key={index}
-                            friend={req}
-                        />
+                        <>
+                            <AccFriendBox
+                                key={"friend" + index}
+                                friend={req}
+                            />
+                        </>
                     );
                 })}
                 {friends.length == 0 && <NoFriendBox description={"No Friend"} />}

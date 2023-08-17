@@ -7,12 +7,11 @@ import { Friend, User } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 
 interface TagFriendModal {
-    tagModalState: boolean;
     setTagModalState: Dispatch<SetStateAction<boolean>>;
     tagList: User[];
     setTagList: Dispatch<SetStateAction<User[]>>;
 }
-export default function TagFriendModal({ tagModalState, setTagModalState, tagList, setTagList }: TagFriendModal) {
+export default function TagFriendModal({ setTagModalState, tagList, setTagList }: TagFriendModal) {
     const [friends, setFriends] = useState<User[]>([]);
     const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
     const { auth } = useContext(AuthContext);
@@ -49,58 +48,56 @@ export default function TagFriendModal({ tagModalState, setTagModalState, tagLis
     };
     return (
         <>
-            {tagModalState && (
-                <div className={styles.background}>
-                    <div className={styles.box}>
-                        <header>
-                            <h2>Tag Friends</h2>
-                            <AiOutlineClose
-                                size={"1.5rem"}
-                                onClick={() => setTagModalState(false)}
+            <div className={styles.background}>
+                <div className={styles.box}>
+                    <header>
+                        <h2>Tag Friends</h2>
+                        <AiOutlineClose
+                            size={"1.5rem"}
+                            onClick={() => setTagModalState(false)}
+                        />
+                    </header>
+                    <hr />
+                    <div>
+                        <div className={styles.content}>
+                            <AiOutlineSearch size={"1.2rem"} />
+                            <input
+                                type={"text"}
+                                placeholder={"Search friends..."}
+                                onChange={(e) => handleFilter(e.target.value)}
                             />
-                        </header>
-                        <hr />
-                        <div>
-                            <div className={styles.content}>
-                                <AiOutlineSearch size={"1.2rem"} />
-                                <input
-                                    type={"text"}
-                                    placeholder={"Search friends..."}
-                                    onChange={(e) => handleFilter(e.target.value)}
-                                />
-                            </div>
-                            <h4 onClick={() => setTagModalState(false)}>Done</h4>
                         </div>
-                        <div className={styles.friendList}>
-                            {filteredFriends.map((user, index) => {
-                                return (
-                                    <div
-                                        key={index}
-                                        className={styles.friend}
-                                        onClick={() => handleCheck(user)}
-                                    >
-                                        <div>
-                                            <img
-                                                src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
-                                                alt={"profile picture"}
-                                            />
-                                            <span>
-                                                {user.firstName} {user.lastName}
-                                            </span>
-                                        </div>
-                                        <input
-                                            checked={tagList.includes(user)}
-                                            type={"checkbox"}
-                                            value={user.id}
-                                            onChange={() => handleCheck(user)}
+                        <h4 onClick={() => setTagModalState(false)}>Done</h4>
+                    </div>
+                    <div className={styles.friendList}>
+                        {filteredFriends.map((user, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    className={styles.friend}
+                                    onClick={() => handleCheck(user)}
+                                >
+                                    <div>
+                                        <img
+                                            src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
+                                            alt={"profile picture"}
                                         />
+                                        <span>
+                                            {user.firstName} {user.lastName}
+                                        </span>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                    <input
+                                        checked={tagList.includes(user)}
+                                        type={"checkbox"}
+                                        value={user.id}
+                                        onChange={() => handleCheck(user)}
+                                    />
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
-            )}
+            </div>
         </>
     );
 }

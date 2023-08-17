@@ -29,7 +29,7 @@ export default function GroupDetail() {
     const [inviteGroupModalState, setInviteGroupModalState] = useState(false);
     const [joinRequestModalState, setJoinRequestModalState] = useState(false);
     const [membersModalState, setMembersModalState] = useState(false);
-    const [group, setGroup] = useState<Group>();
+    const [group, setGroup] = useState<Group>({} as Group);
     const [tab, setTab] = useState("discussion");
     const [updateGroupBackground] = useMutation(UPDATE_GROUP_BACKGROUND);
     const backgroundInputRef = useRef<HTMLInputElement>(null);
@@ -103,13 +103,14 @@ export default function GroupDetail() {
             <NewGroupPostModal
                 modalState={newGroupModalState}
                 setModalState={setNewGroupModalState}
-                data={data}
+                setGroup={setGroup}
             />
-            <ShareModal
-                shareModalState={shareModalState}
-                setShareModalState={setShareModalState}
-                currPost={currPost}
-            />
+            {shareModalState && (
+                <ShareModal
+                    setShareModalState={setShareModalState}
+                    currPost={currPost}
+                />
+            )}
             <div
                 key={"mainPage"}
                 className={styles.page}
@@ -118,6 +119,7 @@ export default function GroupDetail() {
                 <div className={styles.content}>
                     {group?.joined == "joined" ? (
                         <GroupDetailSidebar
+                            key={Date.now()}
                             group={group}
                             setInviteGroupModalState={setInviteGroupModalState}
                             setMembersModalState={setMembersModalState}

@@ -2,7 +2,7 @@ import styles from "../../assets/styles/group/groupSidebar.module.scss";
 import { AiOutlineSearch } from "react-icons/ai";
 import { HiMiniHome } from "react-icons/hi2";
 import { FaCompass } from "react-icons/fa";
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_JOINED_GROUPS } from "../../../lib/query/group/getJoinedGroups.graphql.ts";
@@ -12,18 +12,19 @@ import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts"
 
 interface GroupSidebar {
     redirect: boolean;
-    handleFilter: (filter: string) => void;
+    handleFilter?: (filter: string) => void;
+    currentTab?: string;
+    setCurrentTab?: Dispatch<SetStateAction<string>>;
 }
 
-export default function GroupSidebar({ handleFilter, redirect }: GroupSidebar) {
-    const [currentTab, setCurrentTab] = useState(redirect ? "discover" : "feed");
+export default function GroupSidebar({ handleFilter, redirect, currentTab, setCurrentTab }: GroupSidebar) {
     const { data } = useQuery(GET_JOINED_GROUPS, {
         onError: debouncedError,
     });
     const nav = useNavigate();
 
     const handleTab = (tab: string) => {
-        setCurrentTab(tab);
+        if (setCurrentTab) setCurrentTab(tab);
         if (redirect) {
             nav("/group");
         }
@@ -35,14 +36,16 @@ export default function GroupSidebar({ handleFilter, redirect }: GroupSidebar) {
                 <header>
                     <div className={styles.bio}>
                         <h2>Groups</h2>
-                        <div className={styles.search}>
-                            <AiOutlineSearch />
-                            <input
-                                type={"text"}
-                                onChange={(e) => handleFilter(e.target.value)}
-                                placeholder={"Find groups..."}
-                            />
-                        </div>
+                        {!redirect && handleFilter && (
+                            <div className={styles.search}>
+                                <AiOutlineSearch />
+                                <input
+                                    type={"text"}
+                                    onChange={(e) => handleFilter(e.target.value)}
+                                    placeholder={"Find groups..."}
+                                />
+                            </div>
+                        )}
                     </div>
                 </header>
                 <div className={styles.content}>
@@ -72,7 +75,10 @@ export default function GroupSidebar({ handleFilter, redirect }: GroupSidebar) {
                     {data &&
                         data.getJoinedGroups.map((group: Group) => {
                             return (
-                                <Link to={`/group/${group.id}`}>
+                                <Link
+                                    to={`/group/${group.id}`}
+                                    key={group.id}
+                                >
                                     <div className={styles.group}>
                                         <img
                                             src={groupBackgroundLoader(group.background)}

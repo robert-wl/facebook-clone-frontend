@@ -306,6 +306,73 @@ func (r *queryResolver) GetCommentPost(ctx context.Context, postID string) ([]*m
 	return comments, nil
 }
 
+// GetFilteredPosts is the resolver for the getFilteredPosts field.
+func (r *queryResolver) GetFilteredPosts(ctx context.Context, filter string, pagination model.Pagination) ([]*model.Post, error) {
+	var posts []*model.Post
+
+	userID := ctx.Value("UserID").(string)
+
+	subQueryFriend := r.DB.
+		Select("*").
+		Where("(sender_id = ? AND receiver_id = posts.user_id) or (sender_id = posts.user_id AND receiver_id = ?)", userID, userID).
+		Table("friends")
+
+	subQueryPrivate := r.DB.
+		Select("user_id").
+		Where("(post_id = posts.id)").
+		Table("post_visibilities")
+
+	subQueryGroup := r.DB.
+		Select("group_id").
+		Where("user_id = ? AND approved = ?", userID, true).
+		Table("members")
+
+	if err := r.DB.
+		Order("created_at desc").
+		Preload("User").
+		Preload("User").
+		Preload("Likes").
+		Preload("Comments").
+		Preload("Visibility.User").
+		Preload("PostTags.User").
+		Offset(pagination.Start).
+		Limit(pagination.Limit).
+		Find(&posts, "(privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?)) OR group_id IN (?)) AND LOWER(content) LIKE LOWER(?)", "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate, subQueryGroup, "%"+filter+"%").Error; err != nil {
+		return nil, err
+	}
+
+	//
+	return posts, nil
+}
+
+// GetGroupHomePosts is the resolver for the getGroupHomePosts field.
+func (r *queryResolver) GetGroupHomePosts(ctx context.Context, pagination model.Pagination) ([]*model.Post, error) {
+	var posts []*model.Post
+
+	userID := ctx.Value("UserID").(string)
+
+	subQueryGroup := r.DB.
+		Select("group_id").
+		Where("user_id = ? AND approved = ?", userID, true).
+		Table("members")
+
+	if err := r.DB.
+		Order("created_at desc").
+		Preload("User").
+		Preload("User").
+		Preload("Likes").
+		Preload("Comments").
+		Preload("Visibility.User").
+		Preload("PostTags.User").
+		Offset(pagination.Start).
+		Limit(pagination.Limit).
+		Find(&posts, "group_id IN (?)", subQueryGroup).Error; err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
 // Comment returns graph.CommentResolver implementation.
 func (r *Resolver) Comment() graph.CommentResolver { return &commentResolver{r} }
 

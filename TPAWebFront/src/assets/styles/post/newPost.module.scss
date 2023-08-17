@@ -133,35 +133,9 @@
                 }
             }
 
-            textarea {
-                width: 93%;
-                height: 5rem;
-                border-color: transparent;
-                background-color: var(--button-color);
-                padding: 1rem;
-                border-radius: 0.25rem;
-                color: var(--color);
-                font-family: Arial, serif;
-                font-size: 1.5rem;
-                outline: none;
-                margin: 1rem 1rem 1rem 0;
-                max-width: 93%;
-
-                &:focus {
-                    border-color: transparent;
-                }
-
-                &::placeholder {
-                    color: gray;
-                }
-
-                &::-webkit-scrollbar {
-                    background-color: rgb(100, 100, 100, 0.025);
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    background-color: lightgray;
-                }
+            .textarea {
+                position: relative;
+                margin: 0 1rem;
             }
 
             .attachment {

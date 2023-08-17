@@ -1,18 +1,30 @@
 import { Comment, Maybe } from "../../../gql/graphql.ts";
 import styles from "../../assets/styles/post/reply.module.scss";
 import { AiFillLike } from "react-icons/ai";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import errorHandler from "../../../controller/errorHandler.ts";
 import { useMutation } from "@apollo/client";
 import { LIKE_COMMENT } from "../../../lib/query/post/likeComment.graphql.ts";
+import domPurify from "../../../controller/domPurify.ts";
+import RichText from "../richText/RichText.tsx";
+import { IoSend } from "react-icons/io5";
+import { AuthContext } from "../context/AuthContextProvider.tsx";
+import { CREATE_COMMENT } from "../../../lib/query/post/createComment.graphql.ts";
 
 interface Reply {
     c: Comment | Maybe<Comment>;
+    parentId: string;
+    setCurrComment: Dispatch<SetStateAction<Comment | null>>;
 }
 
-export default function Reply({ c }: Reply) {
+export default function Reply({ c, parentId, setCurrComment }: Reply) {
     const [comment, setComment] = useState(c);
+    const [showReplyInput, setShowReplyInput] = useState(false);
+    const { auth } = useContext(AuthContext);
     const [likecomment] = useMutation(LIKE_COMMENT);
+    const [replyContent, setReplyContent] = useState("");
+    const [createComment] = useMutation(CREATE_COMMENT);
+    const [reset, setReset] = useState(0);
     const handleLike = () => {
         likecomment({
             variables: {
@@ -30,6 +42,37 @@ export default function Reply({ c }: Reply) {
             .catch(errorHandler);
     };
 
+    const handleReply = () => {
+        if (c) {
+            const tag = `<a href="user/${c.user.username}" class="wysiwyg-mention" data-mention data-value="${c.user.username}">@${c.user.username}</a>&nbsp;`;
+
+            const modifiedString = replyContent.slice(0, 3) + tag + replyContent.slice(3);
+            createComment({
+                variables: {
+                    newComment: {
+                        parentComment: parentId,
+                        content: modifiedString,
+                    },
+                },
+            })
+                .then((data) => {
+                    const newComment = data.data.createComment;
+                    setCurrComment((comment) => {
+                        console.log(comment);
+                        if (comment) {
+                            if (comment.comments) {
+                                return { ...comment, comments: [...comment.comments, newComment] };
+                            }
+                            return { ...comment, comments: [newComment] };
+                        }
+                        return comment;
+                    });
+                })
+                .catch(errorHandler);
+            setReset(reset + 1);
+        }
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.top}>
@@ -44,7 +87,7 @@ export default function Reply({ c }: Reply) {
                         <h4>
                             {comment?.user.firstName} {comment?.user.lastName}
                         </h4>
-                        <p>{comment?.content}</p>
+                        <div dangerouslySetInnerHTML={{ __html: domPurify(comment?.content) }} />
                         {comment?.likeCount != undefined && comment?.likeCount > 0 && (
                             <div className={styles.like}>
                                 <AiFillLike
@@ -62,7 +105,41 @@ export default function Reply({ c }: Reply) {
                         >
                             Like
                         </p>
+                        <p
+                            onClick={() => {
+                                setShowReplyInput(!showReplyInput);
+                            }}
+                        >
+                            Reply
+                        </p>
                     </div>
+                    {showReplyInput && (
+                        <div className={styles.commentInput}>
+                            <div className={styles.image}>
+                                <img
+                                    src={auth?.profile ? auth?.profile : "../src/assets/default-profile.jpg"}
+                                    alt={""}
+                                />
+                            </div>
+                            <div className={styles.commentContainer}>
+                                <RichText
+                                    key={reset}
+                                    setText={setReplyContent}
+                                    width={"20rem"}
+                                    overflow={"hidden"}
+                                    placeholder={"Write a comment..."}
+                                />
+                                <div className={styles.commentFooter}>
+                                    <IoSend
+                                        size={"1rem"}
+                                        onClick={() => handleReply()}
+                                        color={replyContent.length > 8 ? "blue" : ""}
+                                        disabled={replyContent.length == 0}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

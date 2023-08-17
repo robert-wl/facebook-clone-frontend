@@ -22,6 +22,7 @@ import CreateGroup from "./pages/group/CreateGroup.tsx";
 import Group from "./pages/group/Group.tsx";
 import GroupDetail from "./pages/group/GroupDetail.tsx";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import Search from "./pages/search/Search.tsx";
 
 function App() {
     return (
@@ -122,7 +123,7 @@ function App() {
                 path="/messages/:conversationID"
                 element={
                     <AuthenticatedProtector>
-                        <Messages key={Date.now()} />
+                        <Messages />
                     </AuthenticatedProtector>
                 }
             />
@@ -130,7 +131,7 @@ function App() {
                 path="/reels/create"
                 element={
                     <AuthenticatedProtector>
-                        <CreateReels key={Date.now()} />
+                        <CreateReels />
                     </AuthenticatedProtector>
                 }
             />
@@ -138,7 +139,7 @@ function App() {
                 path="/reels"
                 element={
                     <AuthenticatedProtector>
-                        <Reels key={Date.now()} />
+                        <Reels />
                     </AuthenticatedProtector>
                 }
             />
@@ -146,7 +147,7 @@ function App() {
                 path="/group"
                 element={
                     <AuthenticatedProtector>
-                        <Group key={Date.now()} />
+                        <Group />
                     </AuthenticatedProtector>
                 }
             />
@@ -154,7 +155,7 @@ function App() {
                 path="/group/:groupId"
                 element={
                     <AuthenticatedProtector>
-                        <GroupDetail key={Date.now()} />
+                        <GroupDetail />
                     </AuthenticatedProtector>
                 }
             />
@@ -162,10 +163,26 @@ function App() {
                 path="/group/create"
                 element={
                     <AuthenticatedProtector>
-                        <CreateGroup key={Date.now()} />
+                        <CreateGroup />
                     </AuthenticatedProtector>
                 }
-            />{" "}
+            />
+            <Route
+                path="/search/:searchQuery"
+                element={
+                    <AuthenticatedProtector>
+                        <Search />
+                    </AuthenticatedProtector>
+                }
+            />
+            <Route
+                path="/search"
+                element={
+                    <AuthenticatedProtector>
+                        <Search />
+                    </AuthenticatedProtector>
+                }
+            />
         </Routes>
     );
 }

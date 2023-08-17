@@ -43,6 +43,7 @@
                     margin: -0.25rem 0.9rem 0 0.9rem;
                     padding: 0 0.5rem 0.5rem 0;
                     word-wrap: break-word;
+                    margin-top: 0.25rem
                 }
 
                 .like {
@@ -132,6 +133,7 @@
                 }
 
                 .commentContainer {
+                    position: relative;
                     width: 100%;
                     height: fit-content;
                     margin-left: 0.5rem;

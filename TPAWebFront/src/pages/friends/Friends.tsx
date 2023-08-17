@@ -8,23 +8,23 @@ import { BsFillPersonCheckFill, BsFillPersonFill, BsFillPersonPlusFill } from "r
 import FriendRequestSection from "../../components/friend/FriendRequestSection.tsx";
 import AllFriendsSection from "../../components/friend/AllFriendsSection.tsx";
 import { useQuery } from "@apollo/client";
-import { GET_FRIENDS } from "../../../lib/query/friend/getFriends.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { User } from "../../../gql/graphql.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import PeopleMightKnowSection from "../../components/friend/PeopleMightKnowSection.tsx";
+import { GET_USER_FRIENDS } from "../../../lib/query/friend/getUserFriends.graphql.ts";
 
 export default function Friends() {
     const [friends, setFriends] = useState<User[]>([]);
     const { auth } = useContext(AuthContext);
     const [tab, setTab] = useState("all");
-    useQuery(GET_FRIENDS, {
+    useQuery(GET_USER_FRIENDS, {
         variables: {
             username: auth?.username,
         },
         onError: debouncedError,
         onCompleted: (data) => {
-            setFriends(data.getFriends);
+            setFriends(data.getUserFriends);
         },
     });
     return (
@@ -42,10 +42,7 @@ export default function Friends() {
                                     active={tab == "all"}
                                     text={"All"}
                                 >
-                                    <FaUserFriends
-                                        active={tab == "all"}
-                                        size={"1.5rem"}
-                                    />
+                                    <FaUserFriends size={"1.5rem"} />
                                 </SidebarButton>
                             </div>
                             <div onClick={() => setTab("request")}>
@@ -77,14 +74,14 @@ export default function Friends() {
                     <div className={styles.contentBox}>
                         {(tab == "all" || tab == "request") && (
                             <FriendRequestSection
-                                key={Date.now() + 1}
+                                key={"friendRequest"}
                                 setFriends={setFriends}
                             />
                         )}
-                        {(tab == "all" || tab == "recommendation") && <PeopleMightKnowSection key={Date.now() + 2} />}
+                        {(tab == "all" || tab == "recommendation") && <PeopleMightKnowSection key={"peopleKnow"} />}
                         {(tab == "all" || tab == "friend") && (
                             <AllFriendsSection
-                                key={Date.now() + 3}
+                                key={"allFriends"}
                                 friends={friends}
                             />
                         )}

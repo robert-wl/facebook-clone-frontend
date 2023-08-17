@@ -10,6 +10,7 @@ import { AuthContext } from "../context/AuthContextProvider.tsx";
 import RichText from "../richText/RichText.tsx";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { HiPencilSquare } from "react-icons/hi2";
+import cleanRichText from "../../../controller/cleanRichText.ts";
 
 interface NewPostModal {
     modalState: boolean;
@@ -72,7 +73,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
         const { data: dat } = await createPost({
             variables: {
                 post: {
-                    content: content,
+                    content: cleanRichText(content),
                     privacy: visibility,
                     files: urlList,
                     tags: tagUserList,
@@ -142,7 +143,13 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                             </div>
                         </div>
                     </div>
-                    <RichText setText={setContent} />
+                    <div className={styles.textarea}>
+                        <RichText
+                            setText={setContent}
+                            minHeight={"10rem"}
+                            placeholder={"What's on your mind?"}
+                        />
+                    </div>
                     <div className={files.length > 0 ? styles.attachment : styles.attachmentHidden}>
                         <ImageList
                             files={files}

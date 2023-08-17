@@ -262,6 +262,23 @@ func (r *queryResolver) GetAuth(ctx context.Context) (*model.User, error) {
 	return user, nil
 }
 
+// GetFilteredUsers is the resolver for the getFilteredUsers field.
+func (r *queryResolver) GetFilteredUsers(ctx context.Context, filter string, pagination model.Pagination) ([]*model.User, error) {
+	var users []*model.User
+
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.
+		Offset(pagination.Start).
+		Limit(pagination.Limit).
+		Where("id != ? AND (LOWER(first_name) LIKE LOWER(?) OR LOWER(last_name) LIKE LOWER(?) OR LOWER(username) LIKE LOWER(?))", userID, "%"+filter+"%", "%"+filter+"%", "%"+filter+"%").
+		Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 // FriendCount is the resolver for the friendCount field.
 func (r *userResolver) FriendCount(ctx context.Context, obj *model.User) (int, error) {
 	var friendCount int64

@@ -5,6 +5,8 @@ import createToast from "../../../controller/toast/handler.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_GROUP } from "../../../lib/query/group/createGroup.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { useNavigate } from "react-router-dom";
 
 interface CreateGroupSidebar {
     groupData: { name: string; privacy: string; about: string };
@@ -12,6 +14,7 @@ interface CreateGroupSidebar {
 }
 export default function CreateGroupSidebar({ groupData, setGroupData }: CreateGroupSidebar) {
     const [createGroup] = useMutation(CREATE_GROUP);
+    const navigate = useNavigate();
     const { auth } = useContext(AuthContext);
 
     const handleSubmit = () => {
@@ -34,8 +37,8 @@ export default function CreateGroupSidebar({ groupData, setGroupData }: CreateGr
                 },
             },
         })
-            .then((data) => {
-                console.log(data);
+            .then(() => {
+                navigate("/group");
             })
             .catch(debouncedError);
     };
@@ -50,7 +53,7 @@ export default function CreateGroupSidebar({ groupData, setGroupData }: CreateGr
                 </header>
                 <div className={styles.profile}>
                     <img
-                        src={auth?.profile ?? ""}
+                        src={userProfileLoader(auth?.profile)}
                         alt={""}
                     />
                     <div className={styles.text}>

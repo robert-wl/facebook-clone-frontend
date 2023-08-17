@@ -146,7 +146,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
                     {filteredData?.map((file: GroupFile) => {
                         if (file)
                             return (
-                                <tr>
+                                <tr key={file.id}>
                                     <th className={styles.name}>
                                         <AiOutlineFile size={"1.5rem"} />
                                         <>{file.name}</>

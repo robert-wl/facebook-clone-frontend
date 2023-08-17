@@ -5,18 +5,18 @@ import ImageList from "../ImageList.tsx";
 import uploadStorage from "../../../controller/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "../../../lib/query/post/createPost.graphql.ts";
-import { Post } from "../../../gql/graphql.ts";
+import { Group } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { useParams } from "react-router-dom";
+import RichText from "../richText/RichText.tsx";
 
 interface NewGroupPostModal {
     modalState: boolean;
     setModalState: Dispatch<SetStateAction<boolean>>;
-    setData: Dispatch<SetStateAction<Post[]>>;
-    data: Post[];
+    setGroup: Dispatch<SetStateAction<Group>>;
 }
 
-export default function NewGroupPostModal({ modalState, setModalState, data, setData }: NewGroupPostModal) {
+export default function NewGroupPostModal({ modalState, setModalState, setGroup }: NewGroupPostModal) {
     const { groupId } = useParams();
     const [files, setFiles] = useState<File[]>([]);
     const [content, setContent] = useState("");
@@ -61,7 +61,18 @@ export default function NewGroupPostModal({ modalState, setModalState, data, set
             },
         });
 
-        setData([dat.createPost, ...data]);
+        setGroup((prev) => {
+            if (prev?.posts) {
+                return {
+                    ...prev,
+                    posts: [dat.createPost, ...prev.posts],
+                };
+            }
+            return {
+                ...prev,
+                posts: [dat.createPost],
+            };
+        });
     };
 
     if (!modalState) return <></>;
@@ -98,10 +109,13 @@ export default function NewGroupPostModal({ modalState, setModalState, data, set
                             {auth?.firstName} {auth?.lastName}
                         </div>
                     </div>
-                    <textarea
-                        placeholder="What are you thinking"
-                        onChange={(e) => setContent(e.target.value)}
-                    />
+                    <div className={styles.textarea}>
+                        <RichText
+                            setText={setContent}
+                            minHeight={"10rem"}
+                            placeholder={"What's on your mind?"}
+                        />
+                    </div>
                     <div className={files.length > 0 ? styles.attachment : styles.attachmentHidden}>
                         <ImageList
                             files={files}

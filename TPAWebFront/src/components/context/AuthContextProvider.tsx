@@ -37,6 +37,8 @@ export default function AuthContextProvider({ children }: { children: JSX.Elemen
         getUser();
     }, []);
 
+    if (loading) return <></>;
+
     return (
         <AuthContext.Provider value={{ auth, loading, getUser }}>
             <>{children}</>

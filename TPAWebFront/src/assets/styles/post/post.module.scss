@@ -39,6 +39,10 @@
         margin: 0.5rem 1rem;
         text-align: start;
 
+        .text {
+            margin-top: 0.5rem;
+        }
+
         img {
             width: 100%;
         }
@@ -122,6 +126,7 @@
         margin: 0.5rem 1rem;
 
         .commentContainer {
+            position: relative;
             width: 100%;
             height: fit-content;
             margin-left: 0.5rem;

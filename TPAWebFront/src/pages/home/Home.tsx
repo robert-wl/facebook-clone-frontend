@@ -2,7 +2,7 @@ import styles from "../../assets/styles/home/home.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
 import ProfilePicture from "../../components/ProfilePicture.tsx";
 import NewPostModal from "../../components/post/NewPostModal.tsx";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import PostBox from "../../components/post/PostBox.tsx";
 import { GET_POSTS } from "../../../lib/query/post/getPosts.graphql.ts";
 import { useQuery } from "@apollo/client";
@@ -27,6 +27,7 @@ export default function Home() {
     const [currPost, setCurrPost] = useState<Post | null>(null);
     const [tagList, setTagList] = useState<User[]>([]);
     const [visibilityList, setVisibilityList] = useState<User[]>([]);
+    const pageRef = useRef<HTMLDivElement>(null);
     let start = 3;
     const { refetch: getPosts } = useQuery(GET_POSTS, {
         variables: {
@@ -56,7 +57,6 @@ export default function Home() {
             },
         })
             .then(() => {
-                console.log(start);
                 start += 3;
             })
             .catch(debouncedError);
@@ -79,7 +79,7 @@ export default function Home() {
     };
 
     useEffect(() => {
-        scrollElement = document.getElementById("page");
+        scrollElement = pageRef.current!;
 
         if (scrollElement) {
             scrollElement.addEventListener("scroll", handleScroll);
@@ -104,26 +104,29 @@ export default function Home() {
                 setVisibilityList={setVisibilityList}
                 visibilityList={visibilityList}
             />
-            <ShareModal
-                shareModalState={shareModalState}
-                setShareModalState={setShareModalState}
-                currPost={currPost}
-            />
-            <TagFriendModal
-                tagModalState={tagModalState}
-                setTagModalState={setTagModalState}
-                tagList={tagList}
-                setTagList={setTagList}
-            />
-            <VisibilityModal
-                visibilityModalState={visibilityModalState}
-                setVisibilityModalState={setVisibilityModalState}
-                visibilityList={visibilityList}
-                setVisibilityList={setVisibilityList}
-            />
+            {shareModalState && (
+                <ShareModal
+                    setShareModalState={setShareModalState}
+                    currPost={currPost}
+                />
+            )}
+            {tagModalState && (
+                <TagFriendModal
+                    setTagModalState={setTagModalState}
+                    tagList={tagList}
+                    setTagList={setTagList}
+                />
+            )}
+            {visibilityModalState && (
+                <VisibilityModal
+                    setVisibilityModalState={setVisibilityModalState}
+                    visibilityList={visibilityList}
+                    setVisibilityList={setVisibilityList}
+                />
+            )}
             <div
-                id={"page"}
                 className={styles.page}
+                ref={pageRef}
             >
                 <Navbar />
                 <div className={styles.content}>

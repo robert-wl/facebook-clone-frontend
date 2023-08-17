@@ -66,4 +66,5 @@ extend type Query {
     getJoinedGroups: [Group] @auth
     getGroupFiles(groupId: ID!): [GroupFile] @auth
     getJoinRequests(groupId: ID!): [Member] @auth
+    getFilteredGroups(filter: String!, pagination: Pagination!): [Group] @auth
 }

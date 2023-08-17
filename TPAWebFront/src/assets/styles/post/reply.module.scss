@@ -30,7 +30,7 @@
                 background-color: rgb(100, 100, 100, 0.1);
                 text-align: start;
                 width: fit-content;
-                max-width: 37.5rem;
+                max-width: 34.5rem;
 
                 h4 {
                     margin: 0.5rem 0.9rem 0 0.9rem;
@@ -39,7 +39,7 @@
                 }
 
                 p {
-                    margin: -0.25rem 0.9rem 0 0.9rem;
+                    margin: 0.25rem 0.9rem 0 0.9rem;
                     padding: 0 0.5rem 0.5rem 0;
                     word-wrap: break-word;
                 }
@@ -88,6 +88,66 @@
                     &:hover {
                         cursor: pointer;
                         text-decoration: underline;
+                    }
+                }
+            }
+
+            .commentInput {
+                display: flex;
+                flex-direction: row;
+                width: calc(100% - 3rem);
+                margin: 0.5rem 1rem;
+
+                .image {
+                    height: 2.5rem;
+                    border-radius: 20rem;
+                    object-fit: cover;
+
+                    img {
+                        height: 2rem;
+                        width: 2rem;
+                        border-radius: 20rem;
+                    }
+                }
+
+                .commentContainer {
+                    position: relative;
+                    width: calc(100% - 6rem);
+                    height: fit-content;
+                    margin-left: 0.5rem;
+                    border-radius: 1rem;
+                    background-color: rgb(100, 100, 100, 0.1);
+                    text-align: start;
+                    font-size: 1rem;
+                    margin-bottom: 1rem;
+                    color: gray;
+                    padding: 0.6em 1.2em;
+                    border-color: transparent;
+                    margin-right: 1rem;
+
+                    textarea {
+                        width: 100%;
+                        color: black;
+                        background-color: transparent;
+                        border: transparent;
+                        overflow-y: hidden;
+                        resize: none;
+                        font-family: Arial, serif;
+                        font-size: 0.9rem;
+
+                        &:focus {
+                            outline: none;
+                        }
+                    }
+
+                    .commentFooter {
+                        display: flex;
+                        width: 100%;
+                        justify-content: end;
+
+                        svg:hover {
+                            cursor: pointer;
+                        }
                     }
                 }
             }

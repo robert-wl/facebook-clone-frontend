@@ -426,6 +426,20 @@ func (r *queryResolver) GetJoinRequests(ctx context.Context, groupID string) ([]
 	return members, nil
 }
 
+// GetFilteredGroups is the resolver for the getFilteredGroups field.
+func (r *queryResolver) GetFilteredGroups(ctx context.Context, filter string, pagination model.Pagination) ([]*model.Group, error) {
+	var groups []*model.Group
+
+	if err := r.DB.
+		Offset(pagination.Start).
+		Limit(pagination.Limit).
+		Find(&groups, "LOWER(name) LIKE LOWER(?) OR LOWER(about) LIKE LOWER(?)", "%"+filter+"%", "%"+filter+"%").Error; err != nil {
+		return nil, err
+	}
+
+	return groups, nil
+}
+
 // Group returns graph.GroupResolver implementation.
 func (r *Resolver) Group() graph.GroupResolver { return &groupResolver{r} }
 

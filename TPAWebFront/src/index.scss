@@ -17,8 +17,11 @@
   --main-color: white;
   --blue-color: rgb(0, 100, 254);
   --gray-color: rgb(200, 200, 200, 0.5);
+  --gray-text-color: rgb(100, 100, 100, 0.9);
+  --gray-dark-color: rgb(100, 100, 100, 0.2);
   --box-shadow: 1px 1px 5px rgb(50, 50, 50, 1);
   --box-shadow-light: 1px 1px 5px rgb(50, 50, 50, 0.5);
+  --box-shadow-very-light: 1px 1px 5px rgb(100, 100, 100, 0.2);
   --border-radius: 0.5rem;
   --border-color: rgb(200, 200, 200, 0.5);
   --border: 1px solid var(--border-color);
@@ -59,3 +62,31 @@ button:hover {
   cursor: pointer;
 }
 
+.rdw-editor-wrapper *{
+  position: unset;
+}
+
+.public-DraftEditorPlaceholder-inner {
+  position: absolute;
+}
+
+.public-DraftEditorPlaceholder-root {
+  position: relative;
+}
+//.public-DraftStyleDefault-block, public-DraftStyleDefault-ltr {
+//  position: absolute;
+//}
+//
+//.rdw-suggestion-wrapper {
+//  position: absolute;
+//  z-index: 100;
+//}
+//
+.rdw-suggestion-dropdown {
+  position: absolute;
+  z-index: 100;
+}
+//
+//.rdw-editor-wrapper {
+//  z-index: 100;
+//}

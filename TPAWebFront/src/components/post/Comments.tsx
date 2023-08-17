@@ -10,6 +10,8 @@ import { LIKE_COMMENT } from "../../../lib/query/post/likeComment.graphql.ts";
 import { PiArrowBendDownRightDuotone } from "react-icons/pi";
 import { AiFillLike } from "react-icons/ai";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
+import RichText from "../richText/RichText.tsx";
+import domPurify from "../../../controller/domPurify.ts";
 
 interface Comments {
     comment: Comment | Maybe<Comment>;
@@ -19,6 +21,7 @@ export default function Comments({ comment }: Comments) {
     const [showReply, setShowReply] = useState(false);
     const [commentContent, setCommentContent] = useState("");
     const [currComment, setCurrComment] = useState(comment);
+    const [reset, setReset] = useState(0);
     const { auth } = useContext(AuthContext);
     const [createComment] = useMutation(CREATE_COMMENT);
     const [likecomment] = useMutation(LIKE_COMMENT);
@@ -41,6 +44,7 @@ export default function Comments({ comment }: Comments) {
                     });
             })
             .catch(errorHandler);
+        setReset(reset + 1);
     };
 
     const handleLike = () => {
@@ -74,7 +78,12 @@ export default function Comments({ comment }: Comments) {
                         <h4>
                             {comment?.user.firstName} {comment?.user.lastName}
                         </h4>
-                        <p>{comment?.content}</p>
+                        {comment?.content && (
+                            <div
+                                className={styles.text}
+                                dangerouslySetInnerHTML={{ __html: domPurify(comment.content) }}
+                            />
+                        )}
                         {currComment?.likeCount != undefined && currComment?.likeCount > 0 && (
                             <div className={styles.like}>
                                 <AiFillLike
@@ -94,8 +103,8 @@ export default function Comments({ comment }: Comments) {
                         </p>
                         <p
                             onClick={() => {
-                                setShowReplyInput(true);
-                                setShowReply(true);
+                                setShowReplyInput(!showReplyInput);
+                                setShowReply(!showReplyInput);
                             }}
                         >
                             Reply
@@ -113,7 +122,15 @@ export default function Comments({ comment }: Comments) {
                         )}
                         {showReply &&
                             currComment?.comments?.map((com) => {
-                                return <Reply c={com} />;
+                                if (com)
+                                    return (
+                                        <Reply
+                                            key={com.id}
+                                            c={com}
+                                            parentId={currComment?.id ? currComment.id : ""}
+                                            setCurrComment={setCurrComment}
+                                        />
+                                    );
                             })}
                         {showReplyInput && (
                             <div className={styles.commentInput}>
@@ -124,21 +141,19 @@ export default function Comments({ comment }: Comments) {
                                     />
                                 </div>
                                 <div className={styles.commentContainer}>
-                                    <textarea
-                                        value={commentContent}
-                                        onChange={(e) => {
-                                            setCommentContent(e.target.value);
-                                            e.target.style.height = "fit-content";
-                                            e.target.style.height = e.target.scrollHeight + "px";
-                                        }}
+                                    <RichText
+                                        key={reset}
+                                        setText={setCommentContent}
+                                        width={"31rem"}
+                                        overflow={"hidden"}
                                         placeholder={"Write a comment..."}
                                     />
                                     <div className={styles.commentFooter}>
                                         <IoSend
                                             size={"1rem"}
                                             onClick={() => handleReply()}
-                                            color={commentContent.length > 0 ? "blue" : ""}
-                                            disabled={commentContent.length == 0}
+                                            color={commentContent.length > 8 ? "blue" : ""}
+                                            disabled={commentContent.length == 8}
                                         />
                                     </div>
                                 </div>

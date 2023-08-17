@@ -30,7 +30,6 @@
             display: flex;
             flex-direction: column;
             text-align: start;
-            margin-left: 0.5rem;
 
             h2 {
                 margin: 0;
@@ -49,5 +48,12 @@
     .content {
         margin: 0;
         width: 100%;
+
+        h4 {
+            margin: 0.2rem;
+            margin-left: 1rem;
+            text-align: start;
+            font-weight: normal;
+        }
     }
 }

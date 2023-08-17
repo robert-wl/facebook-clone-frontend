@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 )
 
@@ -64,18 +65,15 @@ func (r *mutationResolver) RejectFriend(ctx context.Context, friend string) (*mo
 }
 
 // GetFriends is the resolver for the getFriends field.
-func (r *queryResolver) GetFriends(ctx context.Context, username string) ([]*model.User, error) {
-	var user *model.User
+func (r *queryResolver) GetFriends(ctx context.Context) ([]*model.User, error) {
 	var users []*model.User
 
-	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
-		return nil, err
-	}
+	userID := ctx.Value("UserID").(string)
 
 	subQuery := r.DB.
 		Model(&model.Friend{}).
-		Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", user.ID, user.ID, true).
-		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID)
+		Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", userID, userID, true).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID)
 
 	if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
 		return nil, err
@@ -104,7 +102,6 @@ func (r *queryResolver) GetFriendRequests(ctx context.Context) ([]*model.User, e
 
 // GetUserFriends is the resolver for the getUserFriends field.
 func (r *queryResolver) GetUserFriends(ctx context.Context, username string) ([]*model.User, error) {
-	var userIds []string
 	var user *model.User
 	var users []*model.User
 
@@ -112,15 +109,12 @@ func (r *queryResolver) GetUserFriends(ctx context.Context, username string) ([]
 		return nil, err
 	}
 
-	if err := r.DB.
+	subQuery := r.DB.
 		Model(&model.Friend{}).
-		Where("sender_id = ? OR receiver_id = ? AND accepted = ?", user.ID, user.ID, true).
-		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID).
-		Find(&userIds).Error; err != nil {
-		return nil, err
-	}
+		Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", user.ID, user.ID, true).
+		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID)
 
-	if err := r.DB.Find(&users, "id IN (?)", userIds).Error; err != nil {
+	if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
 		return nil, err
 	}
 

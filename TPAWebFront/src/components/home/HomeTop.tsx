@@ -7,6 +7,7 @@ import { AiOutlineShareAlt } from "react-icons/ai";
 import { BsClockHistory } from "react-icons/bs";
 import { BiSolidMessageRoundedDetail } from "react-icons/bi";
 import { Link } from "react-router-dom";
+import HomeTopReels from "./HomeTopReels.tsx";
 
 export default function HomeTop() {
     const [tab, setTab] = useState("stories");
@@ -36,10 +37,12 @@ export default function HomeTop() {
                     <>
                         <div className={styles.left}>
                             <div className={styles.story}>
-                                <img
-                                    src={auth?.profile ? auth.profile : "../src/assets/default-profile.jpg"}
-                                    alt={""}
-                                />
+                                <Link to={"/stories"}>
+                                    <img
+                                        src={auth?.profile ? auth.profile : "../src/assets/default-profile.jpg"}
+                                        alt={""}
+                                    />
+                                </Link>
                                 <div className={styles.create}>
                                     <h4>Create Story</h4>
                                     <Link to={"/stories/create"}>
@@ -67,7 +70,7 @@ export default function HomeTop() {
                         </div>
                     </>
                 ) : (
-                    <></>
+                    <HomeTopReels />
                 )}
             </div>
         </div>

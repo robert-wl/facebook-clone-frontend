@@ -76,6 +76,8 @@ extend type Query {
     getPosts(pagination: Pagination!): [Post] @auth
     getGroupPosts(groupId: ID!, pagination: Pagination!): [Post] @auth
     getCommentPost(postID: ID!): [Comment] @auth
+    getFilteredPosts(filter: String!, pagination: Pagination!): [Post] @auth
+    getGroupHomePosts(pagination: Pagination!): [Post] @auth
 }
 
 extend type Mutation {

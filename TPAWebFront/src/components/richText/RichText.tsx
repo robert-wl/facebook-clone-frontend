@@ -15,9 +15,14 @@ export interface MentionSuggestion {
 
 interface RichText {
     setText: Dispatch<SetStateAction<string>>;
+    placeholder: string;
+    height?: string;
+    width?: string;
+    overflow?: "hidden";
+    minHeight?: string;
 }
 
-export default function RichText({ setText }: RichText) {
+export default function RichText({ setText, height, width, overflow, minHeight, placeholder }: RichText) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [suggestion, setSuggestion] = useState<MentionSuggestion[]>([]);
     const { data } = useQuery(GET_USERS);
@@ -56,7 +61,25 @@ export default function RichText({ setText }: RichText) {
                 onEditorStateChange={(editorState) => setEditorState(editorState)}
                 editorClassName={styles.editor}
                 editorStyle={{
-                    height: "9rem",
+                    paddingLeft: "0",
+                    height: height ? height : "fit-content",
+                    margin: "0",
+                    padding: "0",
+                    width: width ? width : "100%",
+                    overflowY: overflow ? overflow : "auto",
+                    overflowWrap: "anywhere",
+                    resize: "vertical",
+                    minHeight: minHeight ? minHeight : "fit-content",
+                    zIndex: "20",
+                }}
+                placeholder={placeholder}
+                wrapperStyle={{
+                    margin: "0",
+                    padding: "0",
+                }}
+                toolbarStyle={{
+                    display: "none",
+                    backgroundColor: "transparent",
                 }}
                 toolbarClassName={styles.toolbar}
                 toolbar={{

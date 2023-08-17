@@ -156,11 +156,12 @@ export default function User() {
                     setModalState={setModalState}
                 />
             )}
-            <ShareModal
-                shareModalState={shareModalState}
-                setShareModalState={setShareModalState}
-                currPost={currPost}
-            />
+            {shareModalState && (
+                <ShareModal
+                    setShareModalState={setShareModalState}
+                    currPost={currPost}
+                />
+            )}
             {loading && <Loading />}
             <div
                 id={"page"}

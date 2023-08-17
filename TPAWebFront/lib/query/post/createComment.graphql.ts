@@ -11,6 +11,7 @@ export const CREATE_COMMENT = gql`
                 firstName
                 lastName
                 profile
+                username
             }
         }
     }

@@ -15,6 +15,8 @@ import errorHandler, { debouncedError } from "../../../controller/errorHandler.t
 import { CREATE_COMMENT } from "../../../lib/query/post/createComment.graphql.ts";
 import { LIKE_POST } from "../../../lib/query/post/likePost.graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
+import RichText from "../richText/RichText.tsx";
+import domPurify from "../../../controller/domPurify.ts";
 
 interface PostBox {
     post: Post;
@@ -36,6 +38,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
     const [createComment] = useMutation(CREATE_COMMENT);
     const [likePost] = useMutation(LIKE_POST);
     const [likeCount, setLikeCount] = useState(post?.likeCount ?? 0);
+    const [reset, setReset] = useState(0);
 
     const handleShowComment = () => {
         getCommentPost({
@@ -64,6 +67,8 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                 setComments([...comments, comment]);
             })
             .catch(debouncedError);
+
+        setReset(reset + 1);
     };
 
     useEffect(() => {
@@ -120,7 +125,10 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                     </div>
                 </header>
                 <div className={styles.content}>
-                    <div dangerouslySetInnerHTML={{ __html: post?.content }} />
+                    <div
+                        className={styles.text}
+                        dangerouslySetInnerHTML={{ __html: domPurify(post?.content) }}
+                    />
                     {post?.files && post?.files.length > 0 && <ImageCarousel files={post.files} />}
                     <div className={styles.stats}>
                         <div className={styles.left}>
@@ -184,21 +192,19 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                                 showBox={false}
                             />
                             <div className={styles.commentContainer}>
-                                <textarea
-                                    value={comment}
-                                    onChange={(e) => {
-                                        setComment(e.target.value);
-                                        e.target.style.height = "fit-content";
-                                        e.target.style.height = e.target.scrollHeight + "px";
-                                    }}
+                                <RichText
+                                    key={reset}
+                                    setText={setComment}
+                                    width={"100%"}
+                                    overflow={"hidden"}
                                     placeholder={"Write a comment..."}
                                 />
                                 <div className={styles.commentFooter}>
                                     <IoSend
                                         size={"1rem"}
                                         onClick={() => handleComment()}
-                                        color={comment.length > 0 ? "blue" : ""}
-                                        disabled={comment.length == 0}
+                                        color={comment.length > 8 ? "blue" : ""}
+                                        disabled={comment.length == 8}
                                     />
                                 </div>
                             </div>

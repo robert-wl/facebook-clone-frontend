@@ -2,12 +2,14 @@ import styles from "../../assets/styles/group/groupDetailSidebar.module.scss";
 import { Group } from "../../../gql/graphql.ts";
 import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
 import { Dispatch, SetStateAction, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_JOINED_GROUPS } from "../../../lib/query/group/getJoinedGroups.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { BsPersonPlus } from "react-icons/bs";
 import { MdPeopleOutline } from "react-icons/md";
+import { HiMiniHome } from "react-icons/hi2";
+import { FaCompass } from "react-icons/fa";
 
 interface GroupDetailSidebar {
     group: Group | undefined;
@@ -18,15 +20,45 @@ interface GroupDetailSidebar {
 
 export default function GroupDetailSidebar({ group, setInviteGroupModalState, setJoinRequestsModalState, setMembersModalState }: GroupDetailSidebar) {
     const [tab, setTab] = useState("browse");
+    const navigate = useNavigate();
     const { data } = useQuery(GET_JOINED_GROUPS, {
         fetchPolicy: "cache-and-network",
         onError: debouncedError,
     });
 
+    const handleTab = (nav: string) => {
+        setTab(nav);
+        navigate("/group");
+    };
+
     return (
         <>
             <div className={styles.barSpace} />
             <div className={styles.bar}>
+                <div className={styles.content}>
+                    <div
+                        className={styles.container}
+                        onClick={() => handleTab("feed")}
+                    >
+                        <div className={styles.logo}>
+                            <HiMiniHome size={"1.5rem"} />
+                        </div>
+                        <h4>Your Feed</h4>
+                    </div>
+                    <div
+                        className={styles.container}
+                        onClick={() => handleTab("discover")}
+                    >
+                        <div className={styles.logo}>
+                            <FaCompass size={"1.5rem"} />
+                        </div>
+                        <h4>Discover</h4>
+                    </div>
+                    <button>
+                        <Link to={"/group/create"}>+ Create new group</Link>
+                    </button>
+                    <hr />
+                </div>
                 <header>
                     <img
                         src={groupBackgroundLoader(group?.background)}
@@ -66,7 +98,10 @@ export default function GroupDetailSidebar({ group, setInviteGroupModalState, se
                             {data &&
                                 data.getJoinedGroups.map((group: Group) => {
                                     return (
-                                        <Link to={`/group/${group.id}`}>
+                                        <Link
+                                            to={`/group/${group.id}`}
+                                            key={group.id}
+                                        >
                                             <div className={styles.group}>
                                                 <img
                                                     src={groupBackgroundLoader(group.background)}

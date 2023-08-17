@@ -12,7 +12,7 @@ input FriendInput {
 }
 
 extend type Query {
-    getFriends(username: String!): [User] @auth
+    getFriends: [User] @auth
     getFriendRequests: [User] @auth
     getUserFriends(username: String!): [User] @auth
     getUserMutuals(username: String!): [User] @auth

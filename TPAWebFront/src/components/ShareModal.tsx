@@ -10,12 +10,11 @@ import { SHARE_POST } from "../../lib/query/post/sharePost.graphql.ts";
 import errorHandler from "../../controller/errorHandler.ts";
 
 interface ShareModal {
-    shareModalState: boolean;
     setShareModalState: Dispatch<SetStateAction<boolean>>;
     currPost: Post | null;
 }
 
-export default function ShareModal({ shareModalState, setShareModalState, currPost }: ShareModal) {
+export default function ShareModal({ setShareModalState, currPost }: ShareModal) {
     const [friends, setFriends] = useState<User[]>([]);
     const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
     const [sharePost] = useMutation(SHARE_POST);
@@ -32,6 +31,7 @@ export default function ShareModal({ shareModalState, setShareModalState, currPo
             setFriends(friends);
             setFilteredFriends(friends);
         }
+        console.log(data);
     }, [data]);
 
     const handleFilter = (filter: string) => {
@@ -56,50 +56,48 @@ export default function ShareModal({ shareModalState, setShareModalState, currPo
 
     return (
         <>
-            {shareModalState && (
-                <div className={styles.background}>
-                    <div className={styles.box}>
-                        <header>
-                            <h2>Send in Messenger</h2>
-                            <AiOutlineClose
-                                size={"1.5rem"}
-                                onClick={() => setShareModalState(false)}
-                            />
-                        </header>
-                        <hr />
-                        <div className={styles.content}>
-                            <AiOutlineSearch size={"1.2rem"} />
-                            <input
-                                type={"text"}
-                                placeholder={"Search friends..."}
-                                onChange={(e) => handleFilter(e.target.value)}
-                            />
-                        </div>
-                        <div className={styles.friendList}>
-                            {filteredFriends.map((user, index) => {
-                                return (
-                                    <div
-                                        key={index}
-                                        className={styles.friend}
-                                        onClick={() => handleShare(user.id)}
-                                    >
-                                        <div>
-                                            <img
-                                                src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
-                                                alt={"profile picture"}
-                                            />
-                                            <span>
-                                                {user.firstName} {user.lastName}
-                                            </span>
-                                        </div>
-                                        <MdOutlineArrowForwardIos />
+            <div className={styles.background}>
+                <div className={styles.box}>
+                    <header>
+                        <h2>Send in Messenger</h2>
+                        <AiOutlineClose
+                            size={"1.5rem"}
+                            onClick={() => setShareModalState(false)}
+                        />
+                    </header>
+                    <hr />
+                    <div className={styles.content}>
+                        <AiOutlineSearch size={"1.2rem"} />
+                        <input
+                            type={"text"}
+                            placeholder={"Search friends..."}
+                            onChange={(e) => handleFilter(e.target.value)}
+                        />
+                    </div>
+                    <div className={styles.friendList}>
+                        {filteredFriends.map((user, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    className={styles.friend}
+                                    onClick={() => handleShare(user.id)}
+                                >
+                                    <div>
+                                        <img
+                                            src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
+                                            alt={"profile picture"}
+                                        />
+                                        <span>
+                                            {user.firstName} {user.lastName}
+                                        </span>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                    <MdOutlineArrowForwardIos />
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
-            )}
+            </div>
         </>
     );
 }

@@ -1,8 +1,10 @@
 export default function cleanRichText(text: string) {
-    const aReplaced = text.replaceAll("<a ", "<Link ").replaceAll("</a>", "</Link>");
-    const hrefReplaced = aReplaced.replaceAll("href=", "to=");
-    const classReplaced = hrefReplaced.replaceAll("class=", "className=");
+    let cleaned = text;
+    while (cleaned.includes('href="#')) {
+        const hashtag = cleaned.substring(cleaned.indexOf('href="#') + 6, cleaned.indexOf('"', cleaned.indexOf('href="#') + 6));
+        const link = "/search/" + encodeURIComponent(hashtag);
+        cleaned = cleaned.replace(hashtag, link);
+    }
 
-    console.log(classReplaced);
-    return classReplaced;
+    return cleaned;
 }
