@@ -54,7 +54,7 @@
                     max-width: 50rem;
                     width: 60vw;
                     height: 50rem;
-                    background-color: white;
+                    background-color: var(--main-color);
                     box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
                     border-radius: 1rem;
 
@@ -83,7 +83,7 @@
                             height: 45rem;
                             background-color: pink;
                             border-radius: 0.5rem;
-                            border: 1px solid white;
+                            border: 1px solid var(--main-color);
 
                             img {
                                 width: 100%;

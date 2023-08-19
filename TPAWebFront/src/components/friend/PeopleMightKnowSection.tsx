@@ -10,7 +10,7 @@ import RecommendFriendBox from "./RecommendFriendBox.tsx";
 export default function PeopleMightKnowSection() {
     const [people, setPeople] = useState<User[]>([]);
     useQuery(GET_PEOPLE_MIGHT_KNOW, {
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         onError: debouncedError,
         onCompleted: (data) => {
             setPeople(data.getPeopleMightKnow);

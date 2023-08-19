@@ -72,7 +72,7 @@ func (r *queryResolver) GetFriends(ctx context.Context) ([]*model.User, error) {
 
 	subQuery := r.DB.
 		Model(&model.Friend{}).
-		Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", userID, userID, true).
+		Where("((sender_id = ? OR receiver_id = ?) AND accepted = ?)", userID, userID, true).
 		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID)
 
 	if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
@@ -111,7 +111,7 @@ func (r *queryResolver) GetUserFriends(ctx context.Context, username string) ([]
 
 	subQuery := r.DB.
 		Model(&model.Friend{}).
-		Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", user.ID, user.ID, true).
+		Where("((sender_id = ? OR receiver_id = ?) AND accepted = true)", user.ID, user.ID).
 		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID)
 
 	if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
@@ -143,7 +143,7 @@ func (r *queryResolver) GetUserMutuals(ctx context.Context, username string) ([]
 	userID := ctx.Value("UserID").(string)
 
 	if err := r.DB.Model(&model.Friend{}).
-		Where("sender_id = ? OR receiver_id = ? AND accepted = ?", userID, userID, true).
+		Where("(sender_id = ? OR receiver_id = ?) AND accepted = ?", userID, userID, true).
 		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&myFriendIDs).Error; err != nil {
 		return nil, err
 	}
@@ -162,13 +162,13 @@ func (r *queryResolver) GetPeopleMightKnow(ctx context.Context) ([]*model.User, 
 	userID := ctx.Value("UserID").(string)
 
 	if err := r.DB.Model(&model.Friend{}).
-		Where("sender_id = ? OR receiver_id = ? AND accepted = ?", userID, userID, true).
+		Where("(sender_id = ? OR receiver_id = ?) AND accepted = ?", userID, userID, true).
 		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&userIds).Error; err != nil {
 		return nil, err
 	}
 
 	if err := r.DB.Model(&model.Friend{}).
-		Where("sender_id IN (?) OR receiver_id IN (?) AND accepted = ?", userIds, userIds, true).
+		Where("(sender_id IN (?) OR receiver_id IN (?)) AND accepted = ?", userIds, userIds, true).
 		Select("DISTINCT CASE WHEN sender_id IN (?) THEN receiver_id ELSE sender_id END", userIds).Find(&userFriendIds).Error; err != nil {
 		return nil, err
 	}

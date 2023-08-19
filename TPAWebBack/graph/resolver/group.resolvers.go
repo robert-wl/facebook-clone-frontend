@@ -113,6 +113,10 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, group model.NewGroup
 		return nil, err
 	}
 
+	if group.Privacy != "public" {
+		return newGroup, nil
+	}
+
 	go func() {
 		var userIDs []string
 		var user *model.User
@@ -161,6 +165,8 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, group model.NewGroup
 
 // InviteToGroup is the resolver for the inviteToGroup field.
 func (r *mutationResolver) InviteToGroup(ctx context.Context, groupID string, userID string) (*model.Member, error) {
+	var user *model.User
+
 	member := &model.Member{
 		GroupID:   groupID,
 		UserID:    userID,
@@ -173,7 +179,26 @@ func (r *mutationResolver) InviteToGroup(ctx context.Context, groupID string, us
 		return nil, err
 	}
 
-	//TODO ADD NOTIFICATION
+	userIDCtx := ctx.Value("UserID").(string)
+
+	if err := r.DB.Find(&user, "id = ?", userIDCtx).Error; err != nil {
+		return nil, err
+	}
+
+	go func() {
+		newNotification := &model.NewNotification{
+			Message: fmt.Sprintf("%s %s invited you to join a group", user.FirstName, user.LastName),
+			UserID:  userID,
+			PostID:  nil,
+			ReelID:  nil,
+			StoryID: nil,
+			GroupID: &groupID,
+		}
+
+		if _, err := r.CreateNotification(ctx, *newNotification); err != nil {
+			return
+		}
+	}()
 
 	return member, nil
 }
@@ -267,9 +292,6 @@ func (r *mutationResolver) UploadFile(ctx context.Context, groupID string, file 
 			break
 		}
 
-		fmt.Println(fileCount)
-		fmt.Println(newFile.Name)
-
 		if fileCount == 0 {
 			break
 		}
@@ -277,7 +299,6 @@ func (r *mutationResolver) UploadFile(ctx context.Context, groupID string, file 
 		count++
 		split := strings.Split(file.Name, ".")
 
-		fmt.Println(split)
 		if len(split) >= 2 {
 			newFile.Name = strings.Join(split[:len(split)-1], "") + fmt.Sprintf(" (%d)", count) + "." + split[len(split)-1]
 		} else {
@@ -286,6 +307,12 @@ func (r *mutationResolver) UploadFile(ctx context.Context, groupID string, file 
 	}
 
 	if err := r.DB.Save(&newFile).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.
+		Preload("UploadedBy").
+		First(&newFile, "id = ?", newFile.ID).Error; err != nil {
 		return nil, err
 	}
 
@@ -363,6 +390,13 @@ func (r *mutationResolver) PromoteMember(ctx context.Context, groupID string, us
 func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, error) {
 	var group *model.Group
 
+	subQuery := r.DB.
+		Select("user_id").
+		Where("group_id = ?", id).
+		Table("members")
+
+	userID := ctx.Value("UserID").(string)
+
 	if err := r.DB.
 		Preload("Members").
 		Preload("Members.User").
@@ -371,7 +405,7 @@ func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, 
 		Preload("Files.UploadedBy").
 		Preload("Posts").
 		Preload("Posts.User").
-		Find(&group, "id = ? AND privacy = ?", id, "public").Error; err != nil {
+		Find(&group, "id = ? AND (privacy = ? or (privacy = ? AND ? IN (?)))", id, "public", "private", userID, subQuery).Error; err != nil {
 		return nil, err
 	}
 
@@ -432,7 +466,7 @@ func (r *queryResolver) GetJoinedGroups(ctx context.Context) ([]*model.Group, er
 
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.Model(&model.Member{}).Where("user_id = ?", userID).Select("group_id").Find(&groupIDs).Error; err != nil {
+	if err := r.DB.Model(&model.Member{}).Where("user_id = ? AND approved = ? AND requested = ?", userID, true, false).Select("group_id").Find(&groupIDs).Error; err != nil {
 		return nil, err
 	}
 

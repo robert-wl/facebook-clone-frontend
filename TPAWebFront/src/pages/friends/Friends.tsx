@@ -1,6 +1,6 @@
 import styles from "../../assets/styles/friends/friends.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar.tsx";
 import SidebarButton from "../../components/sidebar/SidebarButton.tsx";
 import { FaUserFriends } from "react-icons/fa";
@@ -10,21 +10,17 @@ import AllFriendsSection from "../../components/friend/AllFriendsSection.tsx";
 import { useQuery } from "@apollo/client";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { User } from "../../../gql/graphql.ts";
-import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import PeopleMightKnowSection from "../../components/friend/PeopleMightKnowSection.tsx";
-import { GET_USER_FRIENDS } from "../../../lib/query/friend/getUserFriends.graphql.ts";
+import { GET_FRIENDS } from "../../../lib/query/friend/getFriends.graphql.ts";
 
 export default function Friends() {
     const [friends, setFriends] = useState<User[]>([]);
-    const { auth } = useContext(AuthContext);
     const [tab, setTab] = useState("all");
-    useQuery(GET_USER_FRIENDS, {
-        variables: {
-            username: auth?.username,
-        },
+    useQuery(GET_FRIENDS, {
         onError: debouncedError,
+        fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
-            setFriends(data.getUserFriends);
+            setFriends(data.getFriends);
         },
     });
     return (
@@ -78,7 +74,11 @@ export default function Friends() {
                                 setFriends={setFriends}
                             />
                         )}
-                        {(tab == "all" || tab == "recommendation") && <PeopleMightKnowSection key={"peopleKnow"} />}
+                        {(tab == "all" || tab == "recommendation") && (
+                            <>
+                                <PeopleMightKnowSection key={"peopleKnow"} />
+                            </>
+                        )}
                         {(tab == "all" || tab == "friend") && (
                             <AllFriendsSection
                                 key={"allFriends"}

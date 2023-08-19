@@ -23,6 +23,7 @@ export default function UserPage({ pageRef }: UserPage) {
                 start: 0,
                 limit: 10,
             },
+            fetchPolicy: "cache-and-network",
         },
         onError: debouncedError,
         onCompleted: (data) => {
@@ -91,6 +92,7 @@ export default function UserPage({ pageRef }: UserPage) {
                 return (
                     <UserLoneBox
                         user={user}
+                        setUsers={setUserData}
                         key={index}
                     />
                 );

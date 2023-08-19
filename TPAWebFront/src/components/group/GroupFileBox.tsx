@@ -23,6 +23,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [uploadFile] = useMutation(UPLOAD_FILE);
     const [deleteFile] = useMutation(DELETE_FILE);
+    const [search, setSearch] = useState("");
     const [sort, setSort] = useState<"asc" | "desc">("asc");
     const [data, setData] = useState<GroupFile[] | null>(null);
     const [filteredData, setFilteredData] = useState<GroupFile[] | null>(null);
@@ -30,6 +31,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
         variables: {
             id: groupId,
         },
+        fetchPolicy: "cache-and-network",
     });
     const { auth } = useContext(AuthContext);
 
@@ -51,7 +53,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
 
         const url = await uploadStorage("groups", file);
 
-        uploadFile({
+        const dataRes = await uploadFile({
             variables: {
                 id: groupId,
                 file: {
@@ -61,6 +63,17 @@ export default function GroupFileBox({ group }: GroupFileBox) {
                 },
             },
         }).catch(debouncedError);
+
+        console.log(dataRes);
+        if (dataRes) {
+            setSearch("");
+            setData((prev) => {
+                return [dataRes.data.uploadFile, ...prev!];
+            });
+            setFilteredData((prev) => {
+                return [dataRes.data.uploadFile, ...prev!];
+            });
+        }
 
         setInputKey(inputKey + 1);
     };
@@ -95,6 +108,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
     };
 
     const handleSearch = (filter: string) => {
+        setSearch(filter);
         if (data) {
             const filtered = data.filter((file) => {
                 return file.name.toLowerCase().includes(filter.toLowerCase());
@@ -113,6 +127,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
                         <AiOutlineSearch size={"1rem"} />
                         <input
                             placeholder={"Search files"}
+                            value={search}
                             onChange={(e) => handleSearch(e.target.value)}
                         />
                     </div>

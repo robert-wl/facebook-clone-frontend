@@ -20,6 +20,7 @@ type Member {
     groupId: ID!
     user: User!
     approved: Boolean!
+    requested: Boolean!
     role: String!
 }
 

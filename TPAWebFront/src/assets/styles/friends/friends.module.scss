@@ -29,7 +29,10 @@
             width: calc(100% - 23rem);
             margin: 2rem 2rem 2rem 2rem;
 
-            h2 {
+            > h1 {
+                color: transparent;
+            }
+            > h2 {
                 color: var(--color);
             }
 

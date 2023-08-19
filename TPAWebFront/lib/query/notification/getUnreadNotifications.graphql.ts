@@ -6,6 +6,7 @@ export const GET_UNREAD_NOTIFICATIONS = gql`
             id
             message
             sender {
+                username
                 firstName
                 lastName
                 profile
@@ -13,6 +14,7 @@ export const GET_UNREAD_NOTIFICATIONS = gql`
             createdAt
             postId
             reelId
+            groupId
             storyId
         }
     }

@@ -2,7 +2,7 @@ import styles from "../../assets/styles/group/groupDetail.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
 import GroupDetailSidebar from "../../components/group/GroupDetailSidebar.tsx";
 import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_GROUP } from "../../../lib/query/group/getGroup.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
@@ -21,6 +21,8 @@ import { UPDATE_GROUP_BACKGROUND } from "../../../lib/query/group/updateGroupBac
 import GroupFileBox from "../../components/group/GroupFileBox.tsx";
 import JoinRequestsModal from "../../components/group/JoinRequestsModal.tsx";
 import MembersModal from "../../components/group/MembersModal.tsx";
+import GroupUser from "../../components/group/GroupUser.tsx";
+import { HANDLE_REQUEST } from "../../../lib/query/group/handleRequest.graphql.ts";
 
 export default function GroupDetail() {
     const [currPost, setCurrPost] = useState<Post | null>(null);
@@ -32,10 +34,11 @@ export default function GroupDetail() {
     const [group, setGroup] = useState<Group>({} as Group);
     const [tab, setTab] = useState("discussion");
     const [updateGroupBackground] = useMutation(UPDATE_GROUP_BACKGROUND);
+    const [handleRequest] = useMutation(HANDLE_REQUEST);
     const backgroundInputRef = useRef<HTMLInputElement>(null);
     const { auth } = useContext(AuthContext);
     const { groupId } = useParams();
-    const { data } = useQuery(GET_GROUP, {
+    const { data, refetch } = useQuery(GET_GROUP, {
         variables: {
             id: groupId,
         },
@@ -81,6 +84,17 @@ export default function GroupDetail() {
             }
         }
     };
+
+    const handleRequestJoin = async () => {
+        await handleRequest({
+            variables: {
+                id: group.id,
+            },
+        }).catch(debouncedError);
+        await refetch().catch(debouncedError);
+    };
+
+    if (group?.members?.length == 0) return <Navigate to={"/group"} />;
 
     return (
         <>
@@ -159,21 +173,24 @@ export default function GroupDetail() {
                                     <h2>{group?.name}</h2>
                                     {group?.joined == "joined" && (
                                         <button onClick={() => setInviteGroupModalState(true)}>
-                                            <h4>+ Invite</h4>
+                                            <h4>Leave Group</h4>
                                         </button>
                                     )}
                                     {group?.joined == "pending" && (
-                                        <button onClick={() => setInviteGroupModalState(true)}>
+                                        <button
+                                            onClick={() => setInviteGroupModalState(true)}
+                                            disabled={true}
+                                        >
                                             <h4>Requested</h4>
                                         </button>
                                     )}
                                     {group?.joined == "not accepted" && (
-                                        <button onClick={() => setInviteGroupModalState(true)}>
+                                        <button onClick={() => handleRequestJoin()}>
                                             <h4>Accept Invite</h4>
                                         </button>
                                     )}
                                     {group?.joined == "not joined" && (
-                                        <button onClick={() => setInviteGroupModalState(true)}>
+                                        <button onClick={() => handleRequestJoin()}>
                                             <h4>Request</h4>
                                         </button>
                                     )}
@@ -213,6 +230,14 @@ export default function GroupDetail() {
                             </div>
                         </header>
                         <article>
+                            {tab == "people" && (
+                                <>
+                                    <GroupUser
+                                        key={"groupUser rawrr"}
+                                        group={group}
+                                    />
+                                </>
+                            )}
                             {tab == "about" && (
                                 <div className={styles.about}>
                                     <div className={styles.aboutBox}>

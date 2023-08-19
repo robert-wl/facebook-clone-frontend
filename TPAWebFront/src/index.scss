@@ -16,7 +16,7 @@
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
 
-    --background-color: #e9ecf1;
+    --background-color: #f0f2f5;
     --main-color: white;
     --blue-color: rgb(0, 100, 254);
     --gray-color: rgb(200, 200, 200, 0.5);
@@ -101,11 +101,6 @@ button:hover {
     @include scrollbar;
 }
 
-.rdw-mention-link {
-    color: rgb(0, 100, 244);
-    background-color: rgba(24, 119, 242, 0.2);
-}
-
 .rdw-suggestion-dropdown * {
     color: var(--color);
     background-color: var(--background-color);
@@ -114,6 +109,13 @@ button:hover {
 
     @include scrollbar;
 }
+
+.rdw-mention-link {
+    color: rgb(0, 100, 244);
+    background-color: rgba(24, 119, 242, 0.2);
+}
+
+
 
 .rdw-suggestion-option-active {
     background-color: var(--blue-light-button);

@@ -26,7 +26,7 @@ interface PostBox {
     setShareModalState: Dispatch<SetStateAction<boolean>>;
     setPostList?: Dispatch<SetStateAction<Post[]>>;
     setGroup?: Dispatch<SetStateAction<Group>>;
-    isAdmin: boolean;
+    isAdmin?: boolean;
 }
 
 export default function PostBox({ post: postN, setCurrPost, setShareModalState, setPostList, setGroup, isAdmin }: PostBox) {

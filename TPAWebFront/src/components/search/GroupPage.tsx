@@ -24,6 +24,7 @@ export default function GroupPage({ pageRef }: GroupPage) {
                 limit: 10,
             },
         },
+        fetchPolicy: "cache-and-network",
         onError: debouncedError,
         onCompleted: (data) => {
             const result = data.getFilteredGroups;
@@ -93,6 +94,7 @@ export default function GroupPage({ pageRef }: GroupPage) {
                 return (
                     <GroupLoneBox
                         group={group}
+                        setGroupData={setGroupData}
                         key={index}
                     />
                 );

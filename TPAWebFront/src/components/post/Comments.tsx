@@ -13,6 +13,7 @@ import { AuthContext } from "../context/AuthContextProvider.tsx";
 import RichText from "../richText/RichText.tsx";
 import domPurify from "../../../controller/domPurify.ts";
 import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { Link } from "react-router-dom";
 
 interface Comments {
     comment: Comment | Maybe<Comment>;
@@ -69,10 +70,31 @@ export default function Comments({ comment }: Comments) {
         <div className={styles.container}>
             <div className={styles.top}>
                 <div className={styles.image}>
-                    <img
-                        src={userProfileLoader(comment?.user.profile)}
-                        alt={""}
-                    />
+                    <Link to={"/user/" + comment?.user?.username}>
+                        <img
+                            src={userProfileLoader(comment?.user.profile)}
+                            alt={""}
+                        />
+                    </Link>
+                    <div className={styles.profile}>
+                        <div className={styles.content}>
+                            <Link to={"/user/" + comment?.user?.username}>
+                                <img
+                                    src={userProfileLoader(comment?.user?.profile)}
+                                    alt={""}
+                                />
+                            </Link>
+                            <div className={styles.bio}>
+                                <h4>
+                                    {comment?.user?.firstName} {comment?.user?.lastName}
+                                </h4>
+                                <p>{comment?.user?.username}</p>
+                                <p>{comment?.user?.gender}</p>
+                                <p>{comment?.user?.email}</p>
+                                <p>{new Date(comment?.user?.dob).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className={styles.content}>
                     <div className={styles.contentBox}>

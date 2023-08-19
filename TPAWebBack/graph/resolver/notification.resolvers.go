@@ -43,10 +43,12 @@ func (r *mutationResolver) GetUnreadNotifications(ctx context.Context) ([]*model
 	userID := ctx.Value("UserID").(string)
 
 	if err := r.DB.
+		Order("created_at DESC").
 		Preload("Sender").
 		Find(&notifications, "user_id = ? AND seen = false", userID).Error; err != nil {
 		return nil, err
 	}
+
 	go func() {
 		for _, notification := range notifications {
 
@@ -66,6 +68,7 @@ func (r *queryResolver) GetNotifications(ctx context.Context) ([]*model.Notifica
 	userID := ctx.Value("UserID").(string)
 
 	if err := r.DB.
+		Order("created_at DESC").
 		Preload("Sender").
 		Find(&notifications, "user_id = ?", userID).Error; err != nil {
 		return nil, err

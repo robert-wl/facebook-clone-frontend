@@ -7,6 +7,7 @@ import { useMutation } from "@apollo/client";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { ADD_FRIEND } from "../../../lib/query/friend/addFriend.graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 interface RecommendFriendBox {
     friend: User;
@@ -46,7 +47,7 @@ export default function RecommendFriendBox({ friend, setFriends }: RecommendFrie
             <header>
                 <Link to={"/user/" + friend.username}>
                     <img
-                        src={friend.profile ? friend.profile : "../src/assets/default-profile.jpg"}
+                        src={userProfileLoader(friend.profile)}
                         alt={""}
                     />
                 </Link>

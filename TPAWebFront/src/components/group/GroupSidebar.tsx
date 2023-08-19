@@ -19,6 +19,7 @@ interface GroupSidebar {
 
 export default function GroupSidebar({ handleFilter, redirect, currentTab, setCurrentTab }: GroupSidebar) {
     const { data } = useQuery(GET_JOINED_GROUPS, {
+        fetchPolicy: "cache-and-network",
         onError: debouncedError,
     });
     const nav = useNavigate();

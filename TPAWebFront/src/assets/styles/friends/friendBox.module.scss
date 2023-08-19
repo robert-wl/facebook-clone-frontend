@@ -4,6 +4,7 @@
     height: 21rem;
     border-radius: 0.5rem;
     margin-top: -0.5rem;
+    color: var(--color);
     box-shadow: var(--box-shadow-very-light);
 
     header {
@@ -58,11 +59,12 @@
 
 
 .recommendFriendBox {
-    background-color: var(--background-color);
+    background-color: var(--main-color);
     width: 12.5rem;
     height: 21rem;
     border-radius: 0.5rem;
     margin-top: -0.5rem;
+    color: var(--color);
     box-shadow: var(--box-shadow-very-light);
 
     header {

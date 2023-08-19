@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -162,7 +161,6 @@ func (r *subscriptionResolver) ViewConversation(ctx context.Context, conversatio
 	var message []*model.Message
 
 	if err := r.DB.First(&model.Conversation{}, "id = ?", conversationID).Error; err != nil {
-
 		close(channel)
 		return nil, err
 	}
@@ -176,8 +174,6 @@ func (r *subscriptionResolver) ViewConversation(ctx context.Context, conversatio
 		close(channel)
 		return nil, err
 	}
-
-	fmt.Println(message)
 
 	go func() {
 		for {

@@ -154,6 +154,14 @@ function App() {
                 }
             />
             <Route
+                path="/reels/:reelId"
+                element={
+                    <AuthenticatedProtector>
+                        <Reels />
+                    </AuthenticatedProtector>
+                }
+            />
+            <Route
                 path="/group"
                 element={
                     <AuthenticatedProtector>

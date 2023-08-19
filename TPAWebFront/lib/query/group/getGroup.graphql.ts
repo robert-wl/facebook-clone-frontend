@@ -43,6 +43,7 @@ export const GET_GROUP = gql`
                     profile
                 }
                 approved
+                requested
                 role
             }
             memberCount

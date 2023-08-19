@@ -79,7 +79,7 @@ export default function NewGroupPostModal({ modalState, setModalState, setGroup 
 
     return (
         <div className={styles.background}>
-            <div className={files.length == 0 ? styles.box : styles.boxImage}>
+            <div className={styles.box}>
                 <header>
                     <h2>Create Group Post</h2>
                     <div

@@ -103,7 +103,7 @@ export default function Search() {
                         )}
                         {tab == "groups" && (
                             <GroupPage
-                                key={searchQuery + "groups"}
+                                key={searchQuery + "groups" + tab}
                                 pageRef={pageRef}
                             />
                         )}

@@ -11,13 +11,13 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	background-color: white;
+	background-color: var(--main-color);
 	width: 20rem;
 	height: 100vh;
 	overflow: hidden;
 	margin-top: -0.5rem;
-	box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
-	color: black;
+	box-shadow: var(--box-shadow-very-light);
+	color: var(--color);
 
 	header {
 		margin: 0.5rem 1rem;
@@ -46,8 +46,8 @@
 		margin-left: 1rem;
 
 		img {
-			width: 4rem;
-			height: 4rem;
+			width: 3rem;
+			height: 3rem;
 			border-radius: 50%;
 			margin: 0.5rem;
 		}
@@ -158,7 +158,7 @@
 	.contentImage {
 		margin: 0;
 		width: 100%;
-		height: 78%;
+		height: 80%;
 		display: flex;
 		flex-direction: column-reverse;
 
@@ -184,6 +184,15 @@
 					background-color: #1877f2;
 					border: 1px solid transparent;
 					color: white;
+				}
+
+				&:disabled {
+					background-color: var(--button-color);
+					color: var(--color);
+
+					&:hover {
+						cursor: not-allowed;
+					}
 				}
 			}
 		}

@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction, useContext } from "react";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import ColorButton from "../stories/ColorButton.tsx";
 import { Content } from "../../pages/story/CreateStory.tsx";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 interface Sidebar {
     title: string;
@@ -11,8 +12,9 @@ interface Sidebar {
     tab: string;
     setTab: Dispatch<SetStateAction<string>>;
     handleSubmit: () => void;
+    loading: boolean;
 }
-export default function StorySidebar({ title, content, setContent, tab, setTab, handleSubmit }: Sidebar) {
+export default function StorySidebar({ title, content, setContent, tab, setTab, handleSubmit, loading }: Sidebar) {
     const { auth } = useContext(AuthContext);
 
     return (
@@ -26,7 +28,7 @@ export default function StorySidebar({ title, content, setContent, tab, setTab, 
                 </header>
                 <div className={styles.profile}>
                     <img
-                        src={auth?.profile ?? ""}
+                        src={userProfileLoader(auth?.profile)}
                         alt={""}
                     />
                     <h3>{auth?.username}</h3>
@@ -86,12 +88,13 @@ export default function StorySidebar({ title, content, setContent, tab, setTab, 
                             <div className={styles.buttons}>
                                 <button onClick={() => setTab("create")}>Cancel</button>
                                 <button
+                                    disabled={loading}
                                     onClick={() => {
                                         setTab("image");
                                         handleSubmit();
                                     }}
                                 >
-                                    Post
+                                    {loading ? "Posting..." : "Post"}
                                 </button>
                             </div>
                         </footer>

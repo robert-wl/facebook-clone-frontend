@@ -9,6 +9,7 @@ import { MdOutlineArrowForwardIos } from "react-icons/md";
 import { GET_GROUP_INVITE } from "../../../lib/query/group/getGroupInvite.graphql.ts";
 import { useParams } from "react-router-dom";
 import { INVITE_TO_GROUP } from "../../../lib/query/group/inviteToGroup.graphql.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 interface InviteGroupModal {
     inviteModalState: boolean;
@@ -53,6 +54,7 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
         })
             .then(() => console.log("hai"))
             .catch(debouncedError);
+        setInviteModalState(false);
     };
 
     return (
@@ -86,7 +88,7 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
                                     >
                                         <div>
                                             <img
-                                                src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
+                                                src={userProfileLoader(user.profile)}
                                                 alt={"profile picture"}
                                             />
                                             <span>

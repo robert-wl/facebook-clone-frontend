@@ -10,6 +10,8 @@ import RichText from "../richText/RichText.tsx";
 import { IoSend } from "react-icons/io5";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { CREATE_COMMENT } from "../../../lib/query/post/createComment.graphql.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { Link } from "react-router-dom";
 
 interface Reply {
     c: Comment | Maybe<Comment>;
@@ -77,10 +79,31 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
         <div className={styles.container}>
             <div className={styles.top}>
                 <div className={styles.image}>
-                    <img
-                        src={comment?.user.profile ? comment.user.profile : "../src/assets/default-profile.jpg"}
-                        alt={""}
-                    />
+                    <Link to={"/user/" + comment?.user?.username}>
+                        <img
+                            src={userProfileLoader(comment?.user.profile)}
+                            alt={""}
+                        />
+                    </Link>
+                    <div className={styles.profile}>
+                        <div className={styles.content}>
+                            <Link to={"/user/" + comment?.user?.username}>
+                                <img
+                                    src={userProfileLoader(comment?.user?.profile)}
+                                    alt={""}
+                                />
+                            </Link>
+                            <div className={styles.bio}>
+                                <h4>
+                                    {comment?.user?.firstName} {comment?.user?.lastName}
+                                </h4>
+                                <p>{comment?.user?.username}</p>
+                                <p>{comment?.user?.gender}</p>
+                                <p>{comment?.user?.email}</p>
+                                <p>{new Date(comment?.user?.dob).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className={styles.content}>
                     <div className={styles.contentBox}>

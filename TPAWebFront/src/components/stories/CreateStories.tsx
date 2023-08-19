@@ -32,6 +32,7 @@ export default function CreateStories({ setTab, handleImage }: CreateStories) {
                                 type={"file"}
                                 hidden={true}
                                 onChange={handleImage}
+                                accept={"image/*"}
                             />
                         </div>
                     </div>

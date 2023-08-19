@@ -14,10 +14,11 @@ import statsConverter from "../../../controller/statsConverter.ts";
 import { LIKE_REEL } from "../../../lib/query/reels/likeReel.graphql.ts";
 import ReelCommentSidebar from "../../components/reels/ReelCommentSidebar.tsx";
 import { MdOutlineVideoLibrary } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 export default function Reels() {
+    const { reelId } = useParams();
     const [reels, setReels] = useState<string[]>([]);
     const [reelData, setReelData] = useState<Reel | null>();
     const [index, setIndex] = useState(0);
@@ -39,9 +40,24 @@ export default function Reels() {
                     const { data } = result;
                     setReelData(data.getReel);
                 })
-                .catch(debouncedError);
+                .catch(() => {
+                    setReels((prev) => {
+                        return prev.filter((reel) => {
+                            return reel != reels[index];
+                        });
+                    });
+                    setIndex((prev) => prev + 1);
+                });
         } else if (data && reels.length == 0) {
-            setReels(data.getReels);
+            if (reelId) {
+                const filteredReels = data.getReels.filter((reel: Reel) => {
+                    return reel.id != reelId;
+                });
+                const reelList: string[] = [reelId, ...filteredReels];
+                setReels(reelList);
+            } else {
+                setReels(data.getReels);
+            }
         }
     }, [index, data, reels]);
 

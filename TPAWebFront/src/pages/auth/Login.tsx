@@ -48,10 +48,7 @@ export default function Login() {
 
     return (
         <div className={styles.page}>
-            <img
-                src="https://static.xx.fbcdn.net/rsrc.php/y8/r/dF5SId3UHWd.svg"
-                alt=""
-            />
+            <h5>FaREbook</h5>
             <div className={styles.loginBox}>
                 <p>Log in to Facebook</p>
                 <form className={styles.inputBox}>

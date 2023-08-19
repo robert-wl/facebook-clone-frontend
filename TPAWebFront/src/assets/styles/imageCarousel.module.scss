@@ -40,6 +40,8 @@
         img {
             height: 30rem;
             width: 100%;
+            z-index: 0;
+            position: relative;
             object-fit: contain;
             user-select: none;
         }

@@ -23,7 +23,11 @@ export default function AllPage({ setTab, setCurrPost, setShareModalState, pageR
     const [anyGroupResult, setAnyGroupResult] = useState(true);
     const [anyUserResult, setAnyUserResult] = useState(true);
     let start = 0;
-    const { loading, refetch: getPosts } = useQuery(GET_FILTERED_POSTS, {
+    const {
+        data,
+        loading,
+        refetch: getPosts,
+    } = useQuery(GET_FILTERED_POSTS, {
         variables: {
             filter: searchQuery ? searchQuery : "",
             pagination: {
@@ -31,14 +35,19 @@ export default function AllPage({ setTab, setCurrPost, setShareModalState, pageR
                 limit: 4,
             },
         },
-        onCompleted: (data) => {
+        fetchPolicy: "cache-and-network",
+        onError: debouncedError,
+    });
+
+    useEffect(() => {
+        if (data) {
             const result = data.getFilteredPosts;
+            if (result == postData) return;
 
             if (result.length < 4) setStop(true);
             setPostData([...postData, ...result]);
-        },
-        onError: debouncedError,
-    });
+        }
+    }, [data]);
 
     const handleFetch = () => {
         getPosts({
@@ -88,11 +97,13 @@ export default function AllPage({ setTab, setCurrPost, setShareModalState, pageR
     return (
         <div className={styles.search}>
             <GroupSearch
+                key={searchQuery + "group"}
                 filter={searchQuery ? searchQuery : ""}
                 setTab={setTab}
                 setAnyGroupResult={setAnyGroupResult}
             />
             <UserSearch
+                key={searchQuery + "user"}
                 filter={searchQuery ? searchQuery : ""}
                 setTab={setTab}
                 setAnyUserResult={setAnyUserResult}

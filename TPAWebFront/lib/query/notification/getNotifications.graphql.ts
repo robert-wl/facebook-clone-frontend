@@ -14,6 +14,7 @@ export const GET_NOTIFICATIONS = gql`
             createdAt
             postId
             reelId
+            groupId
             storyId
         }
     }

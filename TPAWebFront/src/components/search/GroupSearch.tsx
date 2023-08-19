@@ -22,12 +22,14 @@ export default function GroupSearch({ filter, setTab, setAnyGroupResult }: Group
                 limit: 4,
             },
         },
+        fetchPolicy: "cache-and-network",
         onError: debouncedError,
         onCompleted: (data) => {
             setGroupData(data.getFilteredGroups);
         },
     });
 
+    console.log(groupData);
     if (loading)
         return (
             <>
@@ -50,6 +52,7 @@ export default function GroupSearch({ filter, setTab, setAnyGroupResult }: Group
                     return (
                         <GroupBox
                             group={group}
+                            setGroupData={setGroupData}
                             key={group.id}
                         />
                     );

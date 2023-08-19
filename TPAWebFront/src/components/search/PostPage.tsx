@@ -27,6 +27,7 @@ export default function PostPage({ setCurrPost, setShareModalState, pageRef, sea
                 limit: 4,
             },
         },
+        fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
             const result = data.getFilteredPosts;
 

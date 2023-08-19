@@ -18,7 +18,7 @@ export default function FriendRequestSection({ setFriends }: FriendRequestSectio
     const [acceptFriend] = useMutation(ACCEPT_FRIEND);
     const [rejectFriend] = useMutation(REJECT_FRIEND);
     useQuery(GET_FRIEND_REQUESTS, {
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         onError: debouncedError,
         onCompleted: (data) => {
             setRequests(data.getFriendRequests);

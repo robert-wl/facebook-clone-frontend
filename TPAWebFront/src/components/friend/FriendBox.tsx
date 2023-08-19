@@ -1,6 +1,7 @@
 import styles from "../../assets/styles/friends/friendBox.module.scss";
 import { Link } from "react-router-dom";
 import { User } from "../../../gql/graphql.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 interface FriendBox {
     friend: User;
@@ -14,7 +15,7 @@ export default function FriendBox({ friend, handleAccept, handleDeny }: FriendBo
             <header>
                 <Link to={"/user/" + friend.username}>
                     <img
-                        src={friend.profile ? friend.profile : "../src/assets/default-profile.jpg"}
+                        src={userProfileLoader(friend.profile)}
                         alt={""}
                     />
                 </Link>

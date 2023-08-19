@@ -33,9 +33,10 @@ export default function CreateStory() {
     const [createTextStory] = useMutation(CREATE_TEXT_STORY);
     const [createImageStory] = useMutation(CREATE_IMAGE_STORY);
     const [friends, setFriends] = useState<User[]>([]);
+    const [loading, setLoading] = useState(false);
     const { auth } = useContext(AuthContext);
 
-    useQuery(GET_USER_WITH_STORIES, {
+    const { refetch } = useQuery(GET_USER_WITH_STORIES, {
         onCompleted: (data) => {
             console.log(data);
             setFriends(Array.from(new Set(data.getUserWithStories)));
@@ -46,12 +47,18 @@ export default function CreateStory() {
     const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const file = e.target.files[0];
+
+            if (file.type != "image/png" && file.type != "image/jpeg") {
+                return; //TODO ADD TOAST
+            }
+
             setImage(file);
             setTab("image");
         }
     };
 
     const handleSubmit = async () => {
+        setLoading(true);
         if (tab == "text") {
             createTextStory({
                 variables: {
@@ -63,7 +70,9 @@ export default function CreateStory() {
                 },
             })
                 .then(() => {
+                    setLoading(false);
                     setTab("create");
+                    refetch();
                 })
                 .catch(errorHandler);
         } else if (tab == "image") {
@@ -77,8 +86,9 @@ export default function CreateStory() {
                     },
                 })
                     .then(() => {
-                        console.log("udah");
+                        setLoading(false);
                         setTab("create");
+                        refetch();
                     })
                     .catch(errorHandler);
             }
@@ -171,6 +181,7 @@ export default function CreateStory() {
                                 tab={tab}
                                 setTab={setTab}
                                 handleSubmit={handleSubmit}
+                                loading={loading}
                             />
                             <div className={styles.content}>
                                 <div className={styles.container}>
@@ -202,6 +213,7 @@ export default function CreateStory() {
                                 tab={tab}
                                 setTab={setTab}
                                 handleSubmit={handleSubmit}
+                                loading={loading}
                             />
                             <div className={styles.content}>
                                 <div className={styles.container}>

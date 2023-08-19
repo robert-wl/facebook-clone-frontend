@@ -11,6 +11,7 @@ export const GET_USER_FRIENDS = gql`
             dob
             gender
             active
+            profile
         }
     }
 `;

@@ -49,7 +49,7 @@ export default function AuthContextProvider({ children }: { children: JSX.Elemen
                 document.documentElement.style.setProperty("--modal-background-color", "rgb(020, 020, 020, 0.8)");
             } else {
                 document.documentElement.style.setProperty("--main-color", "white");
-                document.documentElement.style.setProperty("--background-color", "#e9ecf1");
+                document.documentElement.style.setProperty("--background-color", "#f0f2f5");
                 document.documentElement.style.setProperty("--color", "black");
                 document.documentElement.style.setProperty("--modal-background-color", "rgba(255, 255, 255, 0.8)");
             }

@@ -22,6 +22,7 @@ export default function UserSearch({ filter, setTab, setAnyUserResult }: UserSea
                 limit: 4,
             },
         },
+        fetchPolicy: "cache-and-network",
         onError: debouncedError,
         onCompleted: (data) => {
             setUserData(data.getFilteredUsers);
@@ -52,6 +53,7 @@ export default function UserSearch({ filter, setTab, setAnyUserResult }: UserSea
                         <UserBox
                             user={user}
                             key={user.id}
+                            setUsers={setUserData}
                         />
                     );
                 })}

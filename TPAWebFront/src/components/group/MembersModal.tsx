@@ -8,6 +8,9 @@ import { useMutation } from "@apollo/client";
 import { PROMOTE_MEMBER } from "../../../lib/query/group/promoteMember.graphql.ts";
 import { useParams } from "react-router-dom";
 import { debouncedError } from "../../../controller/errorHandler.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { RiAdminLine } from "react-icons/ri";
+import { KICK_MEMBER } from "../../../lib/query/group/kickMember.graphql.ts";
 
 interface MembersModal {
     members: Member[] | undefined;
@@ -17,7 +20,7 @@ export default function MembersModal({ members, setMembersModalState }: MembersM
     const [membersList, setMembersList] = useState<Member[]>([]);
     const { groupId } = useParams();
     const [promoteMember] = useMutation(PROMOTE_MEMBER);
-    const [kickMember] = useMutation(PROMOTE_MEMBER);
+    const [kickMember] = useMutation(KICK_MEMBER);
 
     useEffect(() => {
         if (members) setMembersList(members);
@@ -88,7 +91,7 @@ export default function MembersModal({ members, setMembersModalState }: MembersM
                                     >
                                         <div>
                                             <img
-                                                src={member.user.profile ? member.user.profile : "../src/assets/default-profile.jpg"}
+                                                src={userProfileLoader(member.user.profile)}
                                                 alt={"profile picture"}
                                             />
                                             <div className={styles.profile}>
@@ -99,7 +102,7 @@ export default function MembersModal({ members, setMembersModalState }: MembersM
                                             </div>
                                         </div>
                                         <div className={styles.icons}>
-                                            {member.role.toLowerCase() == "member" && (
+                                            {member.role.toLowerCase() == "member" && member.approved && !member.requested && (
                                                 <>
                                                     <GrUserAdmin
                                                         size={"1.2rem"}
@@ -125,7 +128,7 @@ export default function MembersModal({ members, setMembersModalState }: MembersM
                                     >
                                         <div>
                                             <img
-                                                src={member.user.profile ? member.user.profile : "../src/assets/default-profile.jpg"}
+                                                src={userProfileLoader(member.user.profile)}
                                                 alt={"profile picture"}
                                             />
                                             <div className={styles.profile}>
@@ -138,7 +141,7 @@ export default function MembersModal({ members, setMembersModalState }: MembersM
                                         <div className={styles.icons}>
                                             {member.role.toLowerCase() == "member" && (
                                                 <>
-                                                    <GrUserAdmin
+                                                    <RiAdminLine
                                                         size={"1.2rem"}
                                                         onClick={() => handlePromote(member)}
                                                     />

@@ -206,6 +206,15 @@
             //width: 4.5rem;
             height: 2.1rem;
             padding: 0.1rem 1.25rem;
+
+            &:disabled {
+                background-color: var(--button-color);
+                color: var(--color);
+
+                &:hover {
+                    cursor: not-allowed;
+                }
+            }
         }
     }
 }
@@ -236,7 +245,7 @@
             margin: 1rem;
             width: calc(100% - 2rem);
             outline: none;
-            background-color: var(--gray-text-color);
+            background-color: lightgray;
             border: none;
             font-weight: bolder;
             border-radius: var(--border-radius);
@@ -304,6 +313,15 @@
             width: 8rem;
             height: 2.1rem;
             padding: 0.1rem 1.25rem;
+
+            &:disabled {
+                background-color: var(--button-color);
+                color: var(--color);
+
+                &:hover {
+                    cursor: not-allowed;
+                }
+            }
         }
     }
 }
@@ -367,6 +385,15 @@
             width: 8rem;
             height: 2.1rem;
             padding: 0.1rem 1.25rem;
+
+            &:disabled {
+                background-color: var(--button-color);
+                color: var(--color);
+
+                &:hover {
+                    cursor: not-allowed;
+                }
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 import styles from "../../assets/styles/friends/userFriendBox.module.scss";
 import { Link } from "react-router-dom";
 import { User } from "../../../gql/graphql.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 interface UserFriendBox {
     friend: User;
@@ -14,7 +15,7 @@ export default function UserFriendBox({ username, friend }: UserFriendBox) {
                     <header>
                         <Link to={"/user/" + friend.username}>
                             <img
-                                src={friend.profile ? friend.profile : "../src/assets/default-profile.jpg"}
+                                src={userProfileLoader(friend.profile)}
                                 alt={""}
                             />
                         </Link>
@@ -31,7 +32,7 @@ export default function UserFriendBox({ username, friend }: UserFriendBox) {
                     <header>
                         <Link to={"/user/" + friend.username}>
                             <img
-                                src={friend.profile ? friend.profile : "../src/assets/default-profile.jpg"}
+                                src={userProfileLoader(friend.profile)}
                                 alt={""}
                             />
                         </Link>

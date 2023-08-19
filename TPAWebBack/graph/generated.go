@@ -124,10 +124,11 @@ type ComplexityRoot struct {
 	}
 
 	Member struct {
-		Approved func(childComplexity int) int
-		GroupID  func(childComplexity int) int
-		Role     func(childComplexity int) int
-		User     func(childComplexity int) int
+		Approved  func(childComplexity int) int
+		GroupID   func(childComplexity int) int
+		Requested func(childComplexity int) int
+		Role      func(childComplexity int) int
+		User      func(childComplexity int) int
 	}
 
 	Message struct {
@@ -780,6 +781,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Member.GroupID(childComplexity), true
+
+	case "Member.requested":
+		if e.complexity.Member.Requested == nil {
+			break
+		}
+
+		return e.complexity.Member.Requested(childComplexity), true
 
 	case "Member.role":
 		if e.complexity.Member.Role == nil {
@@ -5116,6 +5124,8 @@ func (ec *executionContext) fieldContext_Group_members(ctx context.Context, fiel
 				return ec.fieldContext_Member_user(ctx, field)
 			case "approved":
 				return ec.fieldContext_Member_approved(ctx, field)
+			case "requested":
+				return ec.fieldContext_Member_requested(ctx, field)
 			case "role":
 				return ec.fieldContext_Member_role(ctx, field)
 			}
@@ -5982,6 +5992,50 @@ func (ec *executionContext) _Member_approved(ctx context.Context, field graphql.
 }
 
 func (ec *executionContext) fieldContext_Member_approved(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Member",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Member_requested(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Member_requested(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Requested, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Member_requested(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Member",
 		Field:      field,
@@ -7529,6 +7583,8 @@ func (ec *executionContext) fieldContext_Mutation_inviteToGroup(ctx context.Cont
 				return ec.fieldContext_Member_user(ctx, field)
 			case "approved":
 				return ec.fieldContext_Member_approved(ctx, field)
+			case "requested":
+				return ec.fieldContext_Member_requested(ctx, field)
 			case "role":
 				return ec.fieldContext_Member_role(ctx, field)
 			}
@@ -7614,6 +7670,8 @@ func (ec *executionContext) fieldContext_Mutation_handleRequest(ctx context.Cont
 				return ec.fieldContext_Member_user(ctx, field)
 			case "approved":
 				return ec.fieldContext_Member_approved(ctx, field)
+			case "requested":
+				return ec.fieldContext_Member_requested(ctx, field)
 			case "role":
 				return ec.fieldContext_Member_role(ctx, field)
 			}
@@ -7965,6 +8023,8 @@ func (ec *executionContext) fieldContext_Mutation_approveMember(ctx context.Cont
 				return ec.fieldContext_Member_user(ctx, field)
 			case "approved":
 				return ec.fieldContext_Member_approved(ctx, field)
+			case "requested":
+				return ec.fieldContext_Member_requested(ctx, field)
 			case "role":
 				return ec.fieldContext_Member_role(ctx, field)
 			}
@@ -8050,6 +8110,8 @@ func (ec *executionContext) fieldContext_Mutation_denyMember(ctx context.Context
 				return ec.fieldContext_Member_user(ctx, field)
 			case "approved":
 				return ec.fieldContext_Member_approved(ctx, field)
+			case "requested":
+				return ec.fieldContext_Member_requested(ctx, field)
 			case "role":
 				return ec.fieldContext_Member_role(ctx, field)
 			}
@@ -8279,6 +8341,8 @@ func (ec *executionContext) fieldContext_Mutation_promoteMember(ctx context.Cont
 				return ec.fieldContext_Member_user(ctx, field)
 			case "approved":
 				return ec.fieldContext_Member_approved(ctx, field)
+			case "requested":
+				return ec.fieldContext_Member_requested(ctx, field)
 			case "role":
 				return ec.fieldContext_Member_role(ctx, field)
 			}
@@ -12829,6 +12893,8 @@ func (ec *executionContext) fieldContext_Query_getJoinRequests(ctx context.Conte
 				return ec.fieldContext_Member_user(ctx, field)
 			case "approved":
 				return ec.fieldContext_Member_approved(ctx, field)
+			case "requested":
+				return ec.fieldContext_Member_requested(ctx, field)
 			case "role":
 				return ec.fieldContext_Member_role(ctx, field)
 			}
@@ -19969,6 +20035,11 @@ func (ec *executionContext) _Member(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "approved":
 			out.Values[i] = ec._Member_approved(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "requested":
+			out.Values[i] = ec._Member_requested(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

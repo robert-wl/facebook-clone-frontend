@@ -8,14 +8,21 @@ interface NotificationContent {
     notification: Notification;
 }
 
-export default function NotificationContent({ notification }: NotificationContent) {
-    let link = "";
-
-    console.log(notification);
+function getNotificationLink(notification: Notification) {
     if (notification.postId) {
-        link = `/search/${encodeURIComponent("&" + notification.postId)}`;
+        return `/search/${encodeURIComponent("&" + notification.postId)}`;
+    } else if (notification.groupId) {
+        return `/group/${notification.groupId}`;
+    } else if (notification.reelId) {
+        return `/reels/${notification.reelId}`;
+    } else if (notification.storyId) {
+        return `/stories/${notification.sender.username}`;
     }
 
+    return "";
+}
+
+export default function NotificationContent({ notification }: NotificationContent) {
     return (
         <div className={styles.notificationContent}>
             <div className={styles.left}>
@@ -25,7 +32,7 @@ export default function NotificationContent({ notification }: NotificationConten
             </div>
             <Link
                 className={styles.content}
-                to={link}
+                to={getNotificationLink(notification)}
             >
                 <div className={styles.content}>
                     <p>{notification.message}</p>
