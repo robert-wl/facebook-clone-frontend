@@ -55,6 +55,8 @@ func MigrateDatabase() {
 		&model.Group{},
 		&model.Member{},
 		&model.GroupFile{},
+		&model.Notification{},
+		&model.BlockNotification{},
 	)
 
 	fmt.Println(err)

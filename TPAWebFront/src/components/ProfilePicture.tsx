@@ -2,6 +2,7 @@ import styles from "../assets/styles/profilePicture.module.scss";
 import { User } from "../../gql/graphql.ts";
 import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 interface ProfilePicture {
     user: User | null;
@@ -55,7 +56,7 @@ export default function ProfilePicture({ user, showBox }: ProfilePicture) {
             <Link to={"/user/" + user?.username}>
                 <img
                     ref={ref}
-                    src={user?.profile ? user.profile : "../src/assets/default-profile.jpg"}
+                    src={userProfileLoader(user?.profile)}
                     alt={""}
                 />
             </Link>
@@ -66,7 +67,7 @@ export default function ProfilePicture({ user, showBox }: ProfilePicture) {
                 >
                     <div className={styles.content}>
                         <img
-                            src={user?.profile ? user.profile : "../src/assets/default-profile.jpg"}
+                            src={userProfileLoader(user?.profile)}
                             alt={""}
                         />
                         <div className={styles.bio}>

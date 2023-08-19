@@ -3,6 +3,8 @@ import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } fro
 import { AuthContext } from "../context/AuthContextProvider";
 import { RiVideoAddFill } from "react-icons/ri";
 import createToast from "../../../controller/toast/handler.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { Link } from "react-router-dom";
 
 interface ReelsSidebar {
     setVideo: Dispatch<SetStateAction<File | null>>;
@@ -55,7 +57,7 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
                 </header>
                 <div className={styles.profile}>
                     <img
-                        src={auth?.profile ?? ""}
+                        src={userProfileLoader(auth?.profile)}
                         alt={""}
                     />
                     <h3>{auth?.username}</h3>
@@ -83,9 +85,10 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
                     onChange={(e) => setContent(e.target.value)}
                 />
                 <footer>
-                    <hr />
                     <div className={styles.buttons}>
-                        <button>Cancel</button>
+                        <Link to={"/reels"}>
+                            <button>Cancel</button>
+                        </Link>
                         <button
                             disabled={content == ""}
                             onClick={() => handleSubmit()}

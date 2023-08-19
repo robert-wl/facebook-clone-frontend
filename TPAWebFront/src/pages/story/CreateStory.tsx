@@ -3,7 +3,6 @@ import styles from "../../assets/styles/story/createStory.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
 import Sidebar from "../../components/sidebar/Sidebar.tsx";
 import SidebarButton from "../../components/sidebar/SidebarButton.tsx";
-import { IoAddOutline } from "react-icons/io5";
 import CreateStories from "../../components/stories/CreateStories.tsx";
 import StorySidebar from "../../components/sidebar/StorySidebar.tsx";
 import { useMutation, useQuery } from "@apollo/client";
@@ -15,6 +14,7 @@ import { User } from "../../../gql/graphql.ts";
 import { GET_USER_WITH_STORIES } from "../../../lib/query/story/getUserWithStories.graphql.ts";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
+import { IoIosAdd } from "react-icons/io";
 
 export interface Content {
     text: string;
@@ -103,10 +103,7 @@ export default function CreateStory() {
                                             active={true}
                                             text={"Create a Story"}
                                         >
-                                            <IoAddOutline
-                                                color={"black"}
-                                                size={"1.5rem"}
-                                            />
+                                            <IoIosAdd size={"1.7rem"} />
                                         </SidebarButton>
                                     </div>
                                     {friends.length > 0 &&
@@ -156,6 +153,7 @@ export default function CreateStory() {
                                                     </div>
                                                 );
                                         })}
+                                    {friends.length == 0 || (friends.length == 1 && friends[0].username == auth?.username && <h5>No available stories</h5>)}
                                 </>
                             </Sidebar>
                             <CreateStories

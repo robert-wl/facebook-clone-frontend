@@ -23,6 +23,8 @@ import Group from "./pages/group/Group.tsx";
 import GroupDetail from "./pages/group/GroupDetail.tsx";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Search from "./pages/search/Search.tsx";
+import Notifications from "./pages/notifications/Notifications.tsx";
+import StoriesHome from "./pages/story/StoriesHome.tsx";
 
 function App() {
     return (
@@ -92,6 +94,14 @@ function App() {
                 element={
                     <AuthenticatedProtector>
                         <Friends />
+                    </AuthenticatedProtector>
+                }
+            />
+            <Route
+                path="/stories"
+                element={
+                    <AuthenticatedProtector>
+                        <StoriesHome />
                     </AuthenticatedProtector>
                 }
             />
@@ -180,6 +190,14 @@ function App() {
                 element={
                     <AuthenticatedProtector>
                         <Search />
+                    </AuthenticatedProtector>
+                }
+            />
+            <Route
+                path="/notification"
+                element={
+                    <AuthenticatedProtector>
+                        <Notifications />
                     </AuthenticatedProtector>
                 }
             />

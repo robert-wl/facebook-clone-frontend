@@ -8,7 +8,6 @@ import { Post } from "../../../gql/graphql.ts";
 import { useQuery } from "@apollo/client";
 import { GET_FILTERED_POSTS } from "../../../lib/query/search/getFilteredPosts.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
-import { useParams } from "react-router-dom";
 import { debounce } from "../../../controller/debouncer.ts";
 
 interface AllPage {
@@ -16,9 +15,9 @@ interface AllPage {
     setCurrPost: Dispatch<SetStateAction<Post | null>>;
     setShareModalState: Dispatch<SetStateAction<boolean>>;
     pageRef: RefObject<HTMLDivElement>;
+    searchQuery: string;
 }
-export default function AllPage({ setTab, setCurrPost, setShareModalState, pageRef }: AllPage) {
-    const { searchQuery } = useParams();
+export default function AllPage({ setTab, setCurrPost, setShareModalState, pageRef, searchQuery }: AllPage) {
     const [postData, setPostData] = useState<Post[]>([]);
     const [stop, setStop] = useState(false);
     const [anyGroupResult, setAnyGroupResult] = useState(true);
@@ -105,6 +104,7 @@ export default function AllPage({ setTab, setCurrPost, setShareModalState, pageR
                         post={post}
                         setCurrPost={setCurrPost}
                         setShareModalState={setShareModalState}
+                        setPostList={setPostData}
                     />
                 );
             })}

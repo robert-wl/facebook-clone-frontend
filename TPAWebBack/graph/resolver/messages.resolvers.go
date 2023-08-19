@@ -34,7 +34,7 @@ func (r *mutationResolver) CreateConversation(ctx context.Context, username stri
 	if err := r.DB.Model(&model.ConversationUsers{}).
 		Group("conversation_id").
 		Where("user_id in (?)", []string{userIDCtx, user.ID}).
-		Having("COUNT(user_id) = 2").Pluck("conversation_id", &conversationID).Error; err == nil && conversationID != "nil" {
+		Having("COUNT(user_id) = 2").Pluck("conversation_id", &conversationID).Error; err == nil && conversationID != "" {
 		var conversation *model.Conversation
 
 		if err := r.DB.First(&conversation, "id = ?", conversationID).Error; err != nil {

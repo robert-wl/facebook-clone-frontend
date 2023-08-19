@@ -4,9 +4,9 @@ import { BiSolidMicrophoneAlt } from "react-icons/bi";
 import { BsSendFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import { useMutation } from "@apollo/client";
-import { AiOutlineClose } from "react-icons/ai";
 import { SEND_MESSAGE } from "../../../lib/query/message/sendMessage.graphql.ts";
 import uploadStorage from "../../../controller/firebase/storage.ts";
+import { RxCross2 } from "react-icons/rx";
 
 interface MessageInput {
     conversationID: string;
@@ -105,9 +105,8 @@ export default function MessageInput({ conversationID }: MessageInput) {
                         alt={""}
                         hidden={!image}
                     />
-                    <AiOutlineClose
+                    <RxCross2
                         size={"1.3rem"}
-                        color={"black"}
                         onClick={() => setImage(null)}
                     />
                 </div>

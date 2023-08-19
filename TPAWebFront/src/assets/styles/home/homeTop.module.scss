@@ -4,14 +4,14 @@
     width: 100%;
     height: 25rem;
     border-radius: 0.5rem;
-    box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
-    background-color: white;
+    box-shadow: var(--box-shadow-very-light);
+    background-color: var(--main-color);
     margin: 1rem auto;
 
     > header {
         display: flex;
         flex-direction: row;
-        color: black;
+        color: var(--color);
         justify-content: space-evenly;
         height: fit-content;
         margin-bottom: 0;
@@ -44,8 +44,8 @@
             justify-content: center;
             padding-bottom: 1rem;
             width: 90%;
-            border-bottom: 3px solid #1877f2;
-            color: #1877f2;
+            border-bottom: 3px solid var(--blue-color);
+            color: var(--blue-color);
 
             svg {
                 margin-right: 0.5rem;
@@ -64,7 +64,7 @@
     .content {
         display: flex;
         flex-direction: row;
-        color: black;
+        color: var(--color);
 
         .left {
             margin: 1rem;
@@ -72,7 +72,7 @@
             .story {
                 position: relative;
                 border-radius: 1rem;
-                box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
+                box-shadow: var(--box-shadow-very-light);
                 background-color: black;
 
                 img {
@@ -92,7 +92,7 @@
 
                 svg:nth-child(2) {
                     position: absolute;
-                    color: white;
+                    color: var(--color);
                     left: 50%;
                     top: 45%;
                     transform: translate(-50%, -50%);
@@ -102,21 +102,21 @@
                     bottom: 0;
                     width: 100%;
                     height: 3rem;
-                    background-color: white;
+                    background-color: var(--main-color);
                     border-bottom-right-radius: 1rem;
                     border-bottom-left-radius: 1rem;
                     position: absolute;
 
                     svg {
-                        color: white;
+                        color: var(--color);
                         position: absolute;
                         left: 50%;
                         bottom: 3rem;
                         transform: translate(-50%, 50%);
-                        background-color: #1877f2;
+                        background-color: var(--blue-color);
                         padding: 0.5rem;
                         border-radius: 10rem;
-                        border: 3px solid white;
+                        border: 3px solid var(--main-color);
 
                         &:hover {
                             cursor: pointer;
@@ -125,7 +125,7 @@
                         }
 
                         h4 {
-                            color: black;
+                            color: var(--color);
                         }
                     }
                 }

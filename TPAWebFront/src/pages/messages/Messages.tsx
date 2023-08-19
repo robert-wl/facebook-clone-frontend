@@ -1,32 +1,24 @@
 import styles from "../../assets/styles/messages/messages.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useContext, useEffect, useState } from "react";
-import { useQuery, useSubscription } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { GET_CONVERSATIONS } from "../../../lib/query/message/getConversations.graphql.ts";
-import { Conversation, Message } from "../../../gql/graphql.ts";
+import { Conversation } from "../../../gql/graphql.ts";
 import errorHandler from "../../../controller/errorHandler.ts";
-import { VIEW_CONVERSATION } from "../../../lib/query/message/viewConversation.graphql.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
-import MessageInput from "../../components/message/MessageInput.tsx";
+import MessageBox from "../../components/message/MessageBox.tsx";
+import domPurify from "../../../controller/domPurify.ts";
 
 export default function Messages() {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [filteredConversations, setFilteredConversations] = useState<Conversation[]>([]);
     const { conversationID } = useParams();
     const { auth } = useContext(AuthContext);
-    const [stop, setStop] = useState<boolean>(false);
     const { data: conversationData } = useQuery(GET_CONVERSATIONS, {
         fetchPolicy: "network-only",
         onError: errorHandler,
-    });
-
-    const { data, error } = useSubscription(VIEW_CONVERSATION, {
-        variables: {
-            conversation: conversationID,
-        },
-        skip: stop,
     });
 
     useEffect(() => {
@@ -45,14 +37,6 @@ export default function Messages() {
 
         setFilteredConversations(filtered);
     };
-    // console.log(data.viewConversation)
-    // console.log((!loading && !data.viewConversation))
-
-    if (error && !error.message.includes("must be defined") && !stop) {
-        return <Navigate to={"/messages"} />;
-    } else if (error && error.message.includes("must be defined") && !stop) {
-        setStop(true);
-    }
 
     return (
         <>
@@ -83,7 +67,6 @@ export default function Messages() {
                                 <div className={styles.messageContainer}>
                                     {filteredConversations.length > 0 &&
                                         filteredConversations.map((conv, index) => {
-                                            console.log(conv.group);
                                             if (conv.users[0] && conv.users[1]) {
                                                 const user = conv.users[0].user.username == auth?.username ? conv.users[1].user : conv.users[0].user;
 
@@ -101,7 +84,7 @@ export default function Messages() {
                                                                 <h3>
                                                                     {user.firstName} {user.lastName}
                                                                 </h3>
-                                                                <p>{conv.messages ? conv.messages[conv.messages.length - 1]?.message : ""}</p>
+                                                                <p dangerouslySetInnerHTML={{ __html: conv.messages ? domPurify(conv.messages[conv.messages.length - 1]?.message) : "" }} />
                                                             </div>
                                                         </Link>
                                                     </div>
@@ -133,77 +116,7 @@ export default function Messages() {
                         <div className={styles.barSpace} />
                         {conversationID ? (
                             <>
-                                <div className={styles.chat}>
-                                    <MessageInput conversationID={conversationID} />
-                                    {data &&
-                                        data.viewConversation.map((message: Message) => {
-                                            return (
-                                                <>
-                                                    {message.sender.username == auth?.username ? (
-                                                        <div className={styles.chatReceiver}>
-                                                            <div>
-                                                                {message.image ? (
-                                                                    <img
-                                                                        src={message.image}
-                                                                        alt={""}
-                                                                    />
-                                                                ) : message.post ? (
-                                                                    <div className={styles.post}>
-                                                                        <header>
-                                                                            <img
-                                                                                src={message.post.user.profile ? message.post.user.profile : "../src/assets/default-profile.jpg"}
-                                                                                alt={""}
-                                                                            />
-                                                                            {message.post.user.firstName} {message.post.user.lastName}
-                                                                        </header>
-                                                                        <div className={styles.content}>
-                                                                            <img
-                                                                                src={message.post.files ? message.post.files[0]! : ""}
-                                                                                alt={""}
-                                                                            />
-                                                                            {message.post.content}
-                                                                        </div>
-                                                                    </div>
-                                                                ) : (
-                                                                    message.message
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    ) : (
-                                                        <div className={styles.chatSender}>
-                                                            <div>
-                                                                {message.image ? (
-                                                                    <img
-                                                                        src={message.image}
-                                                                        alt={""}
-                                                                    />
-                                                                ) : message.post ? (
-                                                                    <div className={styles.post}>
-                                                                        <header>
-                                                                            <img
-                                                                                src={message.post.user.profile ? message.post.user.profile : "../src/assets/default-profile.jpg"}
-                                                                                alt={""}
-                                                                            />
-                                                                            {message.post.user.firstName} {message.post.user.lastName}
-                                                                        </header>
-                                                                        <div className={styles.content}>
-                                                                            <img
-                                                                                src={message.post.files ? message.post.files[0]! : ""}
-                                                                                alt={""}
-                                                                            />
-                                                                            {message.post.content}
-                                                                        </div>
-                                                                    </div>
-                                                                ) : (
-                                                                    message.message
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </>
-                                            );
-                                        })}
-                                </div>
+                                <MessageBox key={conversationID} />
                             </>
                         ) : (
                             <div className={styles.empty}>

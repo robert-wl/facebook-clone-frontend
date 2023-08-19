@@ -12,6 +12,8 @@
     border-radius: var(--border-radius);
     overflow-x: auto;
 
+    @include scrollbar;
+
     > header {
         display: flex;
         flex-direction: row;
@@ -34,17 +36,20 @@
                 height: 2rem;
                 padding: 0;
                 border-radius: 20rem;
+                outline: none;
+                border: none;
                 align-items: center;
 
                 > svg {
                     margin-left: 0.5rem;
+                    color: var(--color);
                 }
 
                 > input {
                     background-color: transparent;
                     outline: none;
                     border: none;
-                    color: black;
+                    color: var(--color);
                     padding-left: 0.5rem;
                 }
             }
@@ -187,6 +192,7 @@
                         margin-right: 0.25rem;
 
                         svg {
+                            color: var(--color);
                             display: flex;
                         }
 

@@ -1,4 +1,4 @@
-$background-color: #e9ecf1;
+@use "../mixins.scss" as *;
 
 .pageUser {
     display: flex;
@@ -7,26 +7,18 @@ $background-color: #e9ecf1;
     width: 100vw;
     overflow-y: auto;
     overflow-x: hidden;
-    background-color: $background-color;
+    background-color: var(--background-color);
+    color: var(--color);
     align-items: center;
 
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-        color: black;
-        background-color: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: gray;
-        border-radius: 0.5rem;
-    }
+    @include scrollbar;
 
     .header {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin-top: -1rem;
-        background-color: white;
+        background-color: var(--main-color);
         height: fit-content;
         width: 100%;
 
@@ -67,7 +59,7 @@ $background-color: #e9ecf1;
                 width: 10rem;
                 border-radius: 20rem;
                 object-fit: cover;
-                border: 0.25rem solid white;
+                border: 0.25rem solid var(--main-color);
             }
 
             .circular {
@@ -104,13 +96,13 @@ $background-color: #e9ecf1;
                 h1 {
                     display: flex;
                     text-align: start;
-                    color: black;
+                    color: var(--color);
                     margin-top: 0;
                     margin-bottom: 0;
                 }
 
                 p {
-                    color: black;
+                    color: var(--color);
                     display: flex;
                     text-align: start;
                     margin: 0;
@@ -128,7 +120,7 @@ $background-color: #e9ecf1;
                     margin-right: 0;
                     border-radius: 0.25rem;
                     background-color: rgb(100, 100, 100, 0.2);
-                    color: black;
+                    color: var(--color);
                     border: none;
                     padding: 0.5rem 0.75rem;
                     align-items: center;
@@ -160,7 +152,7 @@ $background-color: #e9ecf1;
                         margin-top: 1rem;
                         border-radius: 0.25rem;
                         background-color: rgb(100, 100, 100, 0.2);
-                        color: black;
+                        color: var(--color);
                         border: none;
                         padding: 0.5rem 0.75rem;
                         justify-content: center;
@@ -209,7 +201,7 @@ $background-color: #e9ecf1;
             p {
                 display: flex;
                 align-items: center;
-                color: black;
+                color: var(--color);
                 font-size: 0.9rem;
 
                 svg {
@@ -239,13 +231,14 @@ $background-color: #e9ecf1;
                 border: none;
                 border-bottom: 0.25rem solid transparent;
                 width: 100%;
-                color: black;
+                color: var(--color);
                 height: 3rem;
                 margin: 0 2rem;
             }
 
             .active {
                 color: #1877f2;
+                font-weight: bolder;
                 border-bottom: 0.25rem solid #1877f2;
             }
         }
@@ -440,6 +433,7 @@ $background-color: #e9ecf1;
 
 .contentBox {
     text-align: start;
+    color: var(--color);
 
     h1 {
         color: transparent;
@@ -472,13 +466,13 @@ $background-color: #e9ecf1;
     border-radius: var(--border-radius);
     border: var(--border);
     padding: 1rem;
-    align-items: start;
+    align-items: center;
     overflow-x: auto;
     overflow-y: hidden;
 
     h3 {
+        align-self: start;
         margin: 0;
-
     }
 
     .content {
@@ -486,7 +480,15 @@ $background-color: #e9ecf1;
         flex-direction: row;
         gap: 0.5rem;
         width: 100%;
+        height: 75%;
+        align-items: center;
         padding-right: 2rem;
         //overflow-x:auto;
+
+        h4 {
+            color: var(--color);
+            font-size: 1.1rem;
+            width: 100%;
+        }
     }
 }

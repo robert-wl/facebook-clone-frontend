@@ -1,23 +1,15 @@
-$background-color: #e9ecf1;
+@use "../mixins.scss" as *;
+
 
 .page {
-    color: black;
+    color: var(--color);
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100vw;
-    background-color: $background-color;
+    background-color: var(--background-color);
 
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-        color: black;
-        background-color: $background-color;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: gray;
-        border-radius: 0.5rem;
-    }
+    @include scrollbar;
 
     .content {
         display: flex;
@@ -26,7 +18,7 @@ $background-color: #e9ecf1;
         width: 100%;
         overflow-x: hidden;
         overflow-y: hidden;
-        background-color: $background-color;
+        background-color: var(--background-color);
 
         .content {
             display: flex;
@@ -35,7 +27,7 @@ $background-color: #e9ecf1;
             width: 100%;
             overflow-x: hidden;
             overflow-y: hidden;
-            background-color: $background-color;
+            background-color: var(--background-color);
 
             .top {
                 display: flex;
@@ -66,8 +58,8 @@ $background-color: #e9ecf1;
                         max-width: 50rem;
                         width: 60vw;
                         height: 50rem;
-                        background-color: white;
-                        box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
+                        background-color: var(--background-color);
+                        box-shadow: var(--box-shadow-very-light);
                         border-radius: 1rem;
 
                         .storyView {
@@ -80,7 +72,7 @@ $background-color: #e9ecf1;
                             width: 56.5vw;
                             height: 48rem;
                             background-color: black;
-                            box-shadow: 5px 5px 20px rgb(0, 0, 0, 0.1);
+                            box-shadow: var(--box-shadow-very-light);
                             border-radius: 1rem;
 
                             .background {
@@ -88,7 +80,7 @@ $background-color: #e9ecf1;
                                 flex-direction: row;
                                 align-items: center;
                                 justify-content: center;
-                                color: black;
+                                color: var(--color);
                                 font-size: 1.5rem;
                                 word-wrap: anywhere;
                                 width: 25rem;
@@ -112,7 +104,7 @@ $background-color: #e9ecf1;
                             max-width: 48rem;
                             width: 56.5vw;
                             height: 48rem;
-                            background-color: $background-color;
+                            background-color: var(--background-color);
                             border-radius: 1rem;
 
                             .background {

@@ -4,14 +4,15 @@ import FriendButton from "./buttons/FriendButton.tsx";
 import GroupButton from "./buttons/GroupButton.tsx";
 import { useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
-import { Link } from "react-router-dom";
-import { AiFillBell } from "react-icons/ai";
+import { Link, useLocation } from "react-router-dom";
 import { BiSolidMessageRoundedDetail, BiUserCircle } from "react-icons/bi";
 import { MdKeyboardArrowRight, MdLogout } from "react-icons/md";
 import userProfileLoader from "../../../controller/userProfileLoader.ts";
 import SearchBar from "./SearchBar.tsx";
+import NotificationButton from "./buttons/NotificationButton.tsx";
 
 export default function Navbar() {
+    const location = useLocation();
     const { auth } = useContext(AuthContext);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -49,22 +50,12 @@ export default function Navbar() {
                     <GroupButton />
                 </div>
                 <div className={styles.end}>
-                    <Link to={""}>
-                        <div className={styles.circles}>
-                            <AiFillBell
-                                color={"black"}
-                                size={"1.2rem"}
-                            />
-                        </div>
-                    </Link>
                     <Link to={"/messages"}>
-                        <div className={styles.circles}>
-                            <BiSolidMessageRoundedDetail
-                                color={"black"}
-                                size={"1.2rem"}
-                            />
+                        <div className={location.pathname.includes("messages") ? styles.circlesActive : styles.circles}>
+                            <BiSolidMessageRoundedDetail size={"1.2rem"} />
                         </div>
                     </Link>
+                    <NotificationButton />
                     <div className={styles.imageBox}>
                         <img
                             onClick={() => handleClick()}
@@ -80,20 +71,14 @@ export default function Navbar() {
                                 <Link to={"/user/" + auth?.username}>
                                     <BiUserCircle size={"1.4rem"} />
                                     <p>My Profile</p>
-                                    <MdKeyboardArrowRight
-                                        color={"black"}
-                                        size={"1.5rem"}
-                                    />
+                                    <MdKeyboardArrowRight size={"1.5rem"} />
                                 </Link>
                             </button>
                             <button onClick={() => handleLogout()}>
                                 <Link to={"/login"}>
                                     <MdLogout size={"1.4rem"} />
                                     <p>Logout</p>
-                                    <MdKeyboardArrowRight
-                                        color={"black"}
-                                        size={"1.5rem"}
-                                    />
+                                    <MdKeyboardArrowRight size={"1.5rem"} />
                                 </Link>
                             </button>
                         </div>

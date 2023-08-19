@@ -31,6 +31,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		MiscId:     &activationId,
 		Profile:    nil,
 		Background: nil,
+		Theme:      "light",
 	}
 
 	if hashed, err := helper.EncryptPassword(input.Password); err != nil {
@@ -318,6 +319,19 @@ func (r *userResolver) MutualCount(ctx context.Context, obj *model.User) (int, e
 	}
 
 	return int(mutualCount), nil
+}
+
+// NotificationCount is the resolver for the notificationCount field.
+func (r *userResolver) NotificationCount(ctx context.Context, obj *model.User) (int, error) {
+	var notificationCount int64
+
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.Find(&model.Notification{}, "user_id = ? AND seen = false", userID).Count(&notificationCount).Error; err != nil {
+		return 0, err
+	}
+
+	return int(notificationCount), nil
 }
 
 // Friended is the resolver for the friended field.

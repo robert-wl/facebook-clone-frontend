@@ -113,6 +113,49 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, group model.NewGroup
 		return nil, err
 	}
 
+	go func() {
+		var userIDs []string
+		var user *model.User
+
+		if err := r.DB.First(&user, "id = ?", userID).Error; err != nil {
+			return
+		}
+
+		subQuery := r.DB.
+			Model(&model.Friend{}).
+			Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", userID, userID, true).
+			Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID)
+
+		subQueryBlocked := r.DB.
+			Model(&model.BlockNotification{}).
+			Where("(sender_id = ?)", userID).
+			Select("DISTINCT receiver_id")
+
+		if err := r.DB.
+			Model(&model.User{}).
+			Where("id IN (?) AND id NOT IN (?) AND id != ?", subQuery, subQueryBlocked, userID).
+			Select("id").
+			Find(&userIDs).Error; err != nil {
+			return
+		}
+
+		for _, userId := range userIDs {
+
+			newNotification := &model.NewNotification{
+				Message: fmt.Sprintf("%s %s created a new group", user.FirstName, user.LastName),
+				UserID:  userId,
+				PostID:  nil,
+				ReelID:  nil,
+				StoryID: nil,
+				GroupID: &newGroup.ID,
+			}
+
+			if _, err := r.CreateNotification(ctx, *newNotification); err != nil {
+				continue
+			}
+		}
+	}()
+
 	return newGroup, nil
 }
 

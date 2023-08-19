@@ -15,7 +15,7 @@ type Post struct {
 	ShareCount   int               `json:"shareCount"`
 	GroupID      *string           `json:"groupId,omitempty"`
 	Files        []*string         `json:"files,omitempty" gorm:"json"`
-	Likes        []*PostLike       `json:"likes,omitempty"`
+	Likes        []*PostLike       `json:"likes,omitempty" gorm:"foreignKey:PostID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Comments     []*Comment        `json:"comments,omitempty" gorm:"foreignKey:ParentPostID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Liked        *bool             `json:"liked,omitempty" gorm:"-"`
 	CreatedAt    time.Time         `json:"createdAt"`
@@ -51,8 +51,8 @@ type PostVisibility struct {
 }
 
 type CommentLike struct {
-	CommentID string `json:"commentId" gorm:"primaryKey"`
-	UserID    string `json:"userId" gorm:"primaryKey"`
+	CommentID string `json:"commentId" gorm:"primaryKey;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	UserID    string `json:"userId" gorm:"primaryKey;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	User      *User  `json:"user" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
@@ -72,7 +72,7 @@ type NewComment struct {
 }
 
 type PostLike struct {
-	PostID string `json:"postId" gorm:"primaryKey"`
-	UserID string `json:"userId" gorm:"primaryKey"`
+	PostID string `json:"postId" gorm:"primaryKey;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	UserID string `json:"userId" gorm:"primaryKey;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	User   *User  `json:"user" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

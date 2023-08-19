@@ -1,9 +1,20 @@
 import styles from "../assets/styles/imageCarousel.module.scss";
 import { useRef, useState } from "react";
 import { BiSolidLeftArrowCircle, BiSolidRightArrowCircle } from "react-icons/bi";
+import { FileUpload } from "../../controller/firebase/storage.ts";
+import { Maybe } from "../../gql/graphql.ts";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function ImageCarousel({ files }: { files: any }) {
+interface ImageCarousel {
+    files: Maybe<string>[];
+}
+
+export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [files, _] = useState<FileUpload[]>(() => {
+        return fileOutside!.map((file) => {
+            return JSON.parse(file!) as FileUpload;
+        });
+    });
     const [i, setI] = useState(0);
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -39,21 +50,22 @@ export default function ImageCarousel({ files }: { files: any }) {
             video.style.display = "block";
         }
     };
-
     return (
         <>
             <div className={styles.container}>
                 <div className={styles.image}>
-                    {/*<video*/}
-                    {/*    ref={videoRef}*/}
-                    {/*    onLoad={(e) => handleLoad(e, "video")}*/}
-                    {/*    key={i}*/}
-                    {/*    onError={(e) => handleError(e, "video")}*/}
-                    {/*    autoPlay={true}*/}
-                    {/*    controls={true}*/}
-                    {/*>*/}
-                    {/*    <source src={files ? files[i] : ""} />*/}
-                    {/*</video>*/}
+                    {files[i].type.includes("video") && (
+                        <video
+                            ref={videoRef}
+                            onLoad={(e) => handleLoad(e, "video")}
+                            key={i}
+                            onError={(e) => handleError(e, "video")}
+                            autoPlay={true}
+                            controls={true}
+                        >
+                            <source src={files ? files[i].url : ""} />
+                        </video>
+                    )}
                     {files && files.length > 1 && (
                         <div
                             onClick={() => handleLeft()}
@@ -76,16 +88,18 @@ export default function ImageCarousel({ files }: { files: any }) {
                             />
                         </div>
                     )}
-                    <img
-                        src={files ? files[i] : ""}
-                        alt={""}
-                        onLoad={(e) => handleLoad(e, "image")}
-                        onError={(e) => handleError(e, "image")}
-                    />
+                    {files[i].type.includes("image") && (
+                        <img
+                            src={files ? files[i].url : ""}
+                            alt={""}
+                            onLoad={(e) => handleLoad(e, "image")}
+                            onError={(e) => handleError(e, "image")}
+                        />
+                    )}
                 </div>
                 {files &&
                     files.length > 1 &&
-                    files.map((src: string, index: number) => {
+                    files.map((src: string | FileUpload, index: number) => {
                         if (index != 0)
                             return (
                                 <div
@@ -93,7 +107,7 @@ export default function ImageCarousel({ files }: { files: any }) {
                                     className={styles.image}
                                 >
                                     <img
-                                        src={src}
+                                        src={typeof src === "string" ? src : src.url}
                                         alt={""}
                                     />
                                 </div>
@@ -103,7 +117,7 @@ export default function ImageCarousel({ files }: { files: any }) {
             <div className={styles.dotBox}>
                 {files &&
                     files.length > 1 &&
-                    files.map((_: string, index: number) => {
+                    files.map((_: string | FileUpload, index: number) => {
                         return (
                             <div
                                 key={index}

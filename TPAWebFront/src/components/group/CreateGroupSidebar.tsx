@@ -6,7 +6,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_GROUP } from "../../../lib/query/group/createGroup.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import userProfileLoader from "../../../controller/userProfileLoader.ts";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface CreateGroupSidebar {
     groupData: { name: string; privacy: string; about: string };
@@ -42,6 +42,7 @@ export default function CreateGroupSidebar({ groupData, setGroupData }: CreateGr
             })
             .catch(debouncedError);
     };
+
     return (
         <>
             <div className={styles.barSpace} />
@@ -101,7 +102,9 @@ export default function CreateGroupSidebar({ groupData, setGroupData }: CreateGr
                 </div>
                 <footer>
                     <div className={styles.buttons}>
-                        <button>Cancel</button>
+                        <Link to={"/group"}>
+                            <button>Cancel</button>
+                        </Link>
                         <button onClick={() => handleSubmit()}>Post</button>
                     </div>
                 </footer>

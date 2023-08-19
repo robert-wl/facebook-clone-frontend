@@ -146,6 +146,7 @@ export default function Home() {
                                 key={index}
                                 post={post}
                                 setCurrPost={setCurrPost}
+                                setPostList={setData}
                                 setShareModalState={setShareModalState}
                             />
                         ))}

@@ -1,20 +1,27 @@
 import styles from "../../assets/styles/reels/reelComment.module.scss";
-import { AiFillLike } from "react-icons/ai";
 import { ReelComment } from "../../../gql/graphql.ts";
 import { IoSend } from "react-icons/io5";
-import { useContext, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContextProvider";
 import { useMutation } from "@apollo/client";
 import { LIKE_REEL_COMMENT } from "../../../lib/query/reels/likeReelComment.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { CREATE_REEL_COMMENT } from "../../../lib/query/reels/createReelComment.graphql.ts";
 import { PiArrowBendDownRightDuotone } from "react-icons/pi";
+import domPurify from "../../../controller/domPurify.ts";
+import RichText from "../richText/RichText.tsx";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { Link } from "react-router-dom";
+import LikeLabel from "../post/LikeLabel.tsx";
 
 interface ReelCommentBox {
     comment: ReelComment;
+    parent?: ReelComment;
     reply: boolean;
+    setComment?: Dispatch<SetStateAction<ReelComment>>;
 }
-export default function ReelCommentBox({ comment: iComment, reply }: ReelCommentBox) {
+
+export default function ReelCommentBox({ comment: iComment, reply, parent, setComment: setParentComment }: ReelCommentBox) {
     const { auth } = useContext(AuthContext);
     const [comment, setComment] = useState<ReelComment>(iComment);
     const [showReplyInput, setShowReplyInput] = useState(false);
@@ -22,57 +29,93 @@ export default function ReelCommentBox({ comment: iComment, reply }: ReelComment
     const [createReelComment] = useMutation(CREATE_REEL_COMMENT);
     const [commentInput, setCommentInput] = useState("");
     const [showReply, setShowReply] = useState(false);
+    const [reset, setReset] = useState(0);
 
-    const handleLike = () => {
-        LikeReelComment({
+    const handleLike = async () => {
+        await LikeReelComment({
             variables: {
                 id: comment.id,
             },
-        })
-            .then(() => {
-                if (comment.liked) {
-                    setComment({
-                        ...comment,
-                        likeCount: comment.likeCount - 1,
-                        liked: !comment.liked,
-                    });
-                } else {
-                    setComment({
-                        ...comment,
-                        likeCount: comment.likeCount + 1,
-                        liked: !comment.liked,
-                    });
-                }
-            })
-            .catch(debouncedError);
+        }).catch(debouncedError);
+
+        if (comment.liked) {
+            setComment({
+                ...comment,
+                likeCount: comment.likeCount - 1,
+                liked: !comment.liked,
+            });
+        } else {
+            setComment({
+                ...comment,
+                likeCount: comment.likeCount + 1,
+                liked: !comment.liked,
+            });
+        }
     };
 
-    const handleComment = () => {
-        if (commentInput.length > 0) {
-            createReelComment({
+    const handleComment = async () => {
+        console.log(commentInput);
+        if (commentInput.length < 8) return;
+
+        if (reply) {
+            const data = await createReelComment({
                 variables: {
                     comment: {
                         content: commentInput,
                         parentComment: comment.id,
                     },
                 },
-            })
-                .then((data) => {
-                    if (comment.comments?.length && comment.comments.length > 0) {
-                        setComment({
-                            ...comment,
-                            comments: [...comment.comments, data.data.createReelComment],
-                        });
-                    } else {
-                        setComment({
-                            ...comment,
-                            comments: [data.data.createReelComment],
-                        });
-                    }
-                    console.log("hai");
-                    setCommentInput("");
-                })
-                .catch(debouncedError);
+            }).catch(debouncedError);
+
+            setCommentInput("");
+            setReset(reset + 1);
+            if (!data) return;
+
+            if (comment.comments?.length && comment.comments.length > 0) {
+                setComment({
+                    ...comment,
+                    comments: [...comment.comments, data.data.createReelComment],
+                });
+            } else {
+                setComment({
+                    ...comment,
+                    comments: [data.data.createReelComment],
+                });
+            }
+        } else {
+            if (!parent) return;
+            const replyContent = commentInput;
+            const tag = `<a href="user/${parent.user.username}" class="wysiwyg-mention" data-mention data-value="${parent.user.username}">@${parent.user.username}</a>&nbsp;`;
+
+            const modifiedString = replyContent.slice(0, 3) + tag + replyContent.slice(3);
+            const data = await createReelComment({
+                variables: {
+                    comment: {
+                        content: modifiedString,
+                        parentComment: parent.id,
+                    },
+                },
+            }).catch(debouncedError);
+
+            setCommentInput("");
+            setReset(reset + 1);
+            if (!data) return;
+            if (!setParentComment) return;
+
+            setParentComment((prev) => {
+                if (!prev) return prev;
+                if (prev.comments) {
+                    return {
+                        ...prev,
+                        comments: [...prev.comments, data.data.createReelComment],
+                    };
+                } else {
+                    return {
+                        ...prev,
+                        comments: [data.data.createReelComment],
+                    };
+                }
+            });
         }
     };
 
@@ -80,10 +123,12 @@ export default function ReelCommentBox({ comment: iComment, reply }: ReelComment
         <>
             <div className={styles.container}>
                 <div className={styles.left}>
-                    <img
-                        src={comment.user.profile ? comment.user.profile : "../src/assets/default-profile.jpg"}
-                        alt={""}
-                    />
+                    <Link to={"/user/" + comment.user.username}>
+                        <img
+                            src={userProfileLoader(comment.user.profile)}
+                            alt={""}
+                        />
+                    </Link>
                 </div>
                 <div className={styles.content}>
                     <div className={styles.chat}>
@@ -91,16 +136,8 @@ export default function ReelCommentBox({ comment: iComment, reply }: ReelComment
                             {comment.user.firstName}
                             {" " + comment.user.lastName}
                         </h4>
-                        <p>{comment.content}</p>
-                        {comment?.likeCount != undefined && comment?.likeCount > 0 && (
-                            <div className={styles.like}>
-                                <AiFillLike
-                                    color={"#1877f2"}
-                                    size={"1rem"}
-                                />
-                                {comment?.likeCount}
-                            </div>
-                        )}
+                        <div dangerouslySetInnerHTML={{ __html: domPurify(comment.content) }} />
+                        {comment?.likeCount != undefined && comment?.likeCount > 0 && <LikeLabel count={comment.likeCount} />}
                     </div>
                     <div className={styles.buttons}>
                         <p
@@ -109,15 +146,13 @@ export default function ReelCommentBox({ comment: iComment, reply }: ReelComment
                         >
                             Like
                         </p>
-                        {!reply && (
-                            <p
-                                onClick={() => {
-                                    setShowReplyInput(!showReplyInput);
-                                }}
-                            >
-                                Reply
-                            </p>
-                        )}
+                        <p
+                            onClick={() => {
+                                setShowReplyInput(!showReplyInput);
+                            }}
+                        >
+                            Reply
+                        </p>
                     </div>
                     {!showReply && comment?.comments?.length != undefined && comment?.comments?.length > 0 && (
                         <p
@@ -135,17 +170,19 @@ export default function ReelCommentBox({ comment: iComment, reply }: ReelComment
                                 alt={""}
                             />
                             <div className={styles.commentContainer}>
-                                <textarea
-                                    value={commentInput}
-                                    onChange={(e) => setCommentInput(e.target.value)}
-                                    placeholder={"Write a comment..."}
-                                />
+                                <div className={styles.textarea}>
+                                    <RichText
+                                        key={reset}
+                                        setText={setCommentInput}
+                                        placeholder={"Write a comment..."}
+                                    />
+                                </div>
                                 <div
                                     onClick={() => handleComment()}
-                                    className={styles.commentFooter}
+                                    className={commentInput.length > 8 ? styles.commentFooter : styles.commentFooterDisabled}
                                 >
                                     <IoSend
-                                        color={commentInput.length > 0 ? "blue" : ""}
+                                        color={commentInput.length > 8 ? "rgb(0, 100, 254)" : ""}
                                         size={"1rem"}
                                     />
                                 </div>
@@ -160,7 +197,9 @@ export default function ReelCommentBox({ comment: iComment, reply }: ReelComment
                                 return (
                                     <ReelCommentBox
                                         comment={comment}
-                                        reply={true}
+                                        reply={false}
+                                        parent={iComment}
+                                        setComment={setComment}
                                     />
                                 );
                         })}

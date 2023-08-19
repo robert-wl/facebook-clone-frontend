@@ -24,8 +24,7 @@ export default function ShareModal({ setShareModalState, currPost }: ShareModal)
     useEffect(() => {
         if (data && auth) {
             const friends: User[] = [];
-            for (const friend of data.getFriends) {
-                const user = friend.sender.username == auth?.username ? friend.receiver : friend.sender;
+            for (const user of data.getFriends) {
                 friends.push(user);
             }
             setFriends(friends);

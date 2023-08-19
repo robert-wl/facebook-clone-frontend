@@ -247,6 +247,8 @@ export default function GroupDetail() {
                                                             post={post}
                                                             setCurrPost={setCurrPost}
                                                             setShareModalState={setShareModalState}
+                                                            setGroup={setGroup}
+                                                            isAdmin={group.isAdmin}
                                                         />
                                                     );
                                             })}

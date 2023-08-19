@@ -19,8 +19,8 @@ export default function HomeTopReels() {
                             src={auth?.profile ? auth.profile : "../src/assets/default-profile.jpg"}
                             alt={""}
                         />
+                        <BsFillCameraVideoFill size={"3rem"} />
                     </Link>
-                    <BsFillCameraVideoFill size={"3rem"} />
                     <div className={styles.create}>
                         <h4>Create Reel</h4>
                         <Link to={"/stories/create"}>

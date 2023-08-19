@@ -14,10 +14,7 @@ export default function FriendButton() {
                         size={"1.5rem"}
                     />
                 ) : (
-                    <BsPerson
-                        color={"black"}
-                        size={"1.5rem"}
-                    />
+                    <BsPerson size={"1.5rem"} />
                 )}
             </div>
         </Link>

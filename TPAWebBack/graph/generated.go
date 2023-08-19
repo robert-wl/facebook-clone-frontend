@@ -55,6 +55,11 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	BlockNotification struct {
+		Receiver func(childComplexity int) int
+		Sender   func(childComplexity int) int
+	}
+
 	Comment struct {
 		Comments      func(childComplexity int) int
 		Content       func(childComplexity int) int
@@ -136,41 +141,57 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AcceptFriend          func(childComplexity int, friend string) int
-		ActivateUser          func(childComplexity int, id string) int
-		AddFriend             func(childComplexity int, friendInput model.FriendInput) int
-		ApproveMember         func(childComplexity int, groupID string, userID string) int
-		AuthenticateUser      func(childComplexity int, email string, password string) int
-		CreateComment         func(childComplexity int, newComment model.NewComment) int
-		CreateConversation    func(childComplexity int, username string) int
-		CreateGroup           func(childComplexity int, group model.NewGroup) int
-		CreateImageStory      func(childComplexity int, input model.NewImageStory) int
-		CreatePost            func(childComplexity int, newPost model.NewPost) int
-		CreateReel            func(childComplexity int, reel model.NewReel) int
-		CreateReelComment     func(childComplexity int, comment model.NewReelComment) int
-		CreateTextStory       func(childComplexity int, input model.NewTextStory) int
-		CreateUser            func(childComplexity int, input model.NewUser) int
-		DeleteFile            func(childComplexity int, fileID string) int
-		DenyMember            func(childComplexity int, groupID string, userID string) int
-		ForgotPassword        func(childComplexity int, email string) int
-		HandleRequest         func(childComplexity int, groupID string) int
-		InviteToGroup         func(childComplexity int, groupID string, userID string) int
-		KickMember            func(childComplexity int, groupID string, userID string) int
-		LeaveGroup            func(childComplexity int, groupID string) int
-		LikePost              func(childComplexity int, postID string) int
-		LikeReel              func(childComplexity int, reelID string) int
-		LikeReelComment       func(childComplexity int, reelCommentID string) int
-		Likecomment           func(childComplexity int, commentID string) int
-		PromoteMember         func(childComplexity int, groupID string, userID string) int
-		RejectFriend          func(childComplexity int, friend string) int
-		ResetPassword         func(childComplexity int, id string, password string) int
-		SendMessage           func(childComplexity int, conversationID string, message *string, image *string, postID *string) int
-		SharePost             func(childComplexity int, userID string, postID string) int
-		UpdateGroupBackground func(childComplexity int, groupID string, background string) int
-		UpdateUser            func(childComplexity int, input model.UpdateUser) int
-		UpdateUserBackground  func(childComplexity int, background string) int
-		UpdateUserProfile     func(childComplexity int, profile string) int
-		UploadFile            func(childComplexity int, groupID string, file model.NewGroupFile) int
+		AcceptFriend           func(childComplexity int, friend string) int
+		ActivateUser           func(childComplexity int, id string) int
+		AddFriend              func(childComplexity int, friendInput model.FriendInput) int
+		ApproveMember          func(childComplexity int, groupID string, userID string) int
+		AuthenticateUser       func(childComplexity int, email string, password string) int
+		CreateComment          func(childComplexity int, newComment model.NewComment) int
+		CreateConversation     func(childComplexity int, username string) int
+		CreateGroup            func(childComplexity int, group model.NewGroup) int
+		CreateImageStory       func(childComplexity int, input model.NewImageStory) int
+		CreateNotification     func(childComplexity int, notification model.NewNotification) int
+		CreatePost             func(childComplexity int, newPost model.NewPost) int
+		CreateReel             func(childComplexity int, reel model.NewReel) int
+		CreateReelComment      func(childComplexity int, comment model.NewReelComment) int
+		CreateTextStory        func(childComplexity int, input model.NewTextStory) int
+		CreateUser             func(childComplexity int, input model.NewUser) int
+		DeleteFile             func(childComplexity int, fileID string) int
+		DeletePost             func(childComplexity int, postID string) int
+		DenyMember             func(childComplexity int, groupID string, userID string) int
+		ForgotPassword         func(childComplexity int, email string) int
+		GetUnreadNotifications func(childComplexity int) int
+		HandleRequest          func(childComplexity int, groupID string) int
+		InviteToGroup          func(childComplexity int, groupID string, userID string) int
+		KickMember             func(childComplexity int, groupID string, userID string) int
+		LeaveGroup             func(childComplexity int, groupID string) int
+		LikePost               func(childComplexity int, postID string) int
+		LikeReel               func(childComplexity int, reelID string) int
+		LikeReelComment        func(childComplexity int, reelCommentID string) int
+		Likecomment            func(childComplexity int, commentID string) int
+		PromoteMember          func(childComplexity int, groupID string, userID string) int
+		RejectFriend           func(childComplexity int, friend string) int
+		ResetPassword          func(childComplexity int, id string, password string) int
+		SendMessage            func(childComplexity int, conversationID string, message *string, image *string, postID *string) int
+		SharePost              func(childComplexity int, userID string, postID string) int
+		UpdateGroupBackground  func(childComplexity int, groupID string, background string) int
+		UpdateUser             func(childComplexity int, input model.UpdateUser) int
+		UpdateUserBackground   func(childComplexity int, background string) int
+		UpdateUserProfile      func(childComplexity int, profile string) int
+		UploadFile             func(childComplexity int, groupID string, file model.NewGroupFile) int
+	}
+
+	Notification struct {
+		CreatedAt func(childComplexity int) int
+		GroupID   func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Message   func(childComplexity int) int
+		PostID    func(childComplexity int) int
+		ReelID    func(childComplexity int) int
+		Seen      func(childComplexity int) int
+		Sender    func(childComplexity int) int
+		StoryID   func(childComplexity int) int
+		User      func(childComplexity int) int
 	}
 
 	Post struct {
@@ -225,6 +246,7 @@ type ComplexityRoot struct {
 		GetGroups          func(childComplexity int) int
 		GetJoinRequests    func(childComplexity int, groupID string) int
 		GetJoinedGroups    func(childComplexity int) int
+		GetNotifications   func(childComplexity int) int
 		GetPeopleMightKnow func(childComplexity int) int
 		GetPost            func(childComplexity int, id string) int
 		GetPosts           func(childComplexity int, pagination model.Pagination) int
@@ -292,21 +314,23 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Active      func(childComplexity int) int
-		Background  func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		Dob         func(childComplexity int) int
-		Email       func(childComplexity int) int
-		FirstName   func(childComplexity int) int
-		FriendCount func(childComplexity int) int
-		Friended    func(childComplexity int) int
-		Gender      func(childComplexity int) int
-		ID          func(childComplexity int) int
-		LastName    func(childComplexity int) int
-		MutualCount func(childComplexity int) int
-		Posts       func(childComplexity int) int
-		Profile     func(childComplexity int) int
-		Username    func(childComplexity int) int
+		Active            func(childComplexity int) int
+		Background        func(childComplexity int) int
+		CreatedAt         func(childComplexity int) int
+		Dob               func(childComplexity int) int
+		Email             func(childComplexity int) int
+		FirstName         func(childComplexity int) int
+		FriendCount       func(childComplexity int) int
+		Friended          func(childComplexity int) int
+		Gender            func(childComplexity int) int
+		ID                func(childComplexity int) int
+		LastName          func(childComplexity int) int
+		MutualCount       func(childComplexity int) int
+		NotificationCount func(childComplexity int) int
+		Posts             func(childComplexity int) int
+		Profile           func(childComplexity int) int
+		Theme             func(childComplexity int) int
+		Username          func(childComplexity int) int
 	}
 }
 
@@ -346,11 +370,14 @@ type MutationResolver interface {
 	PromoteMember(ctx context.Context, groupID string, userID string) (*model.Member, error)
 	CreateConversation(ctx context.Context, username string) (*model.Conversation, error)
 	SendMessage(ctx context.Context, conversationID string, message *string, image *string, postID *string) (*model.Message, error)
+	CreateNotification(ctx context.Context, notification model.NewNotification) (*model.Notification, error)
+	GetUnreadNotifications(ctx context.Context) ([]*model.Notification, error)
 	CreatePost(ctx context.Context, newPost model.NewPost) (*model.Post, error)
 	CreateComment(ctx context.Context, newComment model.NewComment) (*model.Comment, error)
 	SharePost(ctx context.Context, userID string, postID string) (*string, error)
 	LikePost(ctx context.Context, postID string) (*model.PostLike, error)
 	Likecomment(ctx context.Context, commentID string) (*model.CommentLike, error)
+	DeletePost(ctx context.Context, postID string) (*string, error)
 	CreateReel(ctx context.Context, reel model.NewReel) (*model.Reel, error)
 	CreateReelComment(ctx context.Context, comment model.NewReelComment) (*model.ReelComment, error)
 	LikeReel(ctx context.Context, reelID string) (*model.ReelLike, error)
@@ -384,6 +411,7 @@ type QueryResolver interface {
 	GetJoinRequests(ctx context.Context, groupID string) ([]*model.Member, error)
 	GetFilteredGroups(ctx context.Context, filter string, pagination model.Pagination) ([]*model.Group, error)
 	GetConversations(ctx context.Context) ([]*model.Conversation, error)
+	GetNotifications(ctx context.Context) ([]*model.Notification, error)
 	GetPost(ctx context.Context, id string) (*model.Post, error)
 	GetPosts(ctx context.Context, pagination model.Pagination) ([]*model.Post, error)
 	GetGroupPosts(ctx context.Context, groupID string, pagination model.Pagination) ([]*model.Post, error)
@@ -412,6 +440,7 @@ type SubscriptionResolver interface {
 type UserResolver interface {
 	FriendCount(ctx context.Context, obj *model.User) (int, error)
 	MutualCount(ctx context.Context, obj *model.User) (int, error)
+	NotificationCount(ctx context.Context, obj *model.User) (int, error)
 	Friended(ctx context.Context, obj *model.User) (string, error)
 }
 
@@ -429,6 +458,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "BlockNotification.receiver":
+		if e.complexity.BlockNotification.Receiver == nil {
+			break
+		}
+
+		return e.complexity.BlockNotification.Receiver(childComplexity), true
+
+	case "BlockNotification.sender":
+		if e.complexity.BlockNotification.Sender == nil {
+			break
+		}
+
+		return e.complexity.BlockNotification.Sender(childComplexity), true
 
 	case "Comment.comments":
 		if e.complexity.Comment.Comments == nil {
@@ -909,6 +952,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateImageStory(childComplexity, args["input"].(model.NewImageStory)), true
 
+	case "Mutation.createNotification":
+		if e.complexity.Mutation.CreateNotification == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createNotification_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateNotification(childComplexity, args["notification"].(model.NewNotification)), true
+
 	case "Mutation.createPost":
 		if e.complexity.Mutation.CreatePost == nil {
 			break
@@ -981,6 +1036,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteFile(childComplexity, args["fileId"].(string)), true
 
+	case "Mutation.deletePost":
+		if e.complexity.Mutation.DeletePost == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deletePost_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeletePost(childComplexity, args["postID"].(string)), true
+
 	case "Mutation.denyMember":
 		if e.complexity.Mutation.DenyMember == nil {
 			break
@@ -1004,6 +1071,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ForgotPassword(childComplexity, args["email"].(string)), true
+
+	case "Mutation.getUnreadNotifications":
+		if e.complexity.Mutation.GetUnreadNotifications == nil {
+			break
+		}
+
+		return e.complexity.Mutation.GetUnreadNotifications(childComplexity), true
 
 	case "Mutation.handleRequest":
 		if e.complexity.Mutation.HandleRequest == nil {
@@ -1220,6 +1294,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UploadFile(childComplexity, args["groupId"].(string), args["file"].(model.NewGroupFile)), true
+
+	case "Notification.createdAt":
+		if e.complexity.Notification.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Notification.CreatedAt(childComplexity), true
+
+	case "Notification.groupId":
+		if e.complexity.Notification.GroupID == nil {
+			break
+		}
+
+		return e.complexity.Notification.GroupID(childComplexity), true
+
+	case "Notification.id":
+		if e.complexity.Notification.ID == nil {
+			break
+		}
+
+		return e.complexity.Notification.ID(childComplexity), true
+
+	case "Notification.message":
+		if e.complexity.Notification.Message == nil {
+			break
+		}
+
+		return e.complexity.Notification.Message(childComplexity), true
+
+	case "Notification.postId":
+		if e.complexity.Notification.PostID == nil {
+			break
+		}
+
+		return e.complexity.Notification.PostID(childComplexity), true
+
+	case "Notification.reelId":
+		if e.complexity.Notification.ReelID == nil {
+			break
+		}
+
+		return e.complexity.Notification.ReelID(childComplexity), true
+
+	case "Notification.seen":
+		if e.complexity.Notification.Seen == nil {
+			break
+		}
+
+		return e.complexity.Notification.Seen(childComplexity), true
+
+	case "Notification.sender":
+		if e.complexity.Notification.Sender == nil {
+			break
+		}
+
+		return e.complexity.Notification.Sender(childComplexity), true
+
+	case "Notification.storyId":
+		if e.complexity.Notification.StoryID == nil {
+			break
+		}
+
+		return e.complexity.Notification.StoryID(childComplexity), true
+
+	case "Notification.user":
+		if e.complexity.Notification.User == nil {
+			break
+		}
+
+		return e.complexity.Notification.User(childComplexity), true
 
 	case "Post.commentCount":
 		if e.complexity.Post.CommentCount == nil {
@@ -1553,6 +1697,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetJoinedGroups(childComplexity), true
+
+	case "Query.getNotifications":
+		if e.complexity.Query.GetNotifications == nil {
+			break
+		}
+
+		return e.complexity.Query.GetNotifications(childComplexity), true
 
 	case "Query.getPeopleMightKnow":
 		if e.complexity.Query.GetPeopleMightKnow == nil {
@@ -2005,6 +2156,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.MutualCount(childComplexity), true
 
+	case "User.notificationCount":
+		if e.complexity.User.NotificationCount == nil {
+			break
+		}
+
+		return e.complexity.User.NotificationCount(childComplexity), true
+
 	case "User.posts":
 		if e.complexity.User.Posts == nil {
 			break
@@ -2018,6 +2176,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Profile(childComplexity), true
+
+	case "User.theme":
+		if e.complexity.User.Theme == nil {
+			break
+		}
+
+		return e.complexity.User.Theme(childComplexity), true
 
 	case "User.username":
 		if e.complexity.User.Username == nil {
@@ -2039,6 +2204,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewGroup,
 		ec.unmarshalInputNewGroupFile,
 		ec.unmarshalInputNewImageStory,
+		ec.unmarshalInputNewNotification,
 		ec.unmarshalInputNewPost,
 		ec.unmarshalInputNewReel,
 		ec.unmarshalInputNewReelComment,
@@ -2159,7 +2325,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 	return introspection.WrapTypeFromDef(parsedSchema, parsedSchema.Types[name]), nil
 }
 
-//go:embed "schema/friends.graphqls" "schema/group.graphqls" "schema/messages.graphqls" "schema/post.graphqls" "schema/reels.graphqls" "schema/story.graphqls" "schema/user.graphqls"
+//go:embed "schema/friends.graphqls" "schema/group.graphqls" "schema/messages.graphqls" "schema/notification.graphqls" "schema/post.graphqls" "schema/reels.graphqls" "schema/story.graphqls" "schema/user.graphqls"
 var sourcesFS embed.FS
 
 func sourceData(filename string) string {
@@ -2174,6 +2340,7 @@ var sources = []*ast.Source{
 	{Name: "schema/friends.graphqls", Input: sourceData("schema/friends.graphqls"), BuiltIn: false},
 	{Name: "schema/group.graphqls", Input: sourceData("schema/group.graphqls"), BuiltIn: false},
 	{Name: "schema/messages.graphqls", Input: sourceData("schema/messages.graphqls"), BuiltIn: false},
+	{Name: "schema/notification.graphqls", Input: sourceData("schema/notification.graphqls"), BuiltIn: false},
 	{Name: "schema/post.graphqls", Input: sourceData("schema/post.graphqls"), BuiltIn: false},
 	{Name: "schema/reels.graphqls", Input: sourceData("schema/reels.graphqls"), BuiltIn: false},
 	{Name: "schema/story.graphqls", Input: sourceData("schema/story.graphqls"), BuiltIn: false},
@@ -2338,6 +2505,21 @@ func (ec *executionContext) field_Mutation_createImageStory_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createNotification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.NewNotification
+	if tmp, ok := rawArgs["notification"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notification"))
+		arg0, err = ec.unmarshalNNewNotification2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNewNotification(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["notification"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createPost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2425,6 +2607,21 @@ func (ec *executionContext) field_Mutation_deleteFile_args(ctx context.Context, 
 		}
 	}
 	args["fileId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deletePost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["postID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postID"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["postID"] = arg0
 	return args, nil
 }
 
@@ -3231,6 +3428,166 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _BlockNotification_sender(ctx context.Context, field graphql.CollectedField, obj *model.BlockNotification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_BlockNotification_sender(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sender, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_BlockNotification_sender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "BlockNotification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "dob":
+				return ec.fieldContext_User_dob(ctx, field)
+			case "gender":
+				return ec.fieldContext_User_gender(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "background":
+				return ec.fieldContext_User_background(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "posts":
+				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "mutualCount":
+				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _BlockNotification_receiver(ctx context.Context, field graphql.CollectedField, obj *model.BlockNotification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_BlockNotification_receiver(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Receiver, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_BlockNotification_receiver(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "BlockNotification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "dob":
+				return ec.fieldContext_User_dob(ctx, field)
+			case "gender":
+				return ec.fieldContext_User_gender(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "background":
+				return ec.fieldContext_User_background(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "posts":
+				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "mutualCount":
+				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Comment_id(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Comment_id(ctx, field)
 	if err != nil {
@@ -3342,8 +3699,12 @@ func (ec *executionContext) fieldContext_Comment_user(ctx context.Context, field
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3929,8 +4290,12 @@ func (ec *executionContext) fieldContext_CommentLike_user(ctx context.Context, f
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4269,8 +4634,12 @@ func (ec *executionContext) fieldContext_ConversationUsers_user(ctx context.Cont
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4345,8 +4714,12 @@ func (ec *executionContext) fieldContext_Friend_sender(ctx context.Context, fiel
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4421,8 +4794,12 @@ func (ec *executionContext) fieldContext_Friend_receiver(ctx context.Context, fi
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5392,8 +5769,12 @@ func (ec *executionContext) fieldContext_GroupFile_uploadedBy(ctx context.Contex
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5556,8 +5937,12 @@ func (ec *executionContext) fieldContext_Member_user(ctx context.Context, field 
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5808,8 +6193,12 @@ func (ec *executionContext) fieldContext_Message_sender(ctx context.Context, fie
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6083,8 +6472,12 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6170,8 +6563,12 @@ func (ec *executionContext) fieldContext_Mutation_activateUser(ctx context.Conte
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6367,8 +6764,12 @@ func (ec *executionContext) fieldContext_Mutation_resetPassword(ctx context.Cont
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6474,8 +6875,12 @@ func (ec *executionContext) fieldContext_Mutation_updateUserProfile(ctx context.
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6581,8 +6986,12 @@ func (ec *executionContext) fieldContext_Mutation_updateUserBackground(ctx conte
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6688,8 +7097,12 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -8056,6 +8469,189 @@ func (ec *executionContext) fieldContext_Mutation_sendMessage(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createNotification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createNotification(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateNotification(rctx, fc.Args["notification"].(model.NewNotification))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Notification); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Notification`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Notification)
+	fc.Result = res
+	return ec.marshalNNotification2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNotification(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createNotification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Notification_id(ctx, field)
+			case "message":
+				return ec.fieldContext_Notification_message(ctx, field)
+			case "user":
+				return ec.fieldContext_Notification_user(ctx, field)
+			case "sender":
+				return ec.fieldContext_Notification_sender(ctx, field)
+			case "seen":
+				return ec.fieldContext_Notification_seen(ctx, field)
+			case "postId":
+				return ec.fieldContext_Notification_postId(ctx, field)
+			case "reelId":
+				return ec.fieldContext_Notification_reelId(ctx, field)
+			case "storyId":
+				return ec.fieldContext_Notification_storyId(ctx, field)
+			case "groupId":
+				return ec.fieldContext_Notification_groupId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Notification_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Notification", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createNotification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_getUnreadNotifications(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_getUnreadNotifications(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().GetUnreadNotifications(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Notification); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Notification`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Notification)
+	fc.Result = res
+	return ec.marshalNNotification2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNotificationᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_getUnreadNotifications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Notification_id(ctx, field)
+			case "message":
+				return ec.fieldContext_Notification_message(ctx, field)
+			case "user":
+				return ec.fieldContext_Notification_user(ctx, field)
+			case "sender":
+				return ec.fieldContext_Notification_sender(ctx, field)
+			case "seen":
+				return ec.fieldContext_Notification_seen(ctx, field)
+			case "postId":
+				return ec.fieldContext_Notification_postId(ctx, field)
+			case "reelId":
+				return ec.fieldContext_Notification_reelId(ctx, field)
+			case "storyId":
+				return ec.fieldContext_Notification_storyId(ctx, field)
+			case "groupId":
+				return ec.fieldContext_Notification_groupId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Notification_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Notification", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createPost(ctx, field)
 	if err != nil {
@@ -8478,6 +9074,78 @@ func (ec *executionContext) fieldContext_Mutation_likecomment(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_likecomment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deletePost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deletePost(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeletePost(rctx, fc.Args["postID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deletePost(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deletePost_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -9026,6 +9694,506 @@ func (ec *executionContext) fieldContext_Mutation_createImageStory(ctx context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _Notification_id(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_message(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_message(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_message(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_user(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "dob":
+				return ec.fieldContext_User_dob(ctx, field)
+			case "gender":
+				return ec.fieldContext_User_gender(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "background":
+				return ec.fieldContext_User_background(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "posts":
+				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "mutualCount":
+				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_sender(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_sender(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sender, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_sender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "dob":
+				return ec.fieldContext_User_dob(ctx, field)
+			case "gender":
+				return ec.fieldContext_User_gender(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "background":
+				return ec.fieldContext_User_background(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "posts":
+				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "mutualCount":
+				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_seen(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_seen(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Seen, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_seen(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_postId(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_postId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PostID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_postId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_reelId(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_reelId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReelID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_reelId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_storyId(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_storyId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StoryID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_storyId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_groupId(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_groupId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GroupID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_groupId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Post_id(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Post_id(ctx, field)
 	if err != nil {
@@ -9137,8 +10305,12 @@ func (ec *executionContext) fieldContext_Post_user(ctx context.Context, field gr
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -9850,8 +11022,12 @@ func (ec *executionContext) fieldContext_PostLike_user(ctx context.Context, fiel
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -9970,8 +11146,12 @@ func (ec *executionContext) fieldContext_PostTag_user(ctx context.Context, field
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10090,8 +11270,12 @@ func (ec *executionContext) fieldContext_PostVisibility_user(ctx context.Context
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10183,8 +11367,12 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10267,8 +11455,12 @@ func (ec *executionContext) fieldContext_Query_getUsers(ctx context.Context, fie
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10473,8 +11665,12 @@ func (ec *executionContext) fieldContext_Query_getAuth(ctx context.Context, fiel
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10566,8 +11762,12 @@ func (ec *executionContext) fieldContext_Query_getFilteredUsers(ctx context.Cont
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10670,8 +11870,12 @@ func (ec *executionContext) fieldContext_Query_getFriends(ctx context.Context, f
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10763,8 +11967,12 @@ func (ec *executionContext) fieldContext_Query_getFriendRequests(ctx context.Con
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10856,8 +12064,12 @@ func (ec *executionContext) fieldContext_Query_getUserFriends(ctx context.Contex
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10960,8 +12172,12 @@ func (ec *executionContext) fieldContext_Query_getUserMutuals(ctx context.Contex
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -11064,8 +12280,12 @@ func (ec *executionContext) fieldContext_Query_getPeopleMightKnow(ctx context.Co
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -11257,8 +12477,12 @@ func (ec *executionContext) fieldContext_Query_getGroupInvite(ctx context.Contex
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -11791,6 +13015,92 @@ func (ec *executionContext) fieldContext_Query_getConversations(ctx context.Cont
 				return ec.fieldContext_Conversation_messages(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Conversation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getNotifications(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getNotifications(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetNotifications(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Notification); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/yahkerobertkertasnya/TPAWebBack/graph/model.Notification`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Notification)
+	fc.Result = res
+	return ec.marshalNNotification2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNotificationᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getNotifications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Notification_id(ctx, field)
+			case "message":
+				return ec.fieldContext_Notification_message(ctx, field)
+			case "user":
+				return ec.fieldContext_Notification_user(ctx, field)
+			case "sender":
+				return ec.fieldContext_Notification_sender(ctx, field)
+			case "seen":
+				return ec.fieldContext_Notification_seen(ctx, field)
+			case "postId":
+				return ec.fieldContext_Notification_postId(ctx, field)
+			case "reelId":
+				return ec.fieldContext_Notification_reelId(ctx, field)
+			case "storyId":
+				return ec.fieldContext_Notification_storyId(ctx, field)
+			case "groupId":
+				return ec.fieldContext_Notification_groupId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Notification_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Notification", field.Name)
 		},
 	}
 	return fc, nil
@@ -12843,8 +14153,12 @@ func (ec *executionContext) fieldContext_Query_getUserWithStories(ctx context.Co
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -13092,8 +14406,12 @@ func (ec *executionContext) fieldContext_Reel_user(ctx context.Context, field gr
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -13629,8 +14947,12 @@ func (ec *executionContext) fieldContext_ReelComment_user(ctx context.Context, f
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -14208,8 +15530,12 @@ func (ec *executionContext) fieldContext_ReelCommentLike_user(ctx context.Contex
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -14328,8 +15654,12 @@ func (ec *executionContext) fieldContext_ReelLike_user(ctx context.Context, fiel
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -14448,8 +15778,12 @@ func (ec *executionContext) fieldContext_Story_user(ctx context.Context, field g
 				return ec.fieldContext_User_friendCount(ctx, field)
 			case "mutualCount":
 				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -15386,6 +16720,50 @@ func (ec *executionContext) fieldContext_User_mutualCount(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _User_notificationCount(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_notificationCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().NotificationCount(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_notificationCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_friended(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_friended(ctx, field)
 	if err != nil {
@@ -15423,6 +16801,50 @@ func (ec *executionContext) fieldContext_User_friended(ctx context.Context, fiel
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_theme(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_theme(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Theme, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_theme(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
 		},
@@ -17411,6 +18833,80 @@ func (ec *executionContext) unmarshalInputNewImageStory(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewNotification(ctx context.Context, obj interface{}) (model.NewNotification, error) {
+	var it model.NewNotification
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"message", "userId", "postId", "reelId", "storyId", "groupId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "message":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("message"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Message = data
+		case "userId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "postId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postId"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostID = data
+		case "reelId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reelId"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ReelID = data
+		case "storyId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("storyId"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StoryID = data
+		case "groupId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewPost(ctx context.Context, obj interface{}) (model.NewPost, error) {
 	var it model.NewPost
 	asMap := map[string]interface{}{}
@@ -17801,6 +19297,50 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj in
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var blockNotificationImplementors = []string{"BlockNotification"}
+
+func (ec *executionContext) _BlockNotification(ctx context.Context, sel ast.SelectionSet, obj *model.BlockNotification) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, blockNotificationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("BlockNotification")
+		case "sender":
+			out.Values[i] = ec._BlockNotification_sender(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "receiver":
+			out.Values[i] = ec._BlockNotification_receiver(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
 
 var commentImplementors = []string{"Comment"}
 
@@ -18683,6 +20223,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_sendMessage(ctx, field)
 			})
+		case "createNotification":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createNotification(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "getUnreadNotifications":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_getUnreadNotifications(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createPost":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPost(ctx, field)
@@ -18702,6 +20256,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "likecomment":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_likecomment(ctx, field)
+			})
+		case "deletePost":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deletePost(ctx, field)
 			})
 		case "createReel":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -18742,6 +20300,78 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createImageStory(ctx, field)
 			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var notificationImplementors = []string{"Notification"}
+
+func (ec *executionContext) _Notification(ctx context.Context, sel ast.SelectionSet, obj *model.Notification) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, notificationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Notification")
+		case "id":
+			out.Values[i] = ec._Notification_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "message":
+			out.Values[i] = ec._Notification_message(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user":
+			out.Values[i] = ec._Notification_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sender":
+			out.Values[i] = ec._Notification_sender(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "seen":
+			out.Values[i] = ec._Notification_seen(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "postId":
+			out.Values[i] = ec._Notification_postId(ctx, field, obj)
+		case "reelId":
+			out.Values[i] = ec._Notification_reelId(ctx, field, obj)
+		case "storyId":
+			out.Values[i] = ec._Notification_storyId(ctx, field, obj)
+		case "groupId":
+			out.Values[i] = ec._Notification_groupId(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Notification_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -19461,6 +21091,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getConversations(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getNotifications":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getNotifications(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -20324,6 +21976,42 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "notificationCount":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_notificationCount(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "friended":
 			field := field
 
@@ -20360,6 +22048,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "theme":
+			out.Values[i] = ec._User_theme(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20919,6 +22612,11 @@ func (ec *executionContext) unmarshalNNewImageStory2githubᚗcomᚋyahkerobertke
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNNewNotification2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNewNotification(ctx context.Context, v interface{}) (model.NewNotification, error) {
+	res, err := ec.unmarshalInputNewNotification(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNNewPost2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNewPost(ctx context.Context, v interface{}) (model.NewPost, error) {
 	res, err := ec.unmarshalInputNewPost(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -20942,6 +22640,64 @@ func (ec *executionContext) unmarshalNNewTextStory2githubᚗcomᚋyahkerobertker
 func (ec *executionContext) unmarshalNNewUser2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNewUser(ctx context.Context, v interface{}) (model.NewUser, error) {
 	res, err := ec.unmarshalInputNewUser(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNNotification2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNotification(ctx context.Context, sel ast.SelectionSet, v model.Notification) graphql.Marshaler {
+	return ec._Notification(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNNotification2ᚕᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNotificationᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Notification) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNNotification2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNotification(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNNotification2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐNotification(ctx context.Context, sel ast.SelectionSet, v *model.Notification) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Notification(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNPagination2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐPagination(ctx context.Context, v interface{}) (model.Pagination, error) {

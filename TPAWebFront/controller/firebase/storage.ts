@@ -1,6 +1,12 @@
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { app } from "./firebase.ts";
 
+export interface FileUpload {
+    url: string;
+    directory: string;
+    type: string;
+}
+
 const storage = getStorage(app);
 export default async function uploadStorage(directory: string, file: File) {
     const random = Math.random().toString(36).substring(2);
@@ -9,5 +15,13 @@ export default async function uploadStorage(directory: string, file: File) {
     const storageRef = ref(storage, directory + "/" + name);
 
     await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
+    const url = await getDownloadURL(storageRef);
+
+    const File: FileUpload = {
+        url: url,
+        directory: directory,
+        type: file.type,
+    };
+
+    return JSON.stringify(File);
 }

@@ -3,7 +3,7 @@ import ProfilePicture from "../ProfilePicture.tsx";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { GoComment } from "react-icons/go";
 import { PiShareFatThin } from "react-icons/pi";
-import { Comment, Post } from "../../../gql/graphql.ts";
+import { Comment, Group, Post } from "../../../gql/graphql.ts";
 import getTimeDiff from "../../../controller/timeConverter.ts";
 import ImageCarousel from "../ImageCarousel.tsx";
 import { IoSend } from "react-icons/io5";
@@ -17,18 +17,22 @@ import { LIKE_POST } from "../../../lib/query/post/likePost.graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import RichText from "../richText/RichText.tsx";
 import domPurify from "../../../controller/domPurify.ts";
+import { FiTrash2 } from "react-icons/fi";
+import { DELETE_POST } from "../../../lib/query/post/deletePost.graphql.ts";
 
 interface PostBox {
     post: Post;
     setCurrPost: Dispatch<SetStateAction<Post | null>>;
     setShareModalState: Dispatch<SetStateAction<boolean>>;
+    setPostList?: Dispatch<SetStateAction<Post[]>>;
+    setGroup?: Dispatch<SetStateAction<Group>>;
+    isAdmin: boolean;
 }
 
-export default function PostBox({ post: postN, setCurrPost, setShareModalState }: PostBox) {
+export default function PostBox({ post: postN, setCurrPost, setShareModalState, setPostList, setGroup, isAdmin }: PostBox) {
     const [post, setPost] = useState<Post | null>(null);
     const [comment, setComment] = useState("");
     const [showComment, setShowComment] = useState(false);
-    const [liked, setLiked] = useState(post?.liked);
     const [comments, setComments] = useState<Comment[]>([]);
     const { refetch: getCommentPost } = useQuery(GET_COMMENT_POST, {
         skip: true,
@@ -37,7 +41,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
     const { auth } = useContext(AuthContext);
     const [createComment] = useMutation(CREATE_COMMENT);
     const [likePost] = useMutation(LIKE_POST);
-    const [likeCount, setLikeCount] = useState(post?.likeCount ?? 0);
+    const [deletePost] = useMutation(DELETE_POST);
     const [reset, setReset] = useState(0);
 
     const handleShowComment = () => {
@@ -72,20 +76,35 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
     };
 
     useEffect(() => {
-        if (postN) setPost(postN);
+        if (postN) {
+            setPost(postN);
+        }
     }, [postN]);
+
     const handleLike = () => {
         likePost({
             variables: {
                 id: post?.id,
             },
-        })
-            .then(() => {
-                setLiked(!liked);
-            })
-            .catch(debouncedError);
-        if (liked) setLikeCount(likeCount - 1);
-        else setLikeCount(likeCount + 1);
+        }).catch(debouncedError);
+        if (post?.liked)
+            setPost((prev) => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    likeCount: prev!.likeCount - 1,
+                    liked: false,
+                };
+            });
+        else
+            setPost((prev) => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    likeCount: prev!.likeCount + 1,
+                    liked: true,
+                };
+            });
     };
 
     const handleShare = () => {
@@ -98,6 +117,29 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                 shareCount: post.shareCount + 1,
             });
     };
+
+    const handleDelete = () => {
+        deletePost({
+            variables: {
+                id: post?.id,
+            },
+        }).catch(debouncedError);
+
+        if (setPostList) {
+            setPostList((prev) => {
+                return prev.filter((p) => p.id != post?.id);
+            });
+        } else if (setGroup) {
+            setGroup((prev) => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    posts: prev.posts!.filter((p) => p!.id != post?.id),
+                };
+            });
+        }
+    };
+
     if (post)
         return (
             <div className={styles.myBox}>
@@ -106,6 +148,14 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                         user={post!.user!}
                         showBox={false}
                     />
+                    {(auth?.username == post?.user.username || isAdmin) && (
+                        <div className={styles.delete}>
+                            <FiTrash2
+                                size={"1.5rem"}
+                                onClick={() => handleDelete()}
+                            />
+                        </div>
+                    )}
                     <div className={styles.bio}>
                         <h4>
                             {post?.user.firstName} {post?.user.lastName}
@@ -129,10 +179,15 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                         className={styles.text}
                         dangerouslySetInnerHTML={{ __html: domPurify(post?.content) }}
                     />
-                    {post?.files && post?.files.length > 0 && <ImageCarousel files={post.files} />}
+                    {post?.files && post?.files.length > 0 && (
+                        <ImageCarousel
+                            key={post.id}
+                            files={post.files}
+                        />
+                    )}
                     <div className={styles.stats}>
                         <div className={styles.left}>
-                            <>Liked by {likeCount} people</>
+                            <>Liked by {post.likeCount} people</>
                         </div>
                         <div className={styles.right}>
                             <p>
@@ -147,7 +202,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                     <div className={styles.buttons}>
                         <button onClick={() => handleLike()}>
                             <div>
-                                {liked ? (
+                                {post.liked ? (
                                     <AiFillLike
                                         size={20}
                                         color={"#1877f2"}
@@ -158,7 +213,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState }
                                         color={"gray"}
                                     />
                                 )}
-                                <p className={liked ? styles.liked : ""}>Like</p>
+                                <p className={post.liked ? styles.liked : ""}>Like</p>
                             </div>
                         </button>
                         <div />

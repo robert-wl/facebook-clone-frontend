@@ -14,10 +14,7 @@ export default function GroupButton() {
                         size={"1.5rem"}
                     />
                 ) : (
-                    <BiGroup
-                        color={"black"}
-                        size={"1.5rem"}
-                    />
+                    <BiGroup size={"1.5rem"} />
                 )}
             </div>
         </Link>

@@ -1,4 +1,5 @@
-$background-color: #e9ecf1;
+@use "../mixins.scss" as *;
+
 
 .page {
     display: flex;
@@ -7,18 +8,9 @@ $background-color: #e9ecf1;
     width: 100vw;
     overflow-y: auto;
     overflow-x: hidden;
-    background-color: $background-color;
+    background-color: var(--background-color);
 
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-        color: black;
-        background-color: $background-color;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: gray;
-        border-radius: 0.5rem;
-    }
+   @include scrollbar;
 
     .content {
         display: flex;
@@ -30,8 +22,8 @@ $background-color: #e9ecf1;
             display: flex;
             flex-direction: column;
             border-radius: 0.5rem;
-            box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
-            background-color: white;
+            box-shadow: var(--box-shadow-very-light);
+            background-color: var(--main-color);
             margin: 1rem auto;
             width: 100%;
 
@@ -51,10 +43,11 @@ $background-color: #e9ecf1;
                     color: gray;
                     padding: 0.6em 1.2em;
                     border-color: transparent;
+                    outline: none;
 
                     &:hover {
                         background-color: rgb(100, 100, 100, 0.15);
-                        border: 1px solid darkgray;
+                        //border: 1px solid darkgray;
                     }
                 }
             }

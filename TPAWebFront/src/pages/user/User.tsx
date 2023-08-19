@@ -25,6 +25,8 @@ import ShareModal from "../../components/ShareModal.tsx";
 import UserFriend from "../../components/user/UserFriend.tsx";
 import PeopleMightKnowContainer from "../../components/friend/PeopleMightKnowContainer.tsx";
 import { IoPeopleCircleOutline } from "react-icons/io5";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userBackgroundLoader from "../../../controller/userBackgroundLoader.ts";
 
 export default function User() {
     const { username } = useParams();
@@ -146,7 +148,7 @@ export default function User() {
         // navigate("/message/" + data.data.createConversation.id)
     };
 
-    if (loading) return <></>;
+    // if (loading) return <></>;
     return (
         <>
             {modalState && (
@@ -189,11 +191,11 @@ export default function User() {
                             accept={"image/*, video/*"}
                         />
                         <img
-                            src={user?.background ? user?.background : "https://picsum.photos/200/300"}
+                            src={userBackgroundLoader(user?.background)}
                             alt={"profile picture"}
                         />
                         <img
-                            src={user?.profile ? user?.profile : "../src/assets/default-profile.jpg"}
+                            src={userProfileLoader(user?.profile)}
                             alt={""}
                         />
                         <div className={styles.circular}>
@@ -263,24 +265,15 @@ export default function User() {
                     {peopleMightKnowState && <PeopleMightKnowContainer key={"pplMightKnow"} />}
                     <div className={styles.info}>
                         <p>
-                            <BsGenderAmbiguous
-                                color={"black"}
-                                size={"1.3rem"}
-                            />
+                            <BsGenderAmbiguous size={"1.3rem"} />
                             {user?.gender}
                         </p>
                         <p>
-                            <MdOutlineMarkEmailRead
-                                color={"black"}
-                                size={"1.3rem"}
-                            />
+                            <MdOutlineMarkEmailRead size={"1.3rem"} />
                             {user?.email}
                         </p>
                         <p>
-                            <LiaBirthdayCakeSolid
-                                color={"black"}
-                                size={"1.3rem"}
-                            />
+                            <LiaBirthdayCakeSolid size={"1.3rem"} />
                             {new Date(user?.dob).toLocaleDateString("en-us", {
                                 day: "2-digit",
                                 month: "long",
@@ -288,18 +281,12 @@ export default function User() {
                             })}
                         </p>
                         <p>
-                            <LiaUserFriendsSolid
-                                color={"black"}
-                                size={"1.3rem"}
-                            />
+                            <LiaUserFriendsSolid size={"1.3rem"} />
                             {user?.friendCount}
                         </p>
                         {user?.id != auth?.id && (
                             <p>
-                                <IoPeopleCircleOutline
-                                    color={"black"}
-                                    size={"1.3rem"}
-                                />
+                                <IoPeopleCircleOutline size={"1.3rem"} />
                                 {user?.mutualCount}
                             </p>
                         )}

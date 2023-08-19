@@ -20,9 +20,11 @@ interface RichText {
     width?: string;
     overflow?: "hidden";
     minHeight?: string;
+    maxWidth?: string;
+    resize?: "vertical" | "horizontal" | "none";
 }
 
-export default function RichText({ setText, height, width, overflow, minHeight, placeholder }: RichText) {
+export default function RichText({ setText, height, width, overflow, minHeight, placeholder, resize, maxWidth }: RichText) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [suggestion, setSuggestion] = useState<MentionSuggestion[]>([]);
     const { data } = useQuery(GET_USERS);
@@ -68,7 +70,8 @@ export default function RichText({ setText, height, width, overflow, minHeight, 
                     width: width ? width : "100%",
                     overflowY: overflow ? overflow : "auto",
                     overflowWrap: "anywhere",
-                    resize: "vertical",
+                    resize: resize ? resize : "vertical",
+                    maxWidth: maxWidth ? maxWidth : "100%",
                     minHeight: minHeight ? minHeight : "fit-content",
                     zIndex: "20",
                 }}

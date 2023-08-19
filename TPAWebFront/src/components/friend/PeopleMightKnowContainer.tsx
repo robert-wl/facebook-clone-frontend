@@ -9,11 +9,12 @@ import RecommendFriendBox from "./RecommendFriendBox.tsx";
 export default function PeopleMightKnowContainer() {
     const [people, setPeople] = useState<User[]>([]);
 
-    useQuery(GET_PEOPLE_MIGHT_KNOW, {
+    const { loading } = useQuery(GET_PEOPLE_MIGHT_KNOW, {
         onError: debouncedError,
         fetchPolicy: "no-cache",
         onCompleted: (data) => {
             const ppl = data.getPeopleMightKnow as User[];
+            console.log(data);
             setPeople(ppl);
         },
     });
@@ -21,6 +22,7 @@ export default function PeopleMightKnowContainer() {
         <div className={styles.peopleMightKnow}>
             <h3>People you may know</h3>
             <div className={styles.content}>
+                {!loading && people.length == 0 && <h4>Unavailable</h4>}
                 {people.map((person) => {
                     return (
                         <>

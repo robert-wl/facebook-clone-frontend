@@ -1,10 +1,10 @@
 .container {
-    background-color: white;
+    background-color: var(--main-color);
     width: 12.5rem;
     height: 21rem;
     border-radius: 0.5rem;
     margin-top: -0.5rem;
-    box-shadow: 5px 5px 5px rgb(0, 0, 0, 0.1);
+    box-shadow: var(--box-shadow-very-light);
 
     header {
         width: inherit;
@@ -20,8 +20,6 @@
                 width: inherit;
                 height: 12rem;
                 object-fit: cover;
-                border-top-right-radius: 1rem;
-                border-top-left-radius: 1rem;
             }
         }
     }
@@ -60,12 +58,12 @@
 
 
 .recommendFriendBox {
-    background-color: white;
+    background-color: var(--background-color);
     width: 12.5rem;
     height: 21rem;
     border-radius: 0.5rem;
     margin-top: -0.5rem;
-    box-shadow: 5px 5px 5px rgb(0, 0, 0, 0.1);
+    box-shadow: var(--box-shadow-very-light);
 
     header {
         width: inherit;
@@ -81,8 +79,6 @@
                 width: inherit;
                 height: 12rem;
                 object-fit: cover;
-                border-top-right-radius: 1rem;
-                border-top-left-radius: 1rem;
             }
         }
     }
@@ -108,7 +104,7 @@
             margin-bottom: 0.5rem;
             border-radius: 0.5rem;
             border: none;
-            color: white;
+            color: var(--main-color);
 
             &:nth-child(2) {
                 background-color: var(--blue-light-button);

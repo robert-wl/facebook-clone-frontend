@@ -24,7 +24,8 @@ export default function UserFriend() {
             username: username,
         },
         onCompleted: (data) => {
-            setFriends(data.getFriends);
+            console.log("hai");
+            setFriends(data.getUserFriends);
         },
         onError: debouncedError,
     });
@@ -60,7 +61,7 @@ export default function UserFriend() {
                 )}
                 <h2>Friend List</h2>
                 <div className={styles.friendList}>
-                    {friends.map((friend, index) => {
+                    {friends?.map((friend, index) => {
                         return (
                             <UserFriendBox
                                 key={index}
@@ -69,7 +70,7 @@ export default function UserFriend() {
                             />
                         );
                     })}
-                    {friends.length == 0 && <NoFriendBox description={"This user has no friends"} />}
+                    {friends?.length == 0 && <NoFriendBox description={"This user has no friends"} />}
                 </div>
             </div>
         </>

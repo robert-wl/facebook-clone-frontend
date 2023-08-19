@@ -120,6 +120,7 @@ export default function Stories() {
                                                     </div>
                                                 );
                                         })}
+                                    {friends.length == 0 || (friends.length == 1 && friends[0].username == auth?.username && <h5>No available stories</h5>)}
                                 </>
                             </Sidebar>
                         </>

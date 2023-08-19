@@ -1,23 +1,14 @@
-$background-color: #e9ecf1;
+@use "../mixins.scss" as *;
 
 .page {
-    color: black;
+    color: var(--color);
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100vw;
-    background-color: white;
+    background-color: var(--background-color);
 
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-        color: black;
-        background-color: $background-color;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: gray;
-        border-radius: 0.5rem;
-    }
+    @include scrollbar;
 
     > .content {
         display: flex;
@@ -27,14 +18,13 @@ $background-color: #e9ecf1;
         margin-top: -1rem;
         overflow-x: hidden;
         overflow-y: hidden;
-        background-color: white;
 
         .conversation {
             display: flex;
             flex-direction: row;
             width: 100%;
             margin-top: 0;
-            background-color: white;
+            background-color: var(--background-color);
 
             .barSpace {
                 display: flex;
@@ -52,9 +42,9 @@ $background-color: #e9ecf1;
                 width: 20rem;
                 height: 100vh;
                 overflow: hidden;
-                margin-top: 0;
-                color: black;
-                border-right: 1px solid lightgray;
+                margin-top: 1rem;
+                color: var(--color);
+                border-right: 1px solid var(--main-color);
 
                 header {
                     margin: 0.5rem 1rem;
@@ -88,7 +78,7 @@ $background-color: #e9ecf1;
                     width: 100%;
 
                     .search {
-                        background-color: rgb(100, 100, 100, 0.15);
+                        background-color: var(--button-color);
                         display: flex;
                         margin: 0.5rem 1rem 0;
                         padding: 0.5rem;
@@ -105,7 +95,7 @@ $background-color: #e9ecf1;
                             background-color: transparent;
                             border-color: transparent;
                             outline: transparent;
-                            color: black;
+                            color: var(--color);
                             font-size: 1rem;
                         }
                     }
@@ -115,13 +105,7 @@ $background-color: #e9ecf1;
                         margin-top: 1rem;
                         height: calc(100vh - 12.3rem);
 
-                        &::-webkit-scrollbar {
-                            background-color: rgb(200, 200, 200, 0.4);
-                        }
-
-                        &::-webkit-scrollbar-thumb {
-                            background-color: lightgray;
-                        }
+                        @include scrollbar;
 
                         .message {
                             display: flex;
@@ -137,7 +121,8 @@ $background-color: #e9ecf1;
                                 margin: 0 0.5rem;
                                 padding: 0;
                                 text-decoration: none;
-                                color: black;
+                                color: var(--color
+                                );
 
                                 > img {
                                     display: flex;
@@ -188,7 +173,7 @@ $background-color: #e9ecf1;
                                 margin: 0 0.5rem;
                                 padding: 0;
                                 text-decoration: none;
-                                color: black;
+                                color: var(--color);
 
                                 > img {
                                     display: flex;
@@ -233,22 +218,14 @@ $background-color: #e9ecf1;
                 width: calc(100vw - 20rem);
                 flex: 1;
 
-                &::-webkit-scrollbar {
-                    width: 0.5rem;
-                    color: black;
-                    background-color: $background-color;
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    background-color: gray;
-                    border-radius: 0.5rem;
-                }
+                @include scrollbar;
 
                 .chatSender {
                     display: flex;
                     width: 100%;
                     flex-direction: row;
                     text-align: end;
+                    color: black;
 
                     > div {
                         text-align: start;
@@ -284,6 +261,14 @@ $background-color: #e9ecf1;
                                 display: flex;
                                 flex-direction: column;
                                 margin-top: 1rem;
+
+                                > div {
+                                    margin: 0;
+
+                                    p {
+                                        margin: 0;
+                                    }
+                                }
                             }
                         }
                     }
@@ -293,6 +278,7 @@ $background-color: #e9ecf1;
                     display: flex;
                     width: 100%;
                     flex-direction: row-reverse;
+                    color: black;
 
                     > div {
                         text-align: start;
@@ -329,6 +315,14 @@ $background-color: #e9ecf1;
                                 display: flex;
                                 flex-direction: column;
                                 margin-top: 1rem;
+
+                                > div {
+                                    margin: 0;
+
+                                    p {
+                                        margin: 0;
+                                    }
+                                }
                             }
                         }
                     }
@@ -343,7 +337,7 @@ $background-color: #e9ecf1;
                 width: 100%;
                 flex: 1;
                 margin: 0;
-                background-color: $background-color;
+                background-color: var(--background-color);
             }
         }
     }

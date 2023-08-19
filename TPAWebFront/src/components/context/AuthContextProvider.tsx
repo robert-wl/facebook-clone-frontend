@@ -26,18 +26,35 @@ export default function AuthContextProvider({ children }: { children: JSX.Elemen
     const [auth, setAuth] = useState<User | null>(null);
 
     const getUser = async () => {
-        await refetch()
-            .then((data) => {
-                setAuth(data.data.getAuth);
-            })
-            .catch(debouncedError);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const data = await refetch().catch(debouncedError);
+
+        if (data) {
+            setAuth(data.data.getAuth);
+        }
     };
 
     useEffect(() => {
         getUser();
     }, []);
 
-    if (loading) return <></>;
+    useEffect(() => {
+        if (auth) {
+            if (auth.theme == "dark") {
+                console.log("hai");
+                document.documentElement.style.setProperty("--main-color", "rgb(34, 35, 36, 1)");
+                document.documentElement.style.setProperty("--background-color", "#111111");
+                document.documentElement.style.setProperty("--color", "rgb(220, 220, 220, 0.8)");
+                document.documentElement.style.setProperty("--modal-background-color", "rgb(020, 020, 020, 0.8)");
+            } else {
+                document.documentElement.style.setProperty("--main-color", "white");
+                document.documentElement.style.setProperty("--background-color", "#e9ecf1");
+                document.documentElement.style.setProperty("--color", "black");
+                document.documentElement.style.setProperty("--modal-background-color", "rgba(255, 255, 255, 0.8)");
+            }
+        }
+    }, [auth]);
 
     return (
         <AuthContext.Provider value={{ auth, loading, getUser }}>

@@ -14,10 +14,7 @@ export default function HomeButton() {
                         size={"1.5rem"}
                     />
                 ) : (
-                    <IoHomeOutline
-                        color={"black"}
-                        size={"1.5rem"}
-                    />
+                    <IoHomeOutline size={"1.5rem"} />
                 )}
             </div>
         </Link>

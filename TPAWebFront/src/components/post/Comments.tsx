@@ -12,6 +12,7 @@ import { AiFillLike } from "react-icons/ai";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import RichText from "../richText/RichText.tsx";
 import domPurify from "../../../controller/domPurify.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 interface Comments {
     comment: Comment | Maybe<Comment>;
@@ -69,7 +70,7 @@ export default function Comments({ comment }: Comments) {
             <div className={styles.top}>
                 <div className={styles.image}>
                     <img
-                        src={comment?.user.profile ? comment.user.profile : "../src/assets/default-profile.jpg"}
+                        src={userProfileLoader(comment?.user.profile)}
                         alt={""}
                     />
                 </div>
@@ -86,10 +87,7 @@ export default function Comments({ comment }: Comments) {
                         )}
                         {currComment?.likeCount != undefined && currComment?.likeCount > 0 && (
                             <div className={styles.like}>
-                                <AiFillLike
-                                    color={"#1877f2"}
-                                    size={"1rem"}
-                                />
+                                <AiFillLike size={"1rem"} />
                                 {currComment?.likeCount}
                             </div>
                         )}
@@ -136,7 +134,7 @@ export default function Comments({ comment }: Comments) {
                             <div className={styles.commentInput}>
                                 <div className={styles.image}>
                                     <img
-                                        src={auth?.profile ? auth?.profile : "../src/assets/default-profile.jpg"}
+                                        src={userProfileLoader(auth?.profile)}
                                         alt={""}
                                     />
                                 </div>

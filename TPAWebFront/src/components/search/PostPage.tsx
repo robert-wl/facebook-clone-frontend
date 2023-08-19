@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
 import { Post } from "../../../gql/graphql.ts";
 import { useQuery } from "@apollo/client";
@@ -13,10 +12,10 @@ interface PostPage {
     setCurrPost: Dispatch<SetStateAction<Post | null>>;
     setShareModalState: Dispatch<SetStateAction<boolean>>;
     pageRef: RefObject<HTMLDivElement>;
+    searchQuery: string;
 }
 
-export default function PostPage({ setCurrPost, setShareModalState, pageRef }: PostPage) {
-    const { searchQuery } = useParams();
+export default function PostPage({ setCurrPost, setShareModalState, pageRef, searchQuery }: PostPage) {
     const [postData, setPostData] = useState<Post[]>([]);
     const [stop, setStop] = useState(false);
     let start = 0;
@@ -85,24 +84,17 @@ export default function PostPage({ setCurrPost, setShareModalState, pageRef }: P
 
     return (
         <div className={styles.search}>
-            {postData.length == 0 ? (
-                <>
-                    <PostSkeleton />
-                </>
-            ) : (
-                <>
-                    {postData.map((post) => {
-                        return (
-                            <PostBox
-                                key={post.id}
-                                post={post}
-                                setCurrPost={setCurrPost}
-                                setShareModalState={setShareModalState}
-                            />
-                        );
-                    })}
-                </>
-            )}
+            {postData.map((post) => {
+                return (
+                    <PostBox
+                        key={post.id}
+                        post={post}
+                        setCurrPost={setCurrPost}
+                        setShareModalState={setShareModalState}
+                        setPostList={setPostData}
+                    />
+                );
+            })}
             {loading && !stop && <PostSkeleton />}
             {!stop && <PostSkeleton />}
         </div>

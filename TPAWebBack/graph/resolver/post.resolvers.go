@@ -71,7 +71,6 @@ func (r *mutationResolver) CreatePost(ctx context.Context, newPost model.NewPost
 			PostID: post.ID,
 			UserID: *vsb,
 		}
-		fmt.Println(vsb)
 
 		if err := r.DB.Save(visibility).Error; err != nil {
 			return nil, err
@@ -79,7 +78,6 @@ func (r *mutationResolver) CreatePost(ctx context.Context, newPost model.NewPost
 	}
 
 	for i, _ := range newPost.Tags {
-		fmt.Println(i)
 		tagModel := &model.PostTag{
 			PostID: post.ID,
 			UserID: *newPost.Tags[i],
@@ -88,7 +86,6 @@ func (r *mutationResolver) CreatePost(ctx context.Context, newPost model.NewPost
 		if err := r.DB.Create(tagModel).Error; err != nil {
 			return nil, err
 		}
-		fmt.Println(tagModel.UserID)
 	}
 
 	if err := r.DB.
@@ -97,6 +94,45 @@ func (r *mutationResolver) CreatePost(ctx context.Context, newPost model.NewPost
 		First(&post).Error; err != nil {
 		return nil, err
 	}
+
+	go func() {
+		var userIDs []string
+
+		subQuery := r.DB.
+			Model(&model.Friend{}).
+			Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", userID, userID, true).
+			Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", userID, userID, true).
+			Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID)
+
+		subQueryBlocked := r.DB.
+			Model(&model.BlockNotification{}).
+			Where("(sender_id = ?)", userID).
+			Select("DISTINCT receiver_id")
+
+		if err := r.DB.
+			Model(&model.User{}).
+			Where("id IN (?) AND id NOT IN (?) AND id != ?", subQuery, subQueryBlocked, userID).
+			Select("id").
+			Find(&userIDs).Error; err != nil {
+			return
+		}
+
+		for _, userId := range userIDs {
+
+			newNotification := &model.NewNotification{
+				Message: fmt.Sprintf("%s %s posted a new post", user.FirstName, user.LastName),
+				UserID:  userId,
+				PostID:  &post.ID,
+				ReelID:  nil,
+				StoryID: nil,
+				GroupID: nil,
+			}
+
+			if _, err := r.CreateNotification(ctx, *newNotification); err != nil {
+				continue
+			}
+		}
+	}()
 
 	return post, nil
 }
@@ -127,6 +163,67 @@ func (r *mutationResolver) CreateComment(ctx context.Context, newComment model.N
 	if err := r.DB.Save(&comment).Error; err != nil {
 		return nil, err
 	}
+
+	go func() {
+		var users []*model.User
+
+		subQuery := r.DB.
+			Model(&model.Friend{}).
+			Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", userID, userID, true).
+			Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID)
+
+		subQueryBlocked := r.DB.
+			Model(&model.BlockNotification{}).
+			Where("(sender_id = ?)", userID).
+			Select("DISTINCT receiver_id")
+
+		if err := r.DB.Find(&users, "id IN (?) AND id NOT IN (?) AND id != ?", subQuery, subQueryBlocked, userID).Error; err != nil {
+			return
+		}
+
+		if newComment.ParentPost == nil {
+			var comment *model.Comment
+
+			if err := r.DB.First(&comment, "id = ?", newComment.ParentComment).Error; err != nil {
+				return
+			}
+
+			for _, userDat := range users {
+
+				newNotification := &model.NewNotification{
+					Message: fmt.Sprintf("%s %s replied a comment", user.FirstName, user.LastName),
+					UserID:  userDat.ID,
+					PostID:  comment.ParentPostID,
+					ReelID:  nil,
+					StoryID: nil,
+					GroupID: nil,
+				}
+
+				if _, err := r.CreateNotification(ctx, *newNotification); err != nil {
+					continue
+				}
+			}
+		} else {
+			for _, userDat := range users {
+
+				newNotification := &model.NewNotification{
+					Message: fmt.Sprintf("%s %s commented on a post", user.FirstName, user.LastName),
+					UserID:  userDat.ID,
+					PostID:  newComment.ParentPost,
+					ReelID:  nil,
+					StoryID: nil,
+					GroupID: nil,
+				}
+
+				fmt.Println(newNotification)
+				if _, err := r.CreateNotification(ctx, *newNotification); err != nil {
+					fmt.Println(err)
+					continue
+				}
+				fmt.Println("masuk")
+			}
+		}
+	}()
 
 	return comment, nil
 }
@@ -163,6 +260,26 @@ func (r *mutationResolver) SharePost(ctx context.Context, userID string, postID 
 		return nil, err
 	}
 
+	go func() {
+
+		if err := r.DB.First(&user, "id = ?", userID).Error; err != nil {
+			return
+		}
+
+		newNotification := &model.NewNotification{
+			Message: fmt.Sprintf("%s %s released a new story", user.FirstName, user.LastName),
+			UserID:  userID,
+			PostID:  &post.ID,
+			ReelID:  nil,
+			StoryID: nil,
+			GroupID: nil,
+		}
+
+		if _, err := r.CreateNotification(ctx, *newNotification); err != nil {
+			return
+		}
+	}()
+
 	return &conv.ID, nil
 }
 
@@ -171,7 +288,7 @@ func (r *mutationResolver) LikePost(ctx context.Context, postID string) (*model.
 	var postLike *model.PostLike
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.First(&postLike, "post_id = ? AND user_id = ?", postID, userID).Error; err != nil {
+	if err := r.DB.First(&postLike, "post_id = ? AND user_id = ?", postID, userID).Error; err != nil || postLike == nil {
 		postLike = &model.PostLike{
 			PostID: postID,
 			UserID: userID,
@@ -179,6 +296,50 @@ func (r *mutationResolver) LikePost(ctx context.Context, postID string) (*model.
 		if err := r.DB.Save(&postLike).Error; err != nil {
 			return nil, err
 		}
+
+		go func() {
+			var userIDs []string
+			var user *model.User
+
+			if err := r.DB.First(&user, "id = ?", userID).Error; err != nil {
+				return
+			}
+
+			subQuery := r.DB.
+				Model(&model.Friend{}).
+				Where("(sender_id = ? OR receiver_id = ? AND accepted = ?)", userID, userID, true).
+				Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID)
+
+			subQueryBlocked := r.DB.
+				Model(&model.BlockNotification{}).
+				Where("(sender_id = ?)", userID).
+				Select("DISTINCT receiver_id")
+
+			if err := r.DB.
+				Model(&model.User{}).
+				Where("id IN (?) AND id NOT IN (?) AND id != ?", subQuery, subQueryBlocked, userID).
+				Select("id").
+				Find(&userIDs).Error; err != nil {
+				return
+			}
+
+			for _, userId := range userIDs {
+
+				newNotification := &model.NewNotification{
+					Message: fmt.Sprintf("%s %s liked a post", user.FirstName, user.LastName),
+					UserID:  userId,
+					PostID:  &postID,
+					ReelID:  nil,
+					StoryID: nil,
+					GroupID: nil,
+				}
+
+				if _, err := r.CreateNotification(ctx, *newNotification); err != nil {
+					continue
+				}
+			}
+		}()
+
 	} else {
 		if err := r.DB.Delete(&postLike).Error; err != nil {
 			return nil, err
@@ -210,9 +371,24 @@ func (r *mutationResolver) Likecomment(ctx context.Context, commentID string) (*
 	return commentLike, nil
 }
 
+// DeletePost is the resolver for the deletePost field.
+func (r *mutationResolver) DeletePost(ctx context.Context, postID string) (*string, error) {
+	if err := r.DB.Delete(&model.Post{}, "id = ?", postID).Error; err != nil {
+		return nil, err
+	}
+
+	return &postID, nil
+}
+
 // LikeCount is the resolver for the likeCount field.
 func (r *postResolver) LikeCount(ctx context.Context, obj *model.Post) (int, error) {
-	return int(r.DB.Model(obj).Association("Likes").Count()), nil
+	var count int64
+
+	if err := r.DB.Find(&model.PostLike{}, "post_id = ?", obj.ID).Count(&count).Error; err != nil {
+		return 0, nil
+	}
+
+	return int(count), nil
 }
 
 // CommentCount is the resolver for the commentCount field.
@@ -223,10 +399,13 @@ func (r *postResolver) CommentCount(ctx context.Context, obj *model.Post) (int, 
 // Liked is the resolver for the liked field.
 func (r *postResolver) Liked(ctx context.Context, obj *model.Post) (*bool, error) {
 	boolean := false
+	var postLike *model.PostLike
 
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.First(&model.PostLike{}, "post_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil {
+	fmt.Println(obj.ID)
+	if err := r.DB.First(&postLike, "post_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil && postLike != nil {
+		fmt.Println("found")
 		boolean = true
 	}
 
@@ -254,6 +433,11 @@ func (r *queryResolver) GetPosts(ctx context.Context, pagination model.Paginatio
 		Where("(post_id = posts.id)").
 		Table("post_visibilities")
 
+	subQueryGroup := r.DB.
+		Select("group_id").
+		Where("user_id = ? AND approved = ?", userID, true).
+		Table("members")
+
 	if err := r.DB.
 		Order("created_at desc").
 		Preload("User").
@@ -264,7 +448,7 @@ func (r *queryResolver) GetPosts(ctx context.Context, pagination model.Paginatio
 		Preload("PostTags.User").
 		Offset(pagination.Start).
 		Limit(pagination.Limit).
-		Find(&posts, "privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?))", "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate).Error; err != nil {
+		Find(&posts, "(privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?)) OR group_id IN (?))", "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate, subQueryGroup).Error; err != nil {
 		return nil, err
 	}
 
@@ -337,7 +521,7 @@ func (r *queryResolver) GetFilteredPosts(ctx context.Context, filter string, pag
 		Preload("PostTags.User").
 		Offset(pagination.Start).
 		Limit(pagination.Limit).
-		Find(&posts, "(privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?)) OR group_id IN (?)) AND LOWER(content) LIKE LOWER(?)", "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate, subQueryGroup, "%"+filter+"%").Error; err != nil {
+		Find(&posts, "id = ? OR ((privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?)) OR group_id IN (?)) AND LOWER(content) LIKE LOWER(?))", filter, "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate, subQueryGroup, "%"+filter+"%").Error; err != nil {
 		return nil, err
 	}
 

@@ -11,6 +11,8 @@ export const GET_AUTH = gql`
             dob
             gender
             email
+            notificationCount
+            theme
         }
     }
 `;

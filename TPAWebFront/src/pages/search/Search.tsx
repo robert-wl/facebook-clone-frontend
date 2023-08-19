@@ -15,7 +15,8 @@ import UserPage from "../../components/search/UserPage.tsx";
 import GroupPage from "../../components/search/GroupPage.tsx";
 
 export default function Search() {
-    const searchQuery = decodeURIComponent(useParams().searchQuery as string);
+    const raw = decodeURIComponent(useParams().searchQuery ?? "");
+    const searchQuery = raw ? (decodeURIComponent(raw)[0] == "&" ? decodeURIComponent(raw).split("&")[1] : raw) : "";
     const [tab, setTab] = useState("all");
     const [shareModalState, setShareModalState] = useState(false);
     const [currPost, setCurrPost] = useState<Post | null>(null);
@@ -82,6 +83,7 @@ export default function Search() {
                                 setShareModalState={setShareModalState}
                                 setTab={setTab}
                                 pageRef={pageRef}
+                                searchQuery={searchQuery}
                             />
                         )}
                         {tab == "posts" && (
@@ -90,6 +92,7 @@ export default function Search() {
                                 setCurrPost={setCurrPost}
                                 setShareModalState={setShareModalState}
                                 pageRef={pageRef}
+                                searchQuery={searchQuery}
                             />
                         )}
                         {tab == "people" && (

@@ -90,10 +90,7 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
                         <div dangerouslySetInnerHTML={{ __html: domPurify(comment?.content) }} />
                         {comment?.likeCount != undefined && comment?.likeCount > 0 && (
                             <div className={styles.like}>
-                                <AiFillLike
-                                    color={"#1877f2"}
-                                    size={"1rem"}
-                                />
+                                <AiFillLike size={"1rem"} />
                                 {comment?.likeCount}
                             </div>
                         )}

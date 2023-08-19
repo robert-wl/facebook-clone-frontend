@@ -5,7 +5,7 @@
     width: 100%;
     color: transparent;
     height: fit-content;
-    font-size: 1.7rem;
+    font-size: 2.1rem;
 }
 
 .imageHolder {
@@ -21,7 +21,7 @@
     align-items: center;
     width: inherit;
     justify-content: space-between;
-    background-color: white;
+    background-color: var(--background-color);
     height: 3rem;
 
     svg {
@@ -34,12 +34,12 @@
     }
 
     input {
-        color: black;
+        color: var(--color);
         height: 1.75rem;
         //margin: 0 1rem;
         font-size: 1.1rem;
         width: 100%;
-        background-color: rgb(100, 100, 100, 0.2);
+        background-color: var(--gray-dark-color);
         border: none;
         outline: none;
         border-radius: 1rem;
@@ -67,7 +67,12 @@
             padding: 0.3rem;
             background-color: lightgray;
             border-radius: 20rem;
-            //border: 1px solid black;
+            color: black;
+
+            &:hover {
+                opacity: 0.9;
+                cursor: pointer;
+            }
         }
     }
 }

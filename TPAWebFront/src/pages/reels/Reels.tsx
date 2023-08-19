@@ -15,6 +15,7 @@ import { LIKE_REEL } from "../../../lib/query/reels/likeReel.graphql.ts";
 import ReelCommentSidebar from "../../components/reels/ReelCommentSidebar.tsx";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import { Link } from "react-router-dom";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 export default function Reels() {
     const [reels, setReels] = useState<string[]>([]);
@@ -106,10 +107,12 @@ export default function Reels() {
                         </Link>
                         <div className={styles.box}>
                             <div className={styles.profile}>
-                                <img
-                                    src={reelData?.user.profile ? reelData?.user.profile : "../src/assets/default-profile.jpg"}
-                                    alt={""}
-                                />
+                                <Link to={`/user/${reelData?.user.username}`}>
+                                    <img
+                                        src={userProfileLoader(reelData?.user.profile)}
+                                        alt={""}
+                                    />
+                                </Link>
                                 <h4>
                                     {reelData?.user.firstName} {reelData?.user.lastName}
                                 </h4>
@@ -165,7 +168,15 @@ export default function Reels() {
                             <span>{reelData?.content}</span>
                         </div>
                     </div>
-                    {showComment && reelData && <ReelCommentSidebar reelData={reelData!} />}
+                    <>
+                        {showComment && reelData && (
+                            <ReelCommentSidebar
+                                key={reels[index]}
+                                reelData={reelData!}
+                                setReelData={setReelData}
+                            />
+                        )}
+                    </>
                 </div>
             </div>
         </>

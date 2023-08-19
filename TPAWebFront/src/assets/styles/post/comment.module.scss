@@ -49,16 +49,22 @@
                 .like {
                     position: absolute;
                     display: flex;
-                    background-color: white;
-                    right: -10%;
-                    bottom: 0;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    right: 0%;
+                    bottom: -5;
                     padding: 0.3rem 0.3rem 0.3rem;
                     box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
                     border-radius: 10rem;
                     font-size: 0.75rem;
 
                     svg {
+                        padding: 0.2rem 0.2rem 0.2rem;
                         margin-right: 0.5rem;
+                        color: white;
+                        background-color: var(--blue-color);
+                        border-radius: 20rem;
                     }
                 }
             }

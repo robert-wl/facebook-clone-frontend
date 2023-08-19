@@ -35,14 +35,18 @@
         position: absolute;
         top: 1%;
         right: 1%;
-        padding: 0.25rem 0.4rem 0;
+        padding: 0.25rem;
         background-color: var(--main-color);
+        color: var(--color);
         border-radius: 20rem;
 
         &:hover {
-            background-color: var(--gray-color);
+            opacity: 90%;
             cursor: pointer;
-            //transition: background-color 0.2s;
+        }
+
+        svg {
+            display: flex;
         }
     }
 }

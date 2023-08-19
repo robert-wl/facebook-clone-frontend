@@ -1,14 +1,17 @@
+@use "../mixins.scss" as *;
+
+
 .comments {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: end;
-    //padding-top: 2rem;
-    width: 25rem;
+    width: 35rem;
     height: 100%;
-    background-color: white;
+    background-color: var(--background-color);
+    color: var(--color);
     z-index: 10000;
-    border-top: 1px solid rgb(100, 100, 100, 0.3);
+    //border-top: var(--border);
 
     > header {
         display: flex;
@@ -38,7 +41,7 @@
 
         hr {
             width: calc(100% - 2rem);
-            background-color: rgb(100, 100, 100, 0.1);
+            background-color: var(--main-color);
             border-color: transparent;
             padding: 0 1rem;
         }
@@ -52,13 +55,7 @@
         overflow-y: auto;
         justify-content: start;
 
-        &::-webkit-scrollbar {
-            background-color: transparent;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background-color: lightgray;
-        }
+        @include scrollbar
     }
 
     .commentInput {
@@ -78,41 +75,56 @@
 
         .commentContainer {
             display: flex;
+            flex-direction: row;
             flex: 1;
             width: 100%;
             height: fit-content;
             margin-left: 0.5rem;
             margin-right: 1rem;
             border-radius: 1rem;
-            background-color: rgb(100, 100, 100, 0.1);
+            background-color: var(--main-color);
             text-align: start;
             font-size: 1rem;
             margin-bottom: 0.2rem;
-            color: gray;
+            color: var(--color);
             padding: 0.6em 1.2em;
             border-color: transparent;
 
-            textarea {
+            .textarea {
                 width: 100%;
-                color: black;
                 background-color: transparent;
                 border: transparent;
-                overflow-y: hidden;
+                overflow-y: auto;
+                word-wrap: anywhere;
                 resize: none;
                 font-family: Arial, serif;
                 font-size: 0.9rem;
+                color: var(--color);
 
                 &:focus {
                     outline: none;
                 }
             }
 
+            //.textarea * {
+            //    color: var(--color);
+            //}
+
             .commentFooter {
                 display: flex;
+                flex-direction: column;
                 justify-content: end;
 
                 svg:hover {
                     cursor: pointer;
+                }
+            }
+
+            .commentFooterDisabled {
+                @extend .commentFooter;
+
+                svg:hover {
+                    cursor: default;
                 }
             }
         }

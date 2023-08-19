@@ -11,6 +11,7 @@ import RichText from "../richText/RichText.tsx";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { HiPencilSquare } from "react-icons/hi2";
 import cleanRichText from "../../../controller/cleanRichText.ts";
+import { RxCross2 } from "react-icons/rx";
 
 interface NewPostModal {
     modalState: boolean;
@@ -26,12 +27,13 @@ interface NewPostModal {
     visibilityList: User[];
 }
 
-export default function NewPostModal({ modalState, setModalState, data, setData, setLoading, setTagModalState, setVisibilityModalState, setTagList, tagList, setVisibilityList, visibilityList }: NewPostModal) {
+export default function NewPostModal({ modalState, setModalState, data, setData, setTagModalState, setVisibilityModalState, setTagList, tagList, setVisibilityList, visibilityList }: NewPostModal) {
     const [files, setFiles] = useState<File[]>([]);
     const [content, setContent] = useState("");
     const [visibility, setVisibility] = useState("public");
     const [createPost] = useMutation(CREATE_POST);
     const [index, setIndex] = useState(0);
+    const [loading, setLoading] = useState(false);
     const { auth } = useContext(AuthContext);
 
     const handleInput = () => {
@@ -62,6 +64,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
         const urlList: string[] = [];
         for (const file of files) {
             const url = await uploadStorage("post", file);
+            console.log(url);
             urlList.push(url);
         }
 
@@ -83,31 +86,22 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
         }).catch(debouncedError);
 
         setData([dat.createPost, ...data]);
-        handleClose();
         setLoading(false);
+        handleClose();
     };
 
     if (!modalState) return <></>;
 
     return (
         <div className={styles.background}>
-            <div className={files.length == 0 ? styles.box : styles.boxImage}>
+            <div className={styles.box}>
                 <header>
                     <h2>Create Post</h2>
                     <div
                         className={styles.close}
                         onClick={() => handleClose()}
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            fill="black"
-                            className="bi bi-x-lg"
-                            viewBox="0 0 16 16"
-                        >
-                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                        </svg>
+                        <RxCross2 size={"1.5rem"} />
                     </div>
                 </header>
                 <hr />
@@ -203,13 +197,22 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                         </div>
                     </div>
                 </div>
-                <button
-                    className={styles.postButton}
-                    disabled={content.length === 8 || content == "<p></p>"}
-                    onClick={() => handleSubmit()}
-                >
-                    Post
-                </button>
+                {loading ? (
+                    <button
+                        className={styles.postingButton}
+                        onClick={() => handleSubmit()}
+                    >
+                        Posting...
+                    </button>
+                ) : (
+                    <button
+                        className={styles.postButton}
+                        disabled={content.length === 8 || content == "<p></p>"}
+                        onClick={() => handleSubmit()}
+                    >
+                        Post
+                    </button>
+                )}
             </div>
         </div>
     );

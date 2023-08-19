@@ -7,11 +7,13 @@ import uploadStorage from "../../../controller/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_REEL } from "../../../lib/query/reels/createReel.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateReels() {
     const [video, setVideo] = useState<File | null>(null);
     const [content, setContent] = useState("");
     const [createReel] = useMutation(CREATE_REEL);
+    const navigation = useNavigate();
     const handleSubmit = async () => {
         if (video && content) {
             const url = await uploadStorage("reels", video);
@@ -23,7 +25,9 @@ export default function CreateReels() {
                     },
                 },
             })
-                .then(() => console.log("yay"))
+                .then(() => {
+                    navigation("/reels");
+                })
                 .catch(debouncedError);
         } else {
             createToast("Error: please fill all the fields", "red");

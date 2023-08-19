@@ -6,6 +6,7 @@ import { FormEvent, useContext, useState } from "react";
 import Toastify from "toastify-js";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
+import Footer from "../../components/misc/Footer.tsx";
 
 export default function Login() {
     const [authenticateUser] = useMutation(AUTHENTICATE_USER);
@@ -81,6 +82,7 @@ export default function Login() {
                     </button>
                 </form>
             </div>
+            <Footer />
         </div>
     );
 }
