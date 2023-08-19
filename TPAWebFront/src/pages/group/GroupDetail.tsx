@@ -238,6 +238,7 @@ export default function GroupDetail() {
                                                 </div>
                                             </div>
                                         )}
+
                                         <div className={styles.posts}>
                                             {group?.posts?.map((post, index) => {
                                                 if (post)
