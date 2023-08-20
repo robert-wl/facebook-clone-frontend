@@ -10,6 +10,8 @@ import errorHandler from "../../../controller/errorHandler.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import MessageBox from "../../components/message/MessageBox.tsx";
 import domPurify from "../../../controller/domPurify.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
 
 export default function Messages() {
     const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -77,7 +79,7 @@ export default function Messages() {
                                                     >
                                                         <Link to={"/messages/" + conv.id}>
                                                             <img
-                                                                src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
+                                                                src={userProfileLoader(user.profile)}
                                                                 alt={"profile picture"}
                                                             />
                                                             <div className={styles.content}>
@@ -98,7 +100,7 @@ export default function Messages() {
                                                     >
                                                         <Link to={"/messages/" + conv.id}>
                                                             <img
-                                                                src={conv.group.background ? conv.group.background : "../src/assets/default-profile.jpg"}
+                                                                src={groupBackgroundLoader(conv.group.background)}
                                                                 alt={"profile picture"}
                                                             />
                                                             <div className={styles.content}>

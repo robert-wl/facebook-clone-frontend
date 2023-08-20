@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"github.com/redis/go-redis/v9"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 	"gorm.io/gorm"
 )
@@ -13,5 +14,6 @@ import (
 
 type Resolver struct {
 	DB                   *gorm.DB
+	Redis                *redis.Client
 	ConversationChannels []*model.ConversationChannel
 }

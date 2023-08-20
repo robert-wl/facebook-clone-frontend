@@ -44,6 +44,7 @@ export default function User() {
         onCompleted: (dat) => {
             setUser(dat.getUser);
         },
+        fetchPolicy: "cache-and-network",
         onError: debouncedError,
     });
     const { auth } = useContext(AuthContext);

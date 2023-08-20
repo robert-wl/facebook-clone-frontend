@@ -7,6 +7,7 @@ import { VIEW_CONVERSATION } from "../../../lib/query/message/viewConversation.g
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import domPurify from "../../../controller/domPurify.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 export default function MessageBox() {
     const { conversationID } = useParams();
@@ -44,7 +45,7 @@ export default function MessageBox() {
                                             <div className={styles.post}>
                                                 <header>
                                                     <img
-                                                        src={message.post.user.profile ? message.post.user.profile : "../src/assets/default-profile.jpg"}
+                                                        src={userProfileLoader(message.post.user.profile)}
                                                         alt={""}
                                                     />
                                                     {message.post.user.firstName} {message.post.user.lastName}
@@ -74,7 +75,7 @@ export default function MessageBox() {
                                             <div className={styles.post}>
                                                 <header>
                                                     <img
-                                                        src={message.post.user.profile ? message.post.user.profile : "../src/assets/default-profile.jpg"}
+                                                        src={userProfileLoader(message.post.user.profile)}
                                                         alt={""}
                                                     />
                                                     {message.post.user.firstName} {message.post.user.lastName}

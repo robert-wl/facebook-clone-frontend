@@ -16,11 +16,7 @@ func CreateJWT(userID string) (string, error) {
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 		})
 
-	key := GetDotENVVariable("JWT_KEY")
-
-	if key == "" {
-		key = defaultKey
-	}
+	key := GetDotENVVariable("JWT_KEY", defaultKey)
 
 	jwtString, err := token.SignedString([]byte(key))
 
@@ -33,11 +29,7 @@ func CreateJWT(userID string) (string, error) {
 
 func ParseJWT(jwtToken string) (string, error) {
 
-	key := GetDotENVVariable("JWT_KEY")
-
-	if key == "" {
-		key = defaultKey
-	}
+	key := GetDotENVVariable("JWT_KEY", defaultKey)
 
 	token, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(key), nil

@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 	cors2 "github.com/rs/cors"
 	"github.com/yahkerobertkertasnya/TPAWebBack/database/postgresql"
+	"github.com/yahkerobertkertasnya/TPAWebBack/database/redis"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/resolver"
 	"github.com/yahkerobertkertasnya/TPAWebBack/helper"
@@ -39,7 +40,8 @@ func main() {
 	router.Use(middleware.AuthMiddleware)
 
 	c := graph.Config{Resolvers: &resolver.Resolver{
-		DB: postgresql.GetInstance(),
+		DB:    postgresql.GetInstance(),
+		Redis: redis.GetInstance(),
 	}}
 
 	c.Directives.Auth = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
