@@ -1,4 +1,4 @@
-package database
+package postgresql
 
 import (
 	"fmt"
@@ -14,11 +14,7 @@ const defaultDatabase = "host=localhost user=postgres password=postgres dbname=T
 
 func GetInstance() *gorm.DB {
 	if database == nil {
-		dsn := helper.GetDotENVVariable("DATABASE_URL")
-
-		if dsn == "" {
-			dsn = defaultDatabase
-		}
+		dsn := helper.GetDotENVVariable("DATABASE_URL", defaultDatabase)
 
 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 

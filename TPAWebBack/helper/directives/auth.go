@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/vektah/gqlparser/v2/gqlerror"
-	"github.com/yahkerobertkertasnya/TPAWebBack/database"
+	"github.com/yahkerobertkertasnya/TPAWebBack/database/postgresql"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 	"github.com/yahkerobertkertasnya/TPAWebBack/helper"
 )
@@ -30,7 +30,7 @@ func AuthDirectives(ctx context.Context, next graphql.Resolver) (res interface{}
 	userId := claims
 
 	fmt.Println(userId)
-	DB := database.GetInstance()
+	DB := postgresql.GetInstance()
 
 	if err := DB.First(&model.User{}, "id = ?", userId).Error; err != nil {
 		return nil, err

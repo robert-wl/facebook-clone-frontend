@@ -2,14 +2,18 @@ package helper
 
 import (
 	"github.com/joho/godotenv"
-	"log"
 	"os"
 )
 
-func GetDotENVVariable(key string) string {
+func GetDotENVVariable(key string, defaultVar string) string {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		return defaultVar
 	}
 
-	return os.Getenv(key)
+	variable := os.Getenv(key)
+
+	if variable == "" {
+		return defaultVar
+	}
+	return variable
 }

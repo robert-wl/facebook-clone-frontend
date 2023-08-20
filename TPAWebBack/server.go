@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
 	cors2 "github.com/rs/cors"
-	"github.com/yahkerobertkertasnya/TPAWebBack/database"
+	"github.com/yahkerobertkertasnya/TPAWebBack/database/postgresql"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/resolver"
 	"github.com/yahkerobertkertasnya/TPAWebBack/helper"
@@ -24,10 +24,7 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	port := helper.GetDotENVVariable("PORT")
-	if port == "" {
-		port = defaultPort
-	}
+	port := helper.GetDotENVVariable("PORT", defaultPort)
 
 	router := chi.NewRouter()
 
@@ -42,7 +39,7 @@ func main() {
 	router.Use(middleware.AuthMiddleware)
 
 	c := graph.Config{Resolvers: &resolver.Resolver{
-		DB: database.GetInstance(),
+		DB: postgresql.GetInstance(),
 	}}
 
 	c.Directives.Auth = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
@@ -70,7 +67,7 @@ func main() {
 	})
 	//srv := handler.NewDefaultServer(graph.NewExecutableSchema(c))
 
-	database.MigrateDatabase()
+	postgresql.MigrateDatabase()
 
 	//helper.SendVerification("robert.wiliam12345@gmail.com", "12345")
 
