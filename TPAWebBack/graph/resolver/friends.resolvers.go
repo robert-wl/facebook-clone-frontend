@@ -6,6 +6,9 @@ package resolver
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"time"
 
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph/model"
 )
@@ -29,8 +32,14 @@ func (r *mutationResolver) AddFriend(ctx context.Context, friendInput model.Frie
 			return nil, err
 		}
 
+		r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", friendInput.Sender))
+		r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", friendInput.Receiver))
+
 		return friend, nil
 	} else {
+		r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", friendInput.Sender))
+		r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", friendInput.Receiver))
+
 		return nil, r.DB.Delete(&friendModel).Error
 	}
 }
@@ -43,6 +52,8 @@ func (r *mutationResolver) AcceptFriend(ctx context.Context, friend string) (*mo
 	if err := r.DB.First(&friendModel, "sender_id = ? and receiver_id = ?", friend, userID).Update("Accepted", true).Error; err != nil {
 		return nil, err
 	}
+
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", userID))
 
 	return friendModel, nil
 }
@@ -61,6 +72,9 @@ func (r *mutationResolver) RejectFriend(ctx context.Context, friend string) (*mo
 		return nil, err
 	}
 
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s:friendCount", userID))
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", userID))
+
 	return friendModel, nil
 }
 
@@ -70,14 +84,28 @@ func (r *queryResolver) GetFriends(ctx context.Context) ([]*model.User, error) {
 
 	userID := ctx.Value("UserID").(string)
 
-	subQuery := r.DB.
-		Model(&model.Friend{}).
-		Where("((sender_id = ? OR receiver_id = ?) AND accepted = ?)", userID, userID, true).
-		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID)
+	if userFriendsRedis, err := r.Redis.Get(ctx, fmt.Sprintf("user:%s:friend", userID)).Result(); err != nil {
+		subQuery := r.DB.
+			Model(&model.Friend{}).
+			Where("((sender_id = ? OR receiver_id = ?) AND accepted = ?)", userID, userID, true).
+			Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID)
 
-	if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
-		return nil, err
+		if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedUsers, err := json.Marshal(users); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("user:%s:friend", userID), serializedUsers, 10*time.Minute)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(userFriendsRedis), &users); err != nil {
+			return nil, err
+		}
 	}
+
+	print(fmt.Sprintf("user:%s:friend", userID))
 
 	return users, nil
 }
@@ -109,13 +137,25 @@ func (r *queryResolver) GetUserFriends(ctx context.Context, username string) ([]
 		return nil, err
 	}
 
-	subQuery := r.DB.
-		Model(&model.Friend{}).
-		Where("((sender_id = ? OR receiver_id = ?) AND accepted = true)", user.ID, user.ID).
-		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID)
+	if userFriendsRedis, err := r.Redis.Get(ctx, fmt.Sprintf("user:%s:friend", user.ID)).Result(); err != nil {
+		subQuery := r.DB.
+			Model(&model.Friend{}).
+			Where("((sender_id = ? OR receiver_id = ?) AND accepted = true)", user.ID, user.ID).
+			Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID)
 
-	if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
-		return nil, err
+		if err := r.DB.Find(&users, "id IN (?)", subQuery).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedUsers, err := json.Marshal(users); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("user:%s:friend", user.ID), serializedUsers, 10*time.Minute)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(userFriendsRedis), &users); err != nil {
+			return nil, err
+		}
 	}
 
 	return users, nil
@@ -132,23 +172,36 @@ func (r *queryResolver) GetUserMutuals(ctx context.Context, username string) ([]
 		return nil, err
 	}
 
-	if err := r.DB.
-		Model(&model.Friend{}).
-		Where("sender_id = ? OR receiver_id = ?", user.ID, user.ID).
-		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID).
-		Find(&friendIDs).Error; err != nil {
-		return nil, err
-	}
-
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.Model(&model.Friend{}).
-		Where("(sender_id = ? OR receiver_id = ?) AND accepted = ?", userID, userID, true).
-		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&myFriendIDs).Error; err != nil {
-		return nil, err
-	}
-	if err := r.DB.Find(&users, "id IN (?) AND id IN (?)", friendIDs, myFriendIDs).Error; err != nil {
-		return nil, err
+	if userMutualsRedis, err := r.Redis.Get(ctx, fmt.Sprintf("user:%s:mutual:%s", userID, user.ID)).Result(); err != nil {
+		if err := r.DB.
+			Model(&model.Friend{}).
+			Where("sender_id = ? OR receiver_id = ?", user.ID, user.ID).
+			Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", user.ID).
+			Find(&friendIDs).Error; err != nil {
+			return nil, err
+		}
+
+		if err := r.DB.Model(&model.Friend{}).
+			Where("(sender_id = ? OR receiver_id = ?) AND accepted = ?", userID, userID, true).
+			Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&myFriendIDs).Error; err != nil {
+			return nil, err
+		}
+		if err := r.DB.Find(&users, "id IN (?) AND id IN (?)", friendIDs, myFriendIDs).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedUsers, err := json.Marshal(users); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("user:%s:mutual:%s", userID, user.ID), serializedUsers, 10*time.Minute)
+		}
+
+	} else {
+		if err := json.Unmarshal([]byte(userMutualsRedis), &users); err != nil {
+			return nil, err
+		}
 	}
 
 	return users, nil
@@ -161,22 +214,35 @@ func (r *queryResolver) GetPeopleMightKnow(ctx context.Context) ([]*model.User, 
 	var users []*model.User
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.Model(&model.Friend{}).
-		Where("(sender_id = ? OR receiver_id = ?) AND accepted = ?", userID, userID, true).
-		Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&userIds).Error; err != nil {
-		return nil, err
-	}
+	if peopleMightKnow, err := r.Redis.Get(ctx, fmt.Sprintf("user:%s:people_might_know", userID)).Result(); err != nil {
+		if err := r.DB.Model(&model.Friend{}).
+			Where("(sender_id = ? OR receiver_id = ?) AND accepted = ?", userID, userID, true).
+			Select("DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END", userID).Find(&userIds).Error; err != nil {
+			return nil, err
+		}
 
-	if err := r.DB.Model(&model.Friend{}).
-		Where("(sender_id IN (?) OR receiver_id IN (?)) AND accepted = ?", userIds, userIds, true).
-		Select("DISTINCT CASE WHEN sender_id IN (?) THEN receiver_id ELSE sender_id END", userIds).Find(&userFriendIds).Error; err != nil {
-		return nil, err
-	}
+		if err := r.DB.Model(&model.Friend{}).
+			Where("(sender_id IN (?) OR receiver_id IN (?)) AND accepted = ?", userIds, userIds, true).
+			Select("DISTINCT CASE WHEN sender_id IN (?) THEN receiver_id ELSE sender_id END", userIds).Find(&userFriendIds).Error; err != nil {
+			return nil, err
+		}
 
-	if err := r.DB.
-		Limit(5).
-		Find(&users, "id IN (?) AND id NOT IN (?) AND id != ?", userFriendIds, userIds, userID).Error; err != nil {
-		return nil, err
+		if err := r.DB.
+			Limit(5).
+			Find(&users, "id IN (?) AND id NOT IN (?) AND id != ?", userFriendIds, userIds, userID).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedUsers, err := json.Marshal(users); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("user:%s:people_might_know", userID), serializedUsers, 10*time.Minute)
+		}
+
+	} else {
+		if err := json.Unmarshal([]byte(peopleMightKnow), &users); err != nil {
+			return nil, err
+		}
 	}
 
 	return users, nil

@@ -6,7 +6,10 @@ package resolver
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/yahkerobertkertasnya/TPAWebBack/graph"
@@ -54,6 +57,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	if err := r.DB.Save(&user).Error; err != nil {
 		return nil, err
 	}
+
+	r.Redis.Del(ctx, fmt.Sprintf("users"))
 
 	return user, nil
 }
@@ -146,6 +151,8 @@ func (r *mutationResolver) UpdateUserProfile(ctx context.Context, profile string
 		return nil, err
 	}
 
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s", user.Username))
+
 	return user, nil
 }
 
@@ -157,6 +164,8 @@ func (r *mutationResolver) UpdateUserBackground(ctx context.Context, background 
 	if err := r.DB.First(&user, "id = ?", userID).Update("background", background).Error; err != nil {
 		return nil, err
 	}
+
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s", user.Username))
 
 	return user, nil
 }
@@ -181,6 +190,8 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUse
 		return nil, err
 	}
 
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s", user.Username))
+
 	return user, nil
 }
 
@@ -192,8 +203,22 @@ func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.Us
 
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
-		return nil, err
+	if serializedUser, err := r.Redis.Get(ctx, fmt.Sprintf(`user:%s`, username)).Result(); err != nil {
+
+		if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedUser, err := json.Marshal(user); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf(`user:%s`, username), serializedUser, 10*60*time.Minute)
+		}
+
+	} else {
+		if err := json.Unmarshal([]byte(serializedUser), &user); err != nil {
+			return nil, err
+		}
 	}
 
 	subQueryFriend := r.DB.
@@ -227,8 +252,21 @@ func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.Us
 func (r *queryResolver) GetUsers(ctx context.Context) ([]*model.User, error) {
 	var users []*model.User
 
-	if err := r.DB.Find(&users).Error; err != nil {
-		return nil, err
+	if serializedUsers, err := r.Redis.Get(ctx, fmt.Sprintf("users")).Result(); err != nil {
+		if err := r.DB.Find(&users).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedUsers, err := json.Marshal(users); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("users"), serializedUsers, 60*time.Minute)
+		}
+
+	} else {
+		if err := json.Unmarshal([]byte(serializedUsers), &users); err != nil {
+			return nil, err
+		}
 	}
 
 	return users, nil
@@ -256,8 +294,24 @@ func (r *queryResolver) CheckResetLink(ctx context.Context, id string) (bool, er
 func (r *queryResolver) GetAuth(ctx context.Context) (*model.User, error) {
 	var user *model.User
 
-	if err := r.DB.First(&user, "id = ?", ctx.Value("UserID")).Error; err != nil {
-		return nil, err
+	userID := ctx.Value("UserID").(string)
+
+	if serializedUser, err := r.Redis.Get(ctx, fmt.Sprintf(`user:%s`, userID)).Result(); err != nil {
+
+		if err := r.DB.First(&user, "id = ?", ctx.Value("UserID")).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedUser, err := json.Marshal(user); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf(`user:%s`, userID), serializedUser, 10*60*time.Minute)
+		}
+
+	} else {
+		if err := json.Unmarshal([]byte(serializedUser), &user); err != nil {
+			return nil, err
+		}
 	}
 
 	return user, nil
@@ -286,8 +340,16 @@ func (r *userResolver) FriendCount(ctx context.Context, obj *model.User) (int, e
 
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.Find(&model.Friend{}, "(sender_id = ? or receiver_id = ?) and accepted = true", userID, userID).Count(&friendCount).Error; err != nil {
-		return 0, err
+	if friendCountRedis, err := r.Redis.Get(ctx, fmt.Sprintf("user:%s:friendCount", userID)).Result(); err != nil {
+		if err := r.DB.Find(&model.Friend{}, "(sender_id = ? or receiver_id = ?) and accepted = true", userID, userID).Count(&friendCount).Error; err != nil {
+			return 0, err
+		}
+
+		r.Redis.Set(ctx, fmt.Sprintf("user:%s:friendCount", userID), friendCount, 10*time.Minute)
+	} else {
+		if friendCountInt, err := strconv.Atoi(friendCountRedis); err != nil {
+			return friendCountInt, nil
+		}
 	}
 
 	return int(friendCount), nil
@@ -327,8 +389,16 @@ func (r *userResolver) NotificationCount(ctx context.Context, obj *model.User) (
 
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.Find(&model.Notification{}, "user_id = ? AND seen = false", userID).Count(&notificationCount).Error; err != nil {
-		return 0, err
+	if notificationCountRedis, err := r.Redis.Get(ctx, fmt.Sprintf("user:%s:notification", userID)).Result(); err != nil {
+		if err := r.DB.Find(&model.Notification{}, "user_id = ? AND seen = false", userID).Count(&notificationCount).Error; err != nil {
+			return 0, err
+		}
+
+		r.Redis.Set(ctx, fmt.Sprintf("user:%s:notification", userID), notificationCount, 1*time.Minute)
+	} else {
+		if notificationCountInt, err := strconv.Atoi(notificationCountRedis); err != nil {
+			return notificationCountInt, nil
+		}
 	}
 
 	return int(notificationCount), nil
@@ -339,6 +409,8 @@ func (r *userResolver) Friended(ctx context.Context, obj *model.User) (string, e
 	var friend *model.Friend
 	var status string
 	userID := ctx.Value("UserID").(string)
+
+	//TODO REDIS
 
 	if err := r.DB.First(&friend, "(sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?)", userID, obj.ID, obj.ID, userID).Error; err != nil {
 		status = "not friends"

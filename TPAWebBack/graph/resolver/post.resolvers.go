@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -16,12 +17,41 @@ import (
 
 // LikeCount is the resolver for the likeCount field.
 func (r *commentResolver) LikeCount(ctx context.Context, obj *model.Comment) (int, error) {
-	return int(r.DB.Model(obj).Association("Likes").Count()), nil
+	var likeCount int64
+	if likeCountRedis, err := r.Redis.Get(ctx, fmt.Sprintf("comment:%s:like", obj.ID)).Result(); err != nil {
+		likeCount = r.DB.Model(obj).Association("Likes").Count()
+
+		r.Redis.Set(ctx, fmt.Sprintf("comment:%s:like", obj.ID), likeCount, 10*time.Minute)
+
+	} else {
+		if likeCountRedis, err := strconv.Atoi(likeCountRedis); err != nil {
+			return 0, err
+		} else {
+			return likeCountRedis, nil
+		}
+	}
+
+	return int(likeCount), nil
 }
 
 // ReplyCount is the resolver for the replyCount field.
 func (r *commentResolver) ReplyCount(ctx context.Context, obj *model.Comment) (int, error) {
-	return int(r.DB.Model(obj).Association("Comments").Count()), nil
+	var replyCount int64
+
+	if replyCountRedis, err := r.Redis.Get(ctx, fmt.Sprintf("comment:%s:reply", obj.ID)).Result(); err != nil {
+		replyCount = r.DB.Model(obj).Association("Comments").Count()
+
+		r.Redis.Set(ctx, fmt.Sprintf("comment:%s:reply", obj.ID), replyCount, 10*time.Minute)
+
+	} else {
+		if replyCountRedis, err := strconv.Atoi(replyCountRedis); err != nil {
+			return 0, err
+		} else {
+			return replyCountRedis, nil
+		}
+	}
+
+	return int(replyCount), nil
 }
 
 // Liked is the resolver for the liked field.
@@ -30,8 +60,17 @@ func (r *commentResolver) Liked(ctx context.Context, obj *model.Comment) (*bool,
 
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.First(&model.CommentLike{}, "comment_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil {
-		boolean = true
+	if liked, err := r.Redis.Get(ctx, fmt.Sprintf("comment:%s:like:%s", obj.ID, userID)).Result(); err != nil {
+		if err := r.DB.First(&model.CommentLike{}, "comment_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil {
+			boolean = true
+		}
+
+		r.Redis.Set(ctx, fmt.Sprintf("comment:%s:like:%s", obj.ID, userID), boolean, 10*time.Minute)
+
+	} else {
+		if liked == "true" {
+			boolean = true
+		}
 	}
 
 	return &boolean, nil
@@ -203,6 +242,7 @@ func (r *mutationResolver) CreateComment(ctx context.Context, newComment model.N
 					continue
 				}
 			}
+			r.Redis.Del(ctx, fmt.Sprintf("comment:%s:reply", *newComment.ParentComment))
 		} else {
 			for _, userDat := range users {
 
@@ -220,8 +260,8 @@ func (r *mutationResolver) CreateComment(ctx context.Context, newComment model.N
 					fmt.Println(err)
 					continue
 				}
-				fmt.Println("masuk")
 			}
+			r.Redis.Del(ctx, fmt.Sprintf("post:%s:comment", *newComment.ParentPost))
 		}
 	}()
 
@@ -346,6 +386,9 @@ func (r *mutationResolver) LikePost(ctx context.Context, postID string) (*model.
 		}
 	}
 
+	r.Redis.Del(ctx, fmt.Sprintf("post:%s:like", postID))
+	r.Redis.Del(ctx, fmt.Sprintf("post:%s:like:%s", postID, userID))
+
 	return postLike, nil
 }
 
@@ -354,7 +397,7 @@ func (r *mutationResolver) Likecomment(ctx context.Context, commentID string) (*
 	var commentLike *model.CommentLike
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.First(&commentLike, "post_id = ? AND user_id = ?", commentID, userID).Error; err != nil {
+	if err := r.DB.First(&commentLike, "comment_id = ? AND user_id = ?", commentID, userID).Error; err != nil {
 		commentLike = &model.CommentLike{
 			CommentID: commentID,
 			UserID:    userID,
@@ -367,6 +410,9 @@ func (r *mutationResolver) Likecomment(ctx context.Context, commentID string) (*
 			return nil, err
 		}
 	}
+
+	r.Redis.Del(ctx, fmt.Sprintf("comment:%s:like", commentID))
+	r.Redis.Del(ctx, fmt.Sprintf("comment:%s:like:%s", commentID, userID))
 
 	return commentLike, nil
 }
@@ -384,8 +430,19 @@ func (r *mutationResolver) DeletePost(ctx context.Context, postID string) (*stri
 func (r *postResolver) LikeCount(ctx context.Context, obj *model.Post) (int, error) {
 	var count int64
 
-	if err := r.DB.Find(&model.PostLike{}, "post_id = ?", obj.ID).Count(&count).Error; err != nil {
-		return 0, nil
+	if likeCountRedis, err := r.Redis.Get(ctx, fmt.Sprintf("post:%s:like", obj.ID)).Result(); err != nil {
+		if err := r.DB.Find(&model.PostLike{}, "post_id = ?", obj.ID).Count(&count).Error; err != nil {
+			return 0, nil
+		}
+
+		r.Redis.Set(ctx, fmt.Sprintf("post:%s:like", obj.ID), count, 10*time.Minute)
+
+	} else {
+		if likeCountRedis, err := strconv.Atoi(likeCountRedis); err != nil {
+			return 0, err
+		} else {
+			return likeCountRedis, nil
+		}
 	}
 
 	return int(count), nil
@@ -393,7 +450,22 @@ func (r *postResolver) LikeCount(ctx context.Context, obj *model.Post) (int, err
 
 // CommentCount is the resolver for the commentCount field.
 func (r *postResolver) CommentCount(ctx context.Context, obj *model.Post) (int, error) {
-	return int(r.DB.Model(obj).Association("Comments").Count()), nil
+	var commentCount int64
+
+	if commentCountRedis, err := r.Redis.Get(ctx, fmt.Sprintf("post:%s:comment", obj.ID)).Result(); err != nil {
+		commentCount = r.DB.Model(obj).Association("Comments").Count()
+
+		r.Redis.Set(ctx, fmt.Sprintf("post:%s:comment", obj.ID), int(commentCount), 10*time.Minute)
+
+	} else {
+		if commentCountRedis, err := strconv.Atoi(commentCountRedis); err != nil {
+			return 0, err
+		} else {
+			return commentCountRedis, nil
+		}
+	}
+
+	return int(commentCount), nil
 }
 
 // Liked is the resolver for the liked field.
@@ -403,10 +475,17 @@ func (r *postResolver) Liked(ctx context.Context, obj *model.Post) (*bool, error
 
 	userID := ctx.Value("UserID").(string)
 
-	fmt.Println(obj.ID)
-	if err := r.DB.First(&postLike, "post_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil && postLike != nil {
-		fmt.Println("found")
-		boolean = true
+	if liked, err := r.Redis.Get(ctx, fmt.Sprintf("post:%s:like:%s", obj.ID, userID)).Result(); err != nil {
+		if err := r.DB.First(&postLike, "post_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil && postLike != nil {
+			boolean = true
+		}
+
+		r.Redis.Set(ctx, fmt.Sprintf("post:%s:like:%s", obj.ID, userID), boolean, 10*time.Minute)
+
+	} else {
+		if liked == "true" {
+			boolean = true
+		}
 	}
 
 	return &boolean, nil

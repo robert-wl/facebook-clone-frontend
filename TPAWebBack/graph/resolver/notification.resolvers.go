@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -33,6 +34,8 @@ func (r *mutationResolver) CreateNotification(ctx context.Context, notification 
 		fmt.Println(err)
 		return nil, err
 	}
+
+	r.Redis.Del(ctx, fmt.Sprintf("notifications:%s:user", userID))
 
 	return newNotification, nil
 }
@@ -67,11 +70,23 @@ func (r *queryResolver) GetNotifications(ctx context.Context) ([]*model.Notifica
 	var notifications []*model.Notification
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.
-		Order("created_at DESC").
-		Preload("Sender").
-		Find(&notifications, "user_id = ?", userID).Error; err != nil {
-		return nil, err
+	if notificationsSerialized, err := r.Redis.Get(ctx, fmt.Sprintf("notifications:%s:user", userID)).Result(); err != nil {
+		if err := r.DB.
+			Order("created_at DESC").
+			Preload("Sender").
+			Find(&notifications, "user_id = ?", userID).Error; err != nil {
+			return nil, err
+		}
+
+		if notificationsSerialized, err := json.Marshal(notifications); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("notifications:%s:user", userID), notificationsSerialized, 10*time.Minute)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(notificationsSerialized), &notifications); err != nil {
+			return nil, err
+		}
 	}
 
 	return notifications, nil

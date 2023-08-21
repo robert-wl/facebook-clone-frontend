@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -17,7 +18,22 @@ import (
 
 // MemberCount is the resolver for the memberCount field.
 func (r *groupResolver) MemberCount(ctx context.Context, obj *model.Group) (int, error) {
-	return int(r.DB.Model(&obj).Association("Members").Count()), nil
+	var count int
+	if memberCountSerialized, err := r.Redis.Get(ctx, fmt.Sprintf("group:%s:memberCount", obj.ID)).Result(); err != nil {
+		count = int(r.DB.Model(&obj).Association("Members").Count())
+
+		if countSerialized, err := json.Marshal(count); err != nil {
+			return 0, nil
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("group:%s:memberCount", obj.ID), countSerialized, 10*time.Second)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(memberCountSerialized), &count); err != nil {
+			return 0, nil
+		}
+	}
+
+	return count, nil
 }
 
 // Joined is the resolver for the joined field.
@@ -27,13 +43,25 @@ func (r *groupResolver) Joined(ctx context.Context, obj *model.Group) (string, e
 
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.First(&member, "group_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil && member != nil {
-		if member.Requested && member.Approved {
-			status = "pending"
-		} else if member.Approved {
-			status = "joined"
+	if joinedSerialized, err := r.Redis.Get(ctx, fmt.Sprintf("group:%s:joined:%s", obj.ID, userID)).Result(); err != nil {
+		if err := r.DB.First(&member, "group_id = ? AND user_id = ?", obj.ID, userID).Error; err == nil && member != nil {
+			if member.Requested && member.Approved {
+				status = "pending"
+			} else if member.Approved {
+				status = "joined"
+			} else {
+				status = "not accepted"
+			}
+		}
+
+		if joinedSerialized, err := json.Marshal(status); err != nil {
+			return "", nil
 		} else {
-			status = "not accepted"
+			r.Redis.Set(ctx, fmt.Sprintf("group:%s:joined:%s", obj.ID, userID), joinedSerialized, 10*time.Second)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(joinedSerialized), &status); err != nil {
+			return "", nil
 		}
 	}
 
@@ -44,7 +72,20 @@ func (r *groupResolver) Joined(ctx context.Context, obj *model.Group) (string, e
 func (r *groupResolver) IsAdmin(ctx context.Context, obj *model.Group) (bool, error) {
 	userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.First(&model.Member{}, "group_id = ? AND user_id = ? and role = ?", obj.ID, userID, "Admin").Error; err != nil {
+	if isAdminSerialized, err := r.Redis.Get(ctx, fmt.Sprintf("group:%s:isAdmin:%s", obj.ID, userID)).Result(); err != nil {
+		if err := r.DB.First(&model.Member{}, "group_id = ? AND user_id = ? and role = ?", obj.ID, userID, "Admin").Error; err != nil {
+			return false, nil
+		}
+
+		if isAdminSerialized, err := json.Marshal(true); err != nil {
+			return false, nil
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("group:%s:isAdmin:%s", obj.ID, userID), isAdminSerialized, 10*time.Second)
+		}
+	} else {
+		if isAdminSerialized == "true" {
+			return true, nil
+		}
 		return false, nil
 	}
 
@@ -246,14 +287,15 @@ func (r *mutationResolver) HandleRequest(ctx context.Context, groupID string) (*
 		if err := r.DB.Save(&conversationUser).Error; err != nil {
 			return nil, err
 		}
-
+		r.Redis.Del(ctx, fmt.Sprintf("group:%s:memberCount", groupID))
+		r.Redis.Del(ctx, fmt.Sprintf("group:%s", groupID))
 		return member, nil
 	}
 
 	if err := r.DB.Delete(&member).Error; err != nil {
 		return nil, err
 	}
-
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s:joined:%s", groupID, userID))
 	//TODO ADD NOTIFICATION
 
 	return member, nil
@@ -266,7 +308,7 @@ func (r *mutationResolver) UpdateGroupBackground(ctx context.Context, groupID st
 	if err := r.DB.First(&group, "id = ?", groupID).Update("background", background).Error; err != nil {
 		return nil, err
 	}
-
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s", groupID))
 	return group, nil
 }
 
@@ -337,7 +379,7 @@ func (r *mutationResolver) ApproveMember(ctx context.Context, groupID string, us
 	if err := r.DB.First(&member, "group_id = ? AND user_id = ?", groupID, userID).Update("approved", true).Update("requested", false).Error; err != nil {
 		return nil, err
 	}
-
+	r.Redis.Get(ctx, fmt.Sprintf("group:%s:joined:%s", groupID, userID))
 	return member, nil
 }
 
@@ -348,7 +390,8 @@ func (r *mutationResolver) DenyMember(ctx context.Context, groupID string, userI
 	if err := r.DB.Delete(&member, "group_id = ? AND user_id = ?", groupID, userID).Error; err != nil {
 		return nil, err
 	}
-
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s:joined:%s", groupID, userID))
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s", groupID))
 	return member, nil
 }
 
@@ -359,7 +402,8 @@ func (r *mutationResolver) KickMember(ctx context.Context, groupID string, userI
 		boolean = false
 		return &boolean, err
 	}
-
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s:joined:%s", groupID, userID))
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s", groupID))
 	return &boolean, nil
 }
 
@@ -372,6 +416,9 @@ func (r *mutationResolver) LeaveGroup(ctx context.Context, groupID string) (*boo
 		return &boolean, err
 	}
 
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s:joined:%s", groupID, userID))
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s:isAdmin:%s", groupID, userID))
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s", groupID))
 	return &boolean, nil
 }
 
@@ -383,6 +430,7 @@ func (r *mutationResolver) PromoteMember(ctx context.Context, groupID string, us
 		return nil, err
 	}
 
+	r.Redis.Del(ctx, fmt.Sprintf("group:%s:isAdmin:%s", groupID, userID))
 	return member, nil
 }
 
@@ -390,23 +438,33 @@ func (r *mutationResolver) PromoteMember(ctx context.Context, groupID string, us
 func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, error) {
 	var group *model.Group
 
-	subQuery := r.DB.
-		Select("user_id").
-		Where("group_id = ?", id).
-		Table("members")
+	if groupSerialized, err := r.Redis.Get(ctx, fmt.Sprintf("group:%s", id)).Result(); err != nil {
+		subQuery := r.DB.
+			Select("user_id").
+			Where("group_id = ?", id).
+			Table("members")
 
-	userID := ctx.Value("UserID").(string)
+		userID := ctx.Value("UserID").(string)
 
-	if err := r.DB.
-		Preload("Members").
-		Preload("Members.User").
-		Preload("Chat").
-		Preload("Files").
-		Preload("Files.UploadedBy").
-		Preload("Posts").
-		Preload("Posts.User").
-		Find(&group, "id = ? AND (privacy = ? or (privacy = ? AND ? IN (?)))", id, "public", "private", userID, subQuery).Error; err != nil {
-		return nil, err
+		if err := r.DB.
+			Preload("Members").
+			Preload("Members.User").
+			Preload("Chat").
+			Preload("Posts").
+			Preload("Posts.User").
+			Find(&group, "id = ? AND (privacy = ? or (privacy = ? AND ? IN (?)))", id, "public", "private", userID, subQuery).Error; err != nil {
+			return nil, err
+		}
+
+		if groupSerialized, err := json.Marshal(group); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("group:%s", id), groupSerialized, 10*time.Second)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(groupSerialized), &group); err != nil {
+			return nil, err
+		}
 	}
 
 	return group, nil

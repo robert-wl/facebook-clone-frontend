@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -74,6 +75,8 @@ func (r *mutationResolver) CreateTextStory(ctx context.Context, input model.NewT
 		}
 	}()
 
+	r.Redis.Del(ctx, fmt.Sprintf(`user:%s:stories`, userID))
+
 	return story, nil
 }
 
@@ -135,6 +138,8 @@ func (r *mutationResolver) CreateImageStory(ctx context.Context, input model.New
 		}
 	}()
 
+	r.Redis.Del(ctx, fmt.Sprintf(`user:%s:stories`, userID))
+
 	return story, nil
 }
 
@@ -147,8 +152,20 @@ func (r *queryResolver) GetStories(ctx context.Context, username string) ([]*mod
 		return nil, err
 	}
 
-	if err := r.DB.Find(&stories, "user_id = ? AND DATE_PART('day', ? - created_at) = 0", user.ID, time.Now()).Error; err != nil {
-		return nil, err
+	if storiesSerialized, err := r.Redis.Get(ctx, fmt.Sprintf(`user:%s:stories`, user.ID)).Result(); err != nil {
+		if err := r.DB.Find(&stories, "user_id = ? AND DATE_PART('day', ? - created_at) = 0", user.ID, time.Now()).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedStories, err := json.Marshal(stories); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf(`user:%s:stories`, user.ID), serializedStories, 10*60*time.Minute)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(storiesSerialized), &stories); err != nil {
+			return nil, err
+		}
 	}
 
 	return stories, nil
@@ -166,8 +183,6 @@ func (r *queryResolver) GetUserWithStories(ctx context.Context) ([]*model.User, 
 		Find(&friendIDs).Error; err != nil {
 		return nil, err
 	}
-
-	fmt.Println(friendIDs)
 
 	friendIDs = append(friendIDs, userID)
 
@@ -190,6 +205,24 @@ func (r *storyResolver) User(ctx context.Context, obj *model.Story) (*model.User
 
 	if err := r.DB.First(&user, "id = ?", obj.UserID).Error; err != nil {
 		return nil, err
+	}
+
+	if serializedUser, err := r.Redis.Get(ctx, fmt.Sprintf(`user:%s`, obj.UserID)).Result(); err != nil {
+
+		if err := r.DB.First(&user, "id = ?", obj.UserID).Error; err != nil {
+			return nil, err
+		}
+
+		if serializedUser, err := json.Marshal(user); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf(`user:%s`, obj.UserID), serializedUser, 10*60*time.Minute)
+		}
+
+	} else {
+		if err := json.Unmarshal([]byte(serializedUser), &user); err != nil {
+			return nil, err
+		}
 	}
 
 	return user, nil
