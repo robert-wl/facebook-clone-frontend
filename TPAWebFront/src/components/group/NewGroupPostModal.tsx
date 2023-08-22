@@ -34,7 +34,14 @@ export default function NewGroupPostModal({ modalState, setModalState, setGroup 
     const handleFiles = (e: ChangeEvent<HTMLInputElement>) => {
         const fileL = e.target.files as FileList;
 
-        setFiles([...files, ...Array.from(fileL)]);
+        const fileArr: File[] = [];
+        for (const file of Array.from(fileL)) {
+            if (file.type.includes("image") || file.type.includes("video")) {
+                fileArr.push(file);
+            }
+        }
+
+        setFiles([...files, ...fileArr]);
     };
 
     const handleClose = () => {

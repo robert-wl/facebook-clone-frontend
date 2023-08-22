@@ -218,7 +218,7 @@ export default function User() {
                             multiple={false}
                             hidden={true}
                             onChange={(e) => promiseToast(() => handleBackgroundFile(e))}
-                            accept={"image/*, video/*"}
+                            accept={"image/*"}
                         />
                         <img
                             src={userBackgroundLoader(user?.background)}
@@ -243,7 +243,7 @@ export default function User() {
                                 multiple={false}
                                 hidden={true}
                                 onChange={(e) => promiseToast(() => handleProfileFile(e))}
-                                accept={"image/*, video/*"}
+                                accept={"image/*"}
                             />
                         </div>
                     </div>

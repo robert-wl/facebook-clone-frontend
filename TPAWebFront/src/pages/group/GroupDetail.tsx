@@ -73,6 +73,7 @@ export default function GroupDetail() {
         if (e.target.files) {
             const file = e.target.files[0] as File;
 
+            if (!file.type.includes("image")) return;
             const url = await uploadStorage("group/background", file);
 
             if (group) {
@@ -187,7 +188,7 @@ export default function GroupDetail() {
                                     hidden={true}
                                     ref={backgroundInputRef}
                                     onChange={(e) => promiseToast(() => handleBackgroundFile(e))}
-                                    accept={"image/*, video/*"}
+                                    accept={"image/*"}
                                 />
                                 <img
                                     src={groupBackgroundLoader(group?.background)}

@@ -50,6 +50,10 @@ export default function MessageInput({ conversationID }: MessageInput) {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
+            const file = e.target.files[0];
+
+            if (!file.type.includes("image")) return;
+
             setImage(e.target.files[0]);
         }
     };
@@ -78,6 +82,7 @@ export default function MessageInput({ conversationID }: MessageInput) {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder={"Aa"}
+                    accept={"image/*"}
                     onKeyDown={(e) => {
                         if (e.key == "Enter") {
                             handleSubmit();
