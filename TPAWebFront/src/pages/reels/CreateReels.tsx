@@ -2,12 +2,12 @@ import styles from "../../assets/styles/reels/createReels.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
 import ReelsSidebar from "../../components/reels/ReelsSidebar.tsx";
 import { useState } from "react";
-import createToast from "../../../controller/toast/handler.ts";
 import uploadStorage from "../../../controller/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_REEL } from "../../../lib/query/reels/createReel.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function CreateReels() {
     const [video, setVideo] = useState<File | null>(null);
@@ -26,11 +26,12 @@ export default function CreateReels() {
                 },
             })
                 .then(() => {
+                    toast.success("Reel created successfully");
                     navigation("/reels");
                 })
                 .catch(debouncedError);
         } else {
-            createToast("Error: please fill all the fields", "red");
+            toast.error("Error: please fill all the fields");
         }
     };
     return (

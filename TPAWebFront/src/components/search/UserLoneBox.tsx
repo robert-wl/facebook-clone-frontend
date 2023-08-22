@@ -25,7 +25,9 @@ export default function UserLoneBox({ user, setUsers }: UserLoneBox) {
                     receiver: user.id,
                 },
             },
-        }).catch(debouncedError);
+        })
+            .then(() => {})
+            .catch(debouncedError);
 
         setUsers((prev) => {
             return prev.map((f) => {

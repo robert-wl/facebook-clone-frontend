@@ -8,13 +8,16 @@ import StorySidebar from "../../components/sidebar/StorySidebar.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_IMAGE_STORY } from "../../../lib/query/story/createImageStory.graphql.ts";
 import { CREATE_TEXT_STORY } from "../../../lib/query/story/createTextStory.graphql.ts";
-import errorHandler from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
 import uploadStorage from "../../../controller/firebase/storage.ts";
 import { User } from "../../../gql/graphql.ts";
 import { GET_USER_WITH_STORIES } from "../../../lib/query/story/getUserWithStories.graphql.ts";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import { IoIosAdd } from "react-icons/io";
+import { toast } from "react-toastify";
+import promiseToast from "../../../controller/toast/promiseToast.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 export interface Content {
     text: string;
@@ -38,10 +41,10 @@ export default function CreateStory() {
 
     const { refetch } = useQuery(GET_USER_WITH_STORIES, {
         onCompleted: (data) => {
-            console.log(data);
             setFriends(Array.from(new Set(data.getUserWithStories)));
         },
-        onError: errorHandler,
+        fetchPolicy: "network-only",
+        onError: debouncedError,
     });
 
     const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +52,7 @@ export default function CreateStory() {
             const file = e.target.files[0];
 
             if (file.type != "image/png" && file.type != "image/jpeg") {
-                return; //TODO ADD TOAST
+                return;
             }
 
             setImage(file);
@@ -60,7 +63,7 @@ export default function CreateStory() {
     const handleSubmit = async () => {
         setLoading(true);
         if (tab == "text") {
-            createTextStory({
+            await createTextStory({
                 variables: {
                     story: {
                         text: content.text,
@@ -68,13 +71,13 @@ export default function CreateStory() {
                         color: content.color,
                     },
                 },
-            })
-                .then(() => {
-                    setLoading(false);
-                    setTab("create");
-                    refetch();
-                })
-                .catch(errorHandler);
+            }).catch(debouncedError);
+
+            setLoading(false);
+            setTab("create");
+            await refetch();
+
+            toast.success("Story created!");
         } else if (tab == "image") {
             if (image) {
                 const url = await uploadStorage("story", image);
@@ -84,13 +87,13 @@ export default function CreateStory() {
                             image: url,
                         },
                     },
-                })
-                    .then(() => {
-                        setLoading(false);
-                        setTab("create");
-                        refetch();
-                    })
-                    .catch(errorHandler);
+                }).catch(debouncedError);
+
+                setLoading(false);
+                setTab("create");
+                await refetch();
+
+                toast.success("Story created!");
             }
         }
     };
@@ -131,7 +134,7 @@ export default function CreateStory() {
                                                                 text={friend.firstName + " " + friend.lastName}
                                                             >
                                                                 <img
-                                                                    src={friend.profile!}
+                                                                    src={userProfileLoader(friend.profile)}
                                                                     alt={""}
                                                                 />
                                                             </SidebarButton>
@@ -155,7 +158,7 @@ export default function CreateStory() {
                                                                 text={friend.firstName + " " + friend.lastName}
                                                             >
                                                                 <img
-                                                                    src={friend.profile!}
+                                                                    src={userProfileLoader(friend.profile!)}
                                                                     alt={""}
                                                                 />
                                                             </SidebarButton>
@@ -180,7 +183,7 @@ export default function CreateStory() {
                                 setContent={setContent}
                                 tab={tab}
                                 setTab={setTab}
-                                handleSubmit={handleSubmit}
+                                handleSubmit={() => promiseToast(handleSubmit)}
                                 loading={loading}
                             />
                             <div className={styles.content}>
@@ -212,7 +215,7 @@ export default function CreateStory() {
                                 setContent={setContent}
                                 tab={tab}
                                 setTab={setTab}
-                                handleSubmit={handleSubmit}
+                                handleSubmit={() => promiseToast(handleSubmit)}
                                 loading={loading}
                             />
                             <div className={styles.content}>

@@ -12,6 +12,8 @@ import { debouncedError } from "../../../controller/errorHandler.ts";
 import { HiPencilSquare } from "react-icons/hi2";
 import cleanRichText from "../../../controller/cleanRichText.ts";
 import { RxCross2 } from "react-icons/rx";
+import promiseToast from "../../../controller/toast/promiseToast.ts";
+import { toast } from "react-toastify";
 
 interface NewPostModal {
     modalState: boolean;
@@ -61,6 +63,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
     const handleSubmit = async () => {
         if (content.length === 0) return;
         setLoading(true);
+        handleClose();
         const urlList: string[] = [];
         for (const file of files) {
             const url = await uploadStorage("post", file);
@@ -87,7 +90,8 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
 
         setData([dat.createPost, ...data]);
         setLoading(false);
-        handleClose();
+
+        toast.success("Post created successfully!");
     };
 
     if (!modalState) return <></>;
@@ -208,7 +212,7 @@ export default function NewPostModal({ modalState, setModalState, data, setData,
                     <button
                         className={styles.postButton}
                         disabled={content.length === 8 || content == "<p></p>"}
-                        onClick={() => handleSubmit()}
+                        onClick={() => promiseToast(handleSubmit)}
                     >
                         Post
                     </button>

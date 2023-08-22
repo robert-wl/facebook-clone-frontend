@@ -56,7 +56,7 @@ extend type Mutation {
     approveMember(groupId: ID!, userId: ID!): Member! @auth
     denyMember(groupId: ID!, userId: ID!): Member! @auth
     kickMember(groupId: ID!, userId: ID!): Boolean @auth
-    leaveGroup(groupId: ID!): Boolean @auth
+    leaveGroup(groupId: ID!): String! @auth
     promoteMember(groupId: ID!, userId: ID!): Member! @auth
 }
 

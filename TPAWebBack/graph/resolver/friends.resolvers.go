@@ -35,6 +35,21 @@ func (r *mutationResolver) AddFriend(ctx context.Context, friendInput model.Frie
 		r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", friendInput.Sender))
 		r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", friendInput.Receiver))
 
+		go func() {
+			newNotification := &model.NewNotification{
+				Message: fmt.Sprintf("%s %s sent you a friend request", friend.Sender.FirstName, friend.Sender.LastName),
+				UserID:  friend.ReceiverID,
+				PostID:  nil,
+				ReelID:  nil,
+				StoryID: nil,
+				GroupID: nil,
+			}
+
+			if _, err := r.CreateNotification(ctx, *newNotification); err != nil {
+				return
+			}
+		}()
+
 		return friend, nil
 	} else {
 		r.Redis.Del(ctx, fmt.Sprintf("user:%s:friend", friendInput.Sender))

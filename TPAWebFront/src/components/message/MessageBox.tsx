@@ -30,9 +30,9 @@ export default function MessageBox() {
         <div className={styles.chat}>
             <MessageInput conversationID={conversationID!} />
             {data &&
-                data.viewConversation.map((message: Message) => {
+                data.viewConversation.map((message: Message, index: number) => {
                     return (
-                        <>
+                        <div key={index}>
                             {message.sender.username == auth?.username ? (
                                 <div className={styles.chatReceiver}>
                                     <div>
@@ -64,7 +64,10 @@ export default function MessageBox() {
                                     </div>
                                 </div>
                             ) : (
-                                <div className={styles.chatSender}>
+                                <div
+                                    key={index}
+                                    className={styles.chatSender}
+                                >
                                     <div>
                                         {message.image ? (
                                             <img
@@ -94,7 +97,7 @@ export default function MessageBox() {
                                     </div>
                                 </div>
                             )}
-                        </>
+                        </div>
                     );
                 })}
         </div>

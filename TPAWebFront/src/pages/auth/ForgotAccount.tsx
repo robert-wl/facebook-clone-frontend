@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { FORGOT_PASSWORD } from "../../../lib/query/user/forgotPassword.graphql.ts";
 import { useState } from "react";
-import errorHandler from "../../../controller/errorHandler.ts";
-import createToast from "../../../controller/toast/handler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
+import Footer from "../../components/misc/Footer.tsx";
+import { toast } from "react-toastify";
 
 export default function ForgotAccount() {
     const [forgotPassword] = useMutation(FORGOT_PASSWORD);
@@ -18,9 +19,9 @@ export default function ForgotAccount() {
                 },
             })
                 .then(() => {
-                    createToast("Success: email sent", "green");
+                    toast.success("Success: email sent");
                 })
-                .catch((e) => errorHandler(e));
+                .catch((e) => debouncedError(e));
         }
     };
 
@@ -38,12 +39,13 @@ export default function ForgotAccount() {
                 />
                 <hr />
                 <div>
-                    <button>
-                        <Link to="/login">Cancel</Link>
-                    </button>
+                    <Link to="/login">
+                        <button>Cancel</button>
+                    </Link>
                     <button onClick={() => handleSubmit()}>Search</button>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

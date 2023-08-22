@@ -2,15 +2,16 @@ import styles from "../../assets/styles/reels/reelsSidebar.module.scss";
 import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../context/AuthContextProvider";
 import { RiVideoAddFill } from "react-icons/ri";
-import createToast from "../../../controller/toast/handler.ts";
 import userProfileLoader from "../../../controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import promiseToast from "../../../controller/toast/promiseToast.ts";
 
 interface ReelsSidebar {
     setVideo: Dispatch<SetStateAction<File | null>>;
     content: string;
     setContent: Dispatch<SetStateAction<string>>;
-    handleSubmit: () => void;
+    handleSubmit: () => Promise<void>;
 }
 
 export default function ReelsSidebar({ setVideo, content, setContent, handleSubmit }: ReelsSidebar) {
@@ -26,7 +27,7 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
     useEffect(() => {
         if (currVideo) {
             if (currVideo && currVideo.type !== "video/mp4") {
-                createToast("Error: video must be in mp4 format", "red");
+                toast.error("Error: video must be in mp4 format");
                 return;
             }
 
@@ -34,10 +35,10 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
 
             videoHTML.onloadedmetadata = () => {
                 if (videoHTML.duration > 60) {
-                    createToast("Error: video must be less than 60 seconds", "red");
+                    toast.error("Error: video must be less than 60 seconds");
                     return;
                 } else if (videoHTML.duration < 1) {
-                    createToast("Error: video must be at least 1 second", "red");
+                    toast.error("Error: video must be at least 1 second");
                     return;
                 }
                 setVideo(currVideo);
@@ -91,7 +92,7 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
                         </Link>
                         <button
                             disabled={content == ""}
-                            onClick={() => handleSubmit()}
+                            onClick={() => promiseToast(handleSubmit)}
                         >
                             Post
                         </button>

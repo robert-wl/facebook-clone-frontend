@@ -16,6 +16,7 @@ import ReelCommentSidebar from "../../components/reels/ReelCommentSidebar.tsx";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import reelLoader from "../../../controller/reelLoader.ts";
 
 export default function Reels() {
     const { reelId } = useParams();
@@ -35,6 +36,7 @@ export default function Reels() {
                 variables: {
                     id: reels[index],
                 },
+                fetchPolicy: "network-only",
             })
                 .then((result) => {
                     const { data } = result;
@@ -155,7 +157,7 @@ export default function Reels() {
                                     loop={true}
                                     onClick={(e) => pauseHandler(e)}
                                 >
-                                    <source src={reelData.video} />
+                                    <source src={reelLoader(reelData)} />
                                 </video>
                             )}
                             <div className={styles.interaction}>

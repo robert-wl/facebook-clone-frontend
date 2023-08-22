@@ -1,3 +1,6 @@
+@use "../mixins.scss" as *;
+
+
 .page {
     color: black;
     display: flex;
@@ -6,16 +9,7 @@
     width: 100vw;
     background-color: var(--background-color);
 
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-        color: black;
-        background-color: var(--background-color);
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: gray;
-        border-radius: 0.5rem;
-    }
+    @include scrollbar;
 
     .content {
         display: flex;
@@ -24,6 +18,9 @@
         height: 100vh;
         overflow-x: hidden;
         background-color: var(--background-color);
+
+
+        @include scrollbar;
 
         .contentBox {
             display: flex;
@@ -98,7 +95,7 @@
             height: 4rem;
             margin: 1rem;
             border-radius: var(--border-radius);
-            background-color: var(--gray-color);
+            background-color: rgb(100, 100, 100, 0.3);
         }
     }
 
@@ -113,7 +110,7 @@
             width: 8rem;
             height: 1.5rem;
             border-radius: var(--border-radius);
-            background-color: var(--gray-color);
+            background-color: rgb(100, 100, 100, 0.3);
         }
 
         span {
@@ -121,7 +118,7 @@
             width: 15rem;
             height: 1.5rem;
             border-radius: var(--border-radius);
-            background-color: var(--gray-color);
+            background-color: rgb(100, 100, 100, 0.3);
         }
     }
 

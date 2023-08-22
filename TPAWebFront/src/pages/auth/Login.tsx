@@ -3,10 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { AUTHENTICATE_USER } from "../../../lib/query/user/authenticateUser.graphql.ts";
 import { FormEvent, useContext, useState } from "react";
-import Toastify from "toastify-js";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import Footer from "../../components/misc/Footer.tsx";
+import { toast } from "react-toastify";
 
 export default function Login() {
     const [authenticateUser] = useMutation(AUTHENTICATE_USER);
@@ -38,12 +38,8 @@ export default function Login() {
                 })
                 .catch(debouncedError);
         }
-        Toastify({
-            text: error,
-            style: {
-                background: "red",
-            },
-        }).showToast();
+
+        toast.error(error);
     };
 
     return (

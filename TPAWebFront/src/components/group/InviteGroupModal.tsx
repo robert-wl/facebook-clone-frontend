@@ -45,15 +45,13 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
         setFilteredFriends(filtered);
     };
 
-    const handleInvite = (userID: string) => {
-        inviteToGroup({
+    const handleInvite = async (userID: string) => {
+        await inviteToGroup({
             variables: {
                 groupId: groupId,
                 userId: userID,
             },
-        })
-            .then(() => console.log("hai"))
-            .catch(debouncedError);
+        }).catch(debouncedError);
         setInviteModalState(false);
     };
 

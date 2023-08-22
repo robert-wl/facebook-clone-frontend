@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { IoSend } from "react-icons/io5";
 import { useMutation } from "@apollo/client";
 import { CREATE_COMMENT } from "../../../lib/query/post/createComment.graphql.ts";
-import errorHandler from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
 import Reply from "./Reply.tsx";
 import { LIKE_COMMENT } from "../../../lib/query/post/likeComment.graphql.ts";
 import { PiArrowBendDownRightDuotone } from "react-icons/pi";
@@ -45,7 +45,7 @@ export default function Comments({ comment }: Comments) {
                         comments: [...currComment.comments, data.data.createComment],
                     });
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
         setReset(reset + 1);
     };
 
@@ -63,7 +63,7 @@ export default function Comments({ comment }: Comments) {
                         likeCount: currComment?.liked ? currComment?.likeCount - 1 : currComment?.likeCount + 1,
                     });
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
     };
 
     return (
@@ -172,7 +172,7 @@ export default function Comments({ comment }: Comments) {
                                         <IoSend
                                             size={"1rem"}
                                             onClick={() => handleReply()}
-                                            color={commentContent.length > 8 ? "blue" : ""}
+                                            color={commentContent.length > 8 ? "rgb(0, 100, 244)" : ""}
                                             disabled={commentContent.length == 8}
                                         />
                                     </div>

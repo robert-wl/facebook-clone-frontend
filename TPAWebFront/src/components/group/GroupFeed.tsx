@@ -94,6 +94,7 @@ export default function GroupFeed({ setShareModalState, setCurrPost, pageRef }: 
                                 setCurrPost={setCurrPost}
                                 setShareModalState={setShareModalState}
                                 setPostList={setPostData}
+                                isGroup={true}
                             />
                         );
                     })}

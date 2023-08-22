@@ -2,8 +2,9 @@ import styles from "../../assets/styles/activateAccount/activateAccount.module.s
 import { useMutation } from "@apollo/client";
 import { ACTIVATE_USER } from "../../../lib/query/user/activateUser.graphql.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import errorHandler from "../../../controller/errorHandler.ts";
-import createToast from "../../../controller/toast/handler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
+import Footer from "../../components/misc/Footer.tsx";
+import { toast } from "react-toastify";
 
 export default function ActivateAccount() {
     const [activateAccount] = useMutation(ACTIVATE_USER);
@@ -16,10 +17,10 @@ export default function ActivateAccount() {
             },
         })
             .then(() => {
-                createToast("Success: account activated successfully", "green");
+                toast.success("Success: account activated successfully");
                 navigate("/login");
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
     };
 
     return (
@@ -28,6 +29,7 @@ export default function ActivateAccount() {
                 <h3>Activate Your Account</h3>
                 <button onClick={() => handleSubmit()}>Activate</button>
             </div>
+            <Footer />
         </div>
     );
 }

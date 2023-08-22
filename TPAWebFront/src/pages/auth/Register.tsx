@@ -4,8 +4,9 @@ import { NewUser } from "../../../gql/graphql.ts";
 import { useMutation } from "@apollo/client";
 import { REGISTER_USER } from "../../../lib/query/user/createUser.graphql.ts";
 import { Link, useNavigate } from "react-router-dom";
-import errorHandler from "../../../controller/errorHandler.ts";
-import createToast from "../../../controller/toast/handler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
+import Footer from "../../components/misc/Footer.tsx";
+import { toast } from "react-toastify";
 
 export default function Register() {
     const [user, setUser] = useState<NewUser>({
@@ -38,6 +39,8 @@ export default function Register() {
             error = "Error: Date of birth cannot be empty";
         } else if (user.gender.length == 0) {
             error = "Error: Gender cannot be empty";
+        } else if (user.dob > new Date().toISOString()) {
+            error = "Error: invalid date";
         } else {
             return registerUser({
                 variables: {
@@ -45,21 +48,18 @@ export default function Register() {
                 },
             })
                 .then(() => {
-                    createToast("Success: account created sucessfully", "green");
+                    toast.success("Success: account created successfully");
                     return navigate("/login");
                 })
-                .catch((err) => errorHandler(err));
+                .catch(debouncedError);
         }
 
-        createToast(error, "red");
+        toast.error(error);
     };
 
     return (
         <div className={styles.page}>
-            <img
-                src="https://static.xx.fbcdn.net/rsrc.php/y8/r/dF5SId3UHWd.svg"
-                alt=""
-            />
+            <h5>FaREbook</h5>
             <div className={styles.registerBox}>
                 <h2>Create a new account</h2>
                 <div className={styles.inputBox}>
@@ -136,6 +136,7 @@ export default function Register() {
                     </p>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

@@ -19,6 +19,9 @@
         overflow-y: hidden;
         background-color: var(--background-color);
 
+        a {
+            text-decoration: none;
+        }
         .top {
             display: flex;
             padding: 1rem;

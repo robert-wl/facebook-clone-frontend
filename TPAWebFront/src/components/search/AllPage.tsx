@@ -1,126 +1,50 @@
 import styles from "../../assets/styles/search/search.module.scss";
-import GroupSearch from "./GroupSearch.tsx";
-import UserSearch from "./UserSearch.tsx";
-import PostSkeleton from "../post/PostSkeleton.tsx";
-import PostBox from "../post/PostBox.tsx";
-import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import { Post } from "../../../gql/graphql.ts";
-import { useQuery } from "@apollo/client";
-import { GET_FILTERED_POSTS } from "../../../lib/query/search/getFilteredPosts.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
-import { debounce } from "../../../controller/debouncer.ts";
+import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
+import UserPage from "./UserPage.tsx";
+import GroupPage from "./GroupPage.tsx";
+import PostPage from "./PostPage.tsx";
 
 interface AllPage {
-    setTab: Dispatch<SetStateAction<string>>;
     setCurrPost: Dispatch<SetStateAction<Post | null>>;
     setShareModalState: Dispatch<SetStateAction<boolean>>;
     pageRef: RefObject<HTMLDivElement>;
     searchQuery: string;
 }
-export default function AllPage({ setTab, setCurrPost, setShareModalState, pageRef, searchQuery }: AllPage) {
-    const [postData, setPostData] = useState<Post[]>([]);
-    const [stop, setStop] = useState(false);
-    const [anyGroupResult, setAnyGroupResult] = useState(true);
-    const [anyUserResult, setAnyUserResult] = useState(true);
-    let start = 0;
-    const {
-        data,
-        loading,
-        refetch: getPosts,
-    } = useQuery(GET_FILTERED_POSTS, {
-        variables: {
-            filter: searchQuery ? searchQuery : "",
-            pagination: {
-                start: 0,
-                limit: 4,
-            },
-        },
-        fetchPolicy: "cache-and-network",
-        onError: debouncedError,
-    });
-
-    useEffect(() => {
-        if (data) {
-            const result = data.getFilteredPosts;
-            if (result == postData) return;
-
-            if (result.length < 4) setStop(true);
-            setPostData([...postData, ...result]);
-        }
-    }, [data]);
-
-    const handleFetch = () => {
-        getPosts({
-            pagination: {
-                start: start,
-                limit: 4,
-            },
-        })
-            .then(() => {
-                start += 4;
-            })
-            .catch(debouncedError);
-    };
-
-    const debouncedHandleScroll = debounce(handleFetch, 50);
-    let scrollElement: HTMLElement | null;
-    const handleScroll = () => {
-        if (scrollElement) {
-            const scrollTop = scrollElement.scrollTop;
-            const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-            const totalHeight = scrollElement.scrollHeight;
-            // console.log(data)
-            if (!(scrollTop + windowHeight + 600 >= totalHeight)) {
-                return;
-            }
-            debouncedHandleScroll();
-        }
-    };
-
-    useEffect(() => {
-        scrollElement = pageRef.current!;
-        if (scrollElement) {
-            scrollElement.addEventListener("scroll", handleScroll);
-            return () => {
-                scrollElement!.addEventListener("scroll", handleScroll);
-            };
-        }
-    }, []);
-
-    if (!loading && postData.length == 0 && !anyGroupResult && !anyUserResult)
-        return (
-            <div className={styles.search}>
-                <h4 className={styles.noResult}>No result found</h4>
-            </div>
-        );
+export default function AllPage({ setCurrPost, setShareModalState, pageRef, searchQuery }: AllPage) {
+    const [userFinished, setUserFinished] = useState(false);
+    const [groupFinished, setGroupFinished] = useState(false);
 
     return (
         <div className={styles.search}>
-            <GroupSearch
-                key={searchQuery + "group"}
-                filter={searchQuery ? searchQuery : ""}
-                setTab={setTab}
-                setAnyGroupResult={setAnyGroupResult}
+            <UserPage
+                key={11}
+                pageRef={pageRef}
+                setFinished={setUserFinished}
+                finished={userFinished}
             />
-            <UserSearch
-                key={searchQuery + "user"}
-                filter={searchQuery ? searchQuery : ""}
-                setTab={setTab}
-                setAnyUserResult={setAnyUserResult}
-            />
-            {postData.map((post) => {
-                return (
-                    <PostBox
-                        key={post.id}
-                        post={post}
-                        setCurrPost={setCurrPost}
-                        setShareModalState={setShareModalState}
-                        setPostList={setPostData}
+            {userFinished && (
+                <>
+                    <GroupPage
+                        key={"masdasd"}
+                        pageRef={pageRef}
+                        setFinished={setGroupFinished}
+                        finished={groupFinished}
                     />
-                );
-            })}
-            {loading && !stop && <PostSkeleton />}
-            {!stop && <PostSkeleton />}
+                </>
+            )}
+            {!groupFinished && <GroupSearchSkeleton key={1} />}
+            {!groupFinished && <GroupSearchSkeleton key={4} />}
+            {groupFinished && (
+                <PostPage
+                    key={"asdkahjsjkashg"}
+                    setCurrPost={setCurrPost}
+                    setShareModalState={setShareModalState}
+                    pageRef={pageRef}
+                    searchQuery={searchQuery}
+                />
+            )}
         </div>
     );
 }

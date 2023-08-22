@@ -195,6 +195,20 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUse
 	return user, nil
 }
 
+// UpdateTheme is the resolver for the updateTheme field.
+func (r *mutationResolver) UpdateTheme(ctx context.Context, theme string) (*model.User, error) {
+	var user *model.User
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.First(&user, "id = ?", userID).Update("theme", theme).Error; err != nil {
+		return nil, err
+	}
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s", user.Username))
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s", user.ID))
+
+	return user, nil
+}
+
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
 	var user *model.User
@@ -239,7 +253,7 @@ func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.Us
 		Preload("Comments").
 		Preload("Visibility.User").
 		Preload("PostTags.User").
-		Find(&posts, "user_id = ? AND (privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?)) OR ?)", user.ID, "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate, user.ID == userID).Error; err != nil {
+		Find(&posts, "user_id = ? AND (privacy = ? OR (privacy = ? AND EXISTS(?)) OR (privacy = ? AND ? IN (?)) OR ?) AND group_id IS NULL", user.ID, "public", "friend", subQueryFriend, "specific", userID, subQueryPrivate, user.ID == userID).Error; err != nil {
 		return nil, err
 	}
 
@@ -423,6 +437,28 @@ func (r *userResolver) Friended(ctx context.Context, obj *model.User) (string, e
 	}
 
 	return status, nil
+}
+
+// Blocked is the resolver for the blocked field.
+func (r *userResolver) Blocked(ctx context.Context, obj *model.User) (bool, error) {
+	userID := ctx.Value("UserID").(string)
+
+	if blockedRedis, err := r.Redis.Get(ctx, fmt.Sprintf("user:%s:blocked:%s", userID, obj.ID)).Result(); err != nil {
+		var blocked *model.BlockNotification
+
+		if err := r.DB.First(&blocked, "sender_id = ? AND receiver_id = ?", obj.ID, userID).Error; err == nil && blocked != nil {
+
+			r.Redis.Set(ctx, fmt.Sprintf("user:%s:blocked:%s", userID, obj.ID), true, 10*time.Minute)
+			return true, nil
+		}
+
+		r.Redis.Set(ctx, fmt.Sprintf("user:%s:blocked:%s", userID, obj.ID), false, 10*time.Minute)
+	} else {
+		if blockedRedis == "1" {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

@@ -12,17 +12,19 @@ export default function NotificationBox() {
     const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
     const [unreadNotifications, setUnreadNotifications] = useState<Notification[]>([]);
 
-    useQuery(GET_NOTIFICATIONS, {
+    const { refetch } = useQuery(GET_NOTIFICATIONS, {
         onCompleted: (data) => {
             const notifList = data.getNotifications;
 
             setAllNotifications(notifList);
         },
         onError: debouncedError,
+        fetchPolicy: "cache-and-network",
     });
     const [getUnreadNotifications] = useMutation(GET_UNREAD_NOTIFICATIONS);
 
     useEffect(() => {
+        refetch();
         getUnreadNotifications()
             .then((data) => {
                 const unreadList = data.data.getUnreadNotifications;

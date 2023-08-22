@@ -20,6 +20,7 @@ type User {
     mutualCount: Int! @goField(forceResolver: true)
     notificationCount: Int! @goField(forceResolver: true)
     friended: String! @goField(forceResolver: true)
+    blocked: Boolean! @goField(forceResolver: true)
     theme: String!
 }
 
@@ -59,6 +60,7 @@ type Mutation {
     updateUserProfile(profile: String!): User! @auth
     updateUserBackground(background: String!): User! @auth
     updateUser(input: UpdateUser!): User! @auth
+    updateTheme(theme: String!): User! @auth
     #updateUser(id: ID!, input: NewUser!): User
     #deleteUser(id: ID!): User
 }

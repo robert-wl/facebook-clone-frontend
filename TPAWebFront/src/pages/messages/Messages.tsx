@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_CONVERSATIONS } from "../../../lib/query/message/getConversations.graphql.ts";
 import { Conversation } from "../../../gql/graphql.ts";
-import errorHandler from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import MessageBox from "../../components/message/MessageBox.tsx";
 import domPurify from "../../../controller/domPurify.ts";
@@ -20,7 +20,7 @@ export default function Messages() {
     const { auth } = useContext(AuthContext);
     const { data: conversationData } = useQuery(GET_CONVERSATIONS, {
         fetchPolicy: "network-only",
-        onError: errorHandler,
+        onError: debouncedError,
     });
 
     useEffect(() => {
@@ -118,7 +118,7 @@ export default function Messages() {
                         <div className={styles.barSpace} />
                         {conversationID ? (
                             <>
-                                <MessageBox key={conversationID} />
+                                <MessageBox key={conversationID + "messageBoks"} />
                             </>
                         ) : (
                             <div className={styles.empty}>

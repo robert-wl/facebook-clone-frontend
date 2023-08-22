@@ -22,9 +22,9 @@ type Notification struct {
 }
 
 type BlockNotification struct {
-	SenderID   string `json:"senderId"`
+	SenderID   string `json:"senderId" gorm:"primaryKey"`
 	Sender     *User  `json:"sender" gorm:"foreignKey:SenderID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	ReceiverID string `json:"receiverId"`
+	ReceiverID string `json:"receiverId" gorm:"primaryKey"`
 	Receiver   *User  `json:"receiver" gorm:"foreignKey:ReceiverID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 

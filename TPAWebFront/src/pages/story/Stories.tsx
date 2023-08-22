@@ -11,14 +11,15 @@ import { Story, User } from "../../../gql/graphql.ts";
 import StoryBox from "../../components/stories/StoryBox.tsx";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import { GET_USER_WITH_STORIES } from "../../../lib/query/story/getUserWithStories.graphql.ts";
-import errorHandler from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 export default function Stories() {
     const [stories, setStories] = useState<Story[]>([]);
     const [friends, setFriends] = useState<User[]>([]);
 
     const [getUserWithStories] = useLazyQuery(GET_USER_WITH_STORIES, {
-        onError: errorHandler,
+        onError: debouncedError,
     });
 
     const { username } = useParams();
@@ -31,7 +32,7 @@ export default function Stories() {
             .then((res) => {
                 setFriends(Array.from(new Set(res.data.getUserWithStories)));
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
 
         getStories({
             variables: {
@@ -42,7 +43,7 @@ export default function Stories() {
             .then((res) => {
                 setStories(res.data.getStories);
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
     }, [username]);
 
     if (friends.length != 0 && friends.filter((friend) => friend.username == username).length == 0) {
@@ -89,7 +90,7 @@ export default function Stories() {
                                                                 text={friend.firstName + " " + friend.lastName}
                                                             >
                                                                 <img
-                                                                    src={friend.profile!}
+                                                                    src={userProfileLoader(friend.profile)}
                                                                     alt={""}
                                                                 />
                                                             </SidebarButton>
@@ -112,7 +113,7 @@ export default function Stories() {
                                                                 text={friend.firstName + " " + friend.lastName}
                                                             >
                                                                 <img
-                                                                    src={friend.profile!}
+                                                                    src={userProfileLoader(friend.profile)}
                                                                     alt={""}
                                                                 />
                                                             </SidebarButton>

@@ -11,6 +11,7 @@ export const GET_USER_MUTUALS = gql`
             dob
             gender
             active
+            profile
         }
     }
 `;

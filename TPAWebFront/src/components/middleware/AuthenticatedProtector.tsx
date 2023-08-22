@@ -7,12 +7,13 @@ interface AuthenticatedProtector {
 }
 
 export default function AuthenticatedProtector({ children }: AuthenticatedProtector) {
-    const { auth, loading } = useContext(AuthContext);
+    const { loading, auth } = useContext(AuthContext);
 
-    if (loading) return <></>;
+    if (loading || !auth) return <></>;
+
     return (
         <>
-            {localStorage.getItem("token") && auth ? (
+            {localStorage.getItem("token") ? (
                 children
             ) : (
                 <Navigate

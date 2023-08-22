@@ -2,9 +2,9 @@ import styles from "../../assets/styles/resetPassword/resetPassword.module.scss"
 import { useMutation } from "@apollo/client";
 import { RESET_PASSWORD } from "../../../lib/query/user/resetPassword.graphql.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import errorHandler from "../../../controller/errorHandler.ts";
-import createToast from "../../../controller/toast/handler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function ResetPassword() {
     const { forgotID } = useParams();
@@ -15,11 +15,11 @@ export default function ResetPassword() {
 
     const handlesubmit = () => {
         if (password != confirmPassword) {
-            return createToast("Error: Passwords do not match", "red");
+            return toast.error("Error: Passwords do not match");
         } else if (password.length == 0) {
-            return createToast("Error: Password cannot be empty", "red");
+            return toast.error("Error: Password cannot be empty");
         } else if (confirmPassword.length == 0) {
-            return createToast("Error: Confirm password cannot be empty", "red");
+            return toast.error("Error: Confirm password cannot be empty");
         }
 
         resetPassword({
@@ -29,10 +29,10 @@ export default function ResetPassword() {
             },
         })
             .then(() => {
-                createToast("Success: password reset successfully", "green");
+                toast.success("Success: password reset successfully");
                 return navigate("/login");
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
     };
 
     return (

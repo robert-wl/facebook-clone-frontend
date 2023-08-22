@@ -22,7 +22,6 @@ export default function Search() {
     const [currPost, setCurrPost] = useState<Post | null>(null);
     const pageRef = useRef<HTMLDivElement>(null);
 
-    console.log(searchQuery);
     return (
         <>
             {shareModalState && (
@@ -81,7 +80,6 @@ export default function Search() {
                                 key={searchQuery + "all"}
                                 setCurrPost={setCurrPost}
                                 setShareModalState={setShareModalState}
-                                setTab={setTab}
                                 pageRef={pageRef}
                                 searchQuery={searchQuery}
                             />

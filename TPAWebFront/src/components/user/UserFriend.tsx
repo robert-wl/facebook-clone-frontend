@@ -63,11 +63,13 @@ export default function UserFriend() {
                 <div className={styles.friendList}>
                     {friends?.map((friend, index) => {
                         return (
-                            <UserFriendBox
-                                key={index}
-                                friend={friend}
-                                username={username!}
-                            />
+                            <>
+                                <UserFriendBox
+                                    key={index}
+                                    friend={friend}
+                                    username={username!}
+                                />
+                            </>
                         );
                     })}
                     {friends?.length == 0 && <NoFriendBox description={"This user has no friends"} />}

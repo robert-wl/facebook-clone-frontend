@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { User } from "../../../gql/graphql.ts";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER } from "../../../lib/query/user/updateUser.graphql.ts";
-import createToast from "../../../controller/toast/handler.ts";
-import errorHandler from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
+import { toast } from "react-toastify";
 
 interface EditUserModal {
     userDat: User;
@@ -26,7 +26,7 @@ export default function EditUserModal({ userDat, setUserDat, setModalState }: Ed
 
     const handleSubmit = () => {
         if (password != confirmPassword) {
-            return createToast("Error: Password must be the same!", "red");
+            return toast.error("Error: Passwords do not match");
         }
 
         handleClose();
@@ -40,7 +40,7 @@ export default function EditUserModal({ userDat, setUserDat, setModalState }: Ed
                     gender: user.gender,
                 },
             },
-        }).catch(errorHandler);
+        }).catch(debouncedError);
 
         if (userDat) setUserDat(user);
     };

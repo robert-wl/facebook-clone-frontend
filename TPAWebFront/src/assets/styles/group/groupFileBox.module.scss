@@ -215,6 +215,21 @@
                     }
                 }
             }
+
+            .noFile {
+                column-span: 100;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                > th {
+                    column-span: 100;
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
         }
     }
 }

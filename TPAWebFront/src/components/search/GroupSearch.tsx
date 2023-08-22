@@ -29,7 +29,6 @@ export default function GroupSearch({ filter, setTab, setAnyGroupResult }: Group
         },
     });
 
-    console.log(groupData);
     if (loading)
         return (
             <>

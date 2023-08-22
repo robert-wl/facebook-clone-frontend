@@ -2,7 +2,7 @@ import styles from "../../assets/styles/group/groupDetail.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
 import GroupDetailSidebar from "../../components/group/GroupDetailSidebar.tsx";
 import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_GROUP } from "../../../lib/query/group/getGroup.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
@@ -23,8 +23,12 @@ import JoinRequestsModal from "../../components/group/JoinRequestsModal.tsx";
 import MembersModal from "../../components/group/MembersModal.tsx";
 import GroupUser from "../../components/group/GroupUser.tsx";
 import { HANDLE_REQUEST } from "../../../lib/query/group/handleRequest.graphql.ts";
+import { LEAVE_GROUP } from "../../../lib/query/group/leaveGroup.graphql.ts";
+import { toast } from "react-toastify";
+import promiseToast from "../../../controller/toast/promiseToast.ts";
 
 export default function GroupDetail() {
+    const navigate = useNavigate();
     const [currPost, setCurrPost] = useState<Post | null>(null);
     const [newGroupModalState, setNewGroupModalState] = useState(false);
     const [shareModalState, setShareModalState] = useState(false);
@@ -35,6 +39,7 @@ export default function GroupDetail() {
     const [tab, setTab] = useState("discussion");
     const [updateGroupBackground] = useMutation(UPDATE_GROUP_BACKGROUND);
     const [handleRequest] = useMutation(HANDLE_REQUEST);
+    const [leaveGroup] = useMutation(LEAVE_GROUP);
     const backgroundInputRef = useRef<HTMLInputElement>(null);
     const { auth } = useContext(AuthContext);
     const { groupId } = useParams();
@@ -75,12 +80,14 @@ export default function GroupDetail() {
                     ...group,
                     background: url,
                 });
-                updateGroupBackground({
+                await updateGroupBackground({
                     variables: {
                         id: groupId,
                         background: url,
                     },
                 }).catch(debouncedError);
+
+                toast.success("Successfully updated group background");
             }
         }
     };
@@ -92,6 +99,23 @@ export default function GroupDetail() {
             },
         }).catch(debouncedError);
         await refetch().catch(debouncedError);
+    };
+
+    const handleLeave = async () => {
+        const data = await leaveGroup({
+            variables: {
+                group: group.id,
+            },
+        }).catch(debouncedError);
+
+        const result = data?.data?.leaveGroup;
+
+        if (result == "success") {
+            toast.success("Successfully left group");
+            navigate("/group");
+        } else if (result == "not allowed") {
+            toast.error("You are not allowed to leave this group");
+        }
     };
 
     if (group?.members?.length == 0) return <Navigate to={"/group"} />;
@@ -148,11 +172,13 @@ export default function GroupDetail() {
                     <div className={styles.contentCenter}>
                         <header>
                             <div className={styles.imageBox}>
-                                <IoMdReverseCamera
-                                    onClick={() => handleBackgroundInput()}
-                                    color={"black"}
-                                    size={"1.5rem"}
-                                />
+                                {group.isAdmin && (
+                                    <IoMdReverseCamera
+                                        onClick={() => handleBackgroundInput()}
+                                        color={"black"}
+                                        size={"1.5rem"}
+                                    />
+                                )}
                                 <input
                                     id={"backgroundInput"}
                                     className={"fileInput"}
@@ -160,7 +186,7 @@ export default function GroupDetail() {
                                     multiple={false}
                                     hidden={true}
                                     ref={backgroundInputRef}
-                                    onChange={handleBackgroundFile}
+                                    onChange={(e) => promiseToast(() => handleBackgroundFile(e))}
                                     accept={"image/*, video/*"}
                                 />
                                 <img
@@ -172,7 +198,7 @@ export default function GroupDetail() {
                                 <div className={styles.top}>
                                     <h2>{group?.name}</h2>
                                     {group?.joined == "joined" && (
-                                        <button onClick={() => setInviteGroupModalState(true)}>
+                                        <button onClick={() => promiseToast(handleLeave)}>
                                             <h4>Leave Group</h4>
                                         </button>
                                     )}
@@ -278,6 +304,11 @@ export default function GroupDetail() {
                                                         />
                                                     );
                                             })}
+                                            {group.posts?.length == 0 && (
+                                                <>
+                                                    <h4>No Posts</h4>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                     <div className={styles.about}>

@@ -16,7 +16,7 @@
     background-color: var(--main-color);
     justify-content: space-between;
     padding-top: 0.5rem;
-    z-index: 1000;
+    z-index: 10;
     box-shadow: var(--box-shadow-light);
 
     .left {
@@ -194,6 +194,62 @@
                     & a:hover {
                         background-color: transparent;
                     }
+                }
+
+                > button {
+
+                    > svg {
+                        padding: 0.2rem;
+                    }
+
+                    > label {
+                        --width: 40px;
+                        --height: calc(var(--width) / 2);
+                        --border-radius: calc(var(--height) / 2);
+
+                        display: inline-block;
+                        cursor: pointer;
+
+                        > input {
+                            display: none;
+
+                            &:checked ~ .fill {
+                                background: var(--blue-color);
+                            }
+
+                            &:checked ~ .fill::after {
+                                transform: translateX(var(--height));
+                            }
+                        }
+
+                        .fill {
+                            position: relative;
+                            width: var(--width);
+                            height: var(--height);
+                            border-radius: var(--border-radius);
+                            background: #dddddd;
+                            transition: background 0.2s;
+
+                            &::after {
+                                content: "";
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                height: var(--height);
+                                width: var(--height);
+                                background: #ffffff;
+                                box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+                                border-radius: var(--border-radius);
+                                transition: transform 0.2s;
+                            }
+                        }
+                    }
+                }
+                > p {
+                    text-decoration: none;
+                    text-align: start;
+                    width: 60%;
+                    margin-left: 0.5rem;
                 }
             }
         }

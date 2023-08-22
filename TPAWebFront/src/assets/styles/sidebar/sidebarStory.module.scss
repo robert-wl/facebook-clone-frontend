@@ -71,7 +71,7 @@
 		height: 100%;
 
 		textarea {
-			color: black;
+			color: var(--color);
 			padding: 0.75rem;
 			font-size: 1rem;
 			font-family: Arial, serif;
@@ -84,7 +84,7 @@
 		}
 
 		select {
-			color: black;
+			color: var(--color);
 			padding: 0.75rem;
 			font-size: 1rem;
 			font-family: Arial, serif;

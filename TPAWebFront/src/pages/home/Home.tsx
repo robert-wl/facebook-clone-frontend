@@ -136,6 +136,7 @@ export default function Home() {
                             <ProfilePicture
                                 user={auth}
                                 showBox={false}
+                                zIndex={5}
                             />
                             <button onClick={() => setModalState(true)}>What's on your mind?</button>
                         </div>
@@ -148,6 +149,7 @@ export default function Home() {
                                 setCurrPost={setCurrPost}
                                 setPostList={setData}
                                 setShareModalState={setShareModalState}
+                                isGroup={!!post.group}
                             />
                         ))}
                         {!hideSkeleton && <PostSkeleton />}

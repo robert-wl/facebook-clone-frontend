@@ -1,4 +1,4 @@
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes, deleteObject } from "firebase/storage";
 import { app } from "./firebase.ts";
 
 export interface FileUpload {
@@ -19,9 +19,19 @@ export default async function uploadStorage(directory: string, file: File) {
 
     const File: FileUpload = {
         url: url,
-        directory: directory,
+        directory: storageRef.fullPath,
         type: file.type,
     };
 
     return JSON.stringify(File);
+}
+
+export async function deleteStorage(reference: string) {
+    const storageRef = ref(storage, reference);
+
+    try {
+        await deleteObject(storageRef);
+    } catch (e) {
+        console.log("not found");
+    }
 }

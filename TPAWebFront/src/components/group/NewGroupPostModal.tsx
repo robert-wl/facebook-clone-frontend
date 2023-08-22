@@ -9,6 +9,8 @@ import { Group } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { useParams } from "react-router-dom";
 import RichText from "../richText/RichText.tsx";
+import promiseToast from "../../../controller/toast/promiseToast.ts";
+import { toast } from "react-toastify";
 
 interface NewGroupPostModal {
     modalState: boolean;
@@ -73,6 +75,8 @@ export default function NewGroupPostModal({ modalState, setModalState, setGroup 
                 posts: [dat.createPost],
             };
         });
+
+        toast.success("Post created!");
     };
 
     if (!modalState) return <></>;
@@ -168,7 +172,7 @@ export default function NewGroupPostModal({ modalState, setModalState, setGroup 
                 <button
                     className={styles.postButton}
                     disabled={content.length === 0}
-                    onClick={() => handleSubmit()}
+                    onClick={() => promiseToast(handleSubmit)}
                 >
                     Post
                 </button>

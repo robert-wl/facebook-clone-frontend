@@ -1,5 +1,5 @@
 import styles from "../../assets/styles/search/search.module.scss";
-import { RefObject, useEffect, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { User } from "../../../gql/graphql.ts";
 import { useQuery } from "@apollo/client";
@@ -11,11 +11,13 @@ import { debounce } from "../../../controller/debouncer.ts";
 
 interface UserPage {
     pageRef: RefObject<HTMLDivElement>;
+    setFinished?: Dispatch<SetStateAction<boolean>>;
+    finished?: boolean;
 }
-export default function UserPage({ pageRef }: UserPage) {
+export default function UserPage({ pageRef, setFinished, finished }: UserPage) {
     const { searchQuery } = useParams();
     const [userData, setUserData] = useState<User[]>([]);
-    let start = 0;
+    let start = 10;
     const { loading, refetch: getUsers } = useQuery(GET_FILTERED_USERS, {
         variables: {
             filter: searchQuery ? searchQuery : "",
@@ -23,17 +25,22 @@ export default function UserPage({ pageRef }: UserPage) {
                 start: 0,
                 limit: 10,
             },
-            fetchPolicy: "cache-and-network",
         },
+        fetchPolicy: "cache-and-network",
         onError: debouncedError,
         onCompleted: (data) => {
             const result = data.getFilteredUsers;
+            // console.log(result);
 
+            if (result < 10) {
+                if (setFinished) setFinished(true);
+            }
             setUserData([...userData, ...result]);
         },
     });
 
     const handleFetch = () => {
+        if (finished) return;
         getUsers({
             filter: searchQuery ? searchQuery : "",
             pagination: {
@@ -67,20 +74,27 @@ export default function UserPage({ pageRef }: UserPage) {
         if (scrollElement) {
             scrollElement.addEventListener("scroll", handleScroll);
             return () => {
-                scrollElement!.addEventListener("scroll", handleScroll);
+                scrollElement!.removeEventListener("scroll", handleScroll);
             };
         }
     }, []);
 
+    useEffect(() => {
+        scrollElement = pageRef.current!;
+        if (scrollElement && finished) {
+            scrollElement!.removeEventListener("scroll", handleScroll);
+        }
+    }, [finished]);
+
     if (loading)
         return (
             <>
-                <GroupSearchSkeleton key={1} />
-                <GroupSearchSkeleton key={2} />
+                <GroupSearchSkeleton key={"user1"} />
+                <GroupSearchSkeleton key={"user2"} />
             </>
         );
 
-    if (!loading && userData.length == 0)
+    if (!loading && userData.length == 0 && !setFinished)
         return (
             <div className={styles.search}>
                 <h4 className={styles.noResult}>No users found</h4>

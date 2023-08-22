@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Group } from "../../../gql/graphql.ts";
 import { useQuery } from "@apollo/client";
@@ -11,11 +11,13 @@ import { GET_FILTERED_GROUPS } from "../../../lib/query/search/getFilteredGroups
 
 interface GroupPage {
     pageRef: RefObject<HTMLDivElement>;
+    setFinished?: Dispatch<SetStateAction<boolean>>;
+    finished?: boolean;
 }
-export default function GroupPage({ pageRef }: GroupPage) {
+export default function GroupPage({ pageRef, setFinished, finished }: GroupPage) {
     const { searchQuery } = useParams();
     const [groupData, setGroupData] = useState<Group[]>([]);
-    let start = 0;
+    let start = 10;
     const { loading, refetch: getGroups } = useQuery(GET_FILTERED_GROUPS, {
         variables: {
             filter: searchQuery ? searchQuery : "",
@@ -29,12 +31,15 @@ export default function GroupPage({ pageRef }: GroupPage) {
         onCompleted: (data) => {
             const result = data.getFilteredGroups;
 
-            console.log(result);
+            if (result < 10) {
+                if (setFinished) setFinished(true);
+            }
             setGroupData([...groupData, ...result]);
         },
     });
 
     const handleFetch = () => {
+        if (finished) return;
         getGroups({
             filter: searchQuery ? searchQuery : "",
             pagination: {
@@ -69,10 +74,17 @@ export default function GroupPage({ pageRef }: GroupPage) {
         if (scrollElement) {
             scrollElement.addEventListener("scroll", handleScroll);
             return () => {
-                scrollElement!.addEventListener("scroll", handleScroll);
+                scrollElement!.removeEventListener("scroll", handleScroll);
             };
         }
     }, []);
+
+    useEffect(() => {
+        scrollElement = pageRef.current!;
+        if (scrollElement && finished) {
+            scrollElement!.removeEventListener("scroll", handleScroll);
+        }
+    }, [finished]);
 
     if (loading)
         return (
@@ -82,7 +94,7 @@ export default function GroupPage({ pageRef }: GroupPage) {
             </>
         );
 
-    if (!loading && groupData.length == 0)
+    if (!loading && groupData.length == 0 && !setFinished)
         return (
             <div className={styles.search}>
                 <h4 className={styles.noResult}>No groups found</h4>

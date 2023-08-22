@@ -23,7 +23,7 @@ export default function HomeTopReels() {
                     </Link>
                     <div className={styles.create}>
                         <h4>Create Reel</h4>
-                        <Link to={"/stories/create"}>
+                        <Link to={"/reels/create"}>
                             <MdOutlineAdd
                                 size={"1.2rem"}
                                 color={"white"}

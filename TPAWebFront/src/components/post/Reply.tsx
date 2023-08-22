@@ -2,7 +2,7 @@ import { Comment, Maybe } from "../../../gql/graphql.ts";
 import styles from "../../assets/styles/post/reply.module.scss";
 import { AiFillLike } from "react-icons/ai";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import errorHandler from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
 import { useMutation } from "@apollo/client";
 import { LIKE_COMMENT } from "../../../lib/query/post/likeComment.graphql.ts";
 import domPurify from "../../../controller/domPurify.ts";
@@ -41,7 +41,7 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
                         likeCount: comment?.liked ? comment?.likeCount - 1 : comment?.likeCount + 1,
                     });
             })
-            .catch(errorHandler);
+            .catch(debouncedError);
     };
 
     const handleReply = () => {
@@ -70,7 +70,7 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
                         return comment;
                     });
                 })
-                .catch(errorHandler);
+                .catch(debouncedError);
             setReset(reset + 1);
         }
     };

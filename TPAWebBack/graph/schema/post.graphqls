@@ -9,7 +9,7 @@ type Post {
     likeCount: Int! @goField(forceResolver: true)
     commentCount: Int! @goField(forceResolver: true)
     shareCount: Int!
-    groupId: String
+    group: Group @goField(forceResolver: true)
     files: [String]
     likes: [PostLike]
     comments: [Comment]

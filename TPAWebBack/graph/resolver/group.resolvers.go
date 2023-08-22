@@ -408,18 +408,51 @@ func (r *mutationResolver) KickMember(ctx context.Context, groupID string, userI
 }
 
 // LeaveGroup is the resolver for the leaveGroup field.
-func (r *mutationResolver) LeaveGroup(ctx context.Context, groupID string) (*bool, error) {
+func (r *mutationResolver) LeaveGroup(ctx context.Context, groupID string) (string, error) {
+	var member *model.Member
 	userID := ctx.Value("UserID").(string)
-	boolean := true
+
+	if err := r.DB.First(&member, "group_id = ? AND user_id = ?", groupID, userID).Error; err != nil {
+		return "not found", err
+	}
+
+	if member.Role == "Admin" {
+		var adminCount int64
+		var memberCount int64
+
+		if err := r.DB.Find(&model.Member{}, "group_id = ? AND role = ?", groupID, "Admin").Count(&adminCount).Error; err != nil {
+			return "not found", err
+		}
+
+		if err := r.DB.Find(&model.Member{}, "group_id = ? AND role = ?", groupID, "member").Count(&memberCount).Error; err != nil {
+			return "not found", err
+		}
+
+		if adminCount == 1 && memberCount != 0 {
+			return "not allowed", nil
+		}
+	}
+
 	if err := r.DB.Delete(&model.Member{}, "group_id = ? AND user_id = ?", groupID, userID).Error; err != nil {
-		boolean = false
-		return &boolean, err
+		return "not found", err
+	}
+
+	var memberCount int64
+
+	if err := r.DB.Find(&model.Member{}, "group_id = ?", groupID).Count(&memberCount).Error; err != nil {
+		return "not found", err
+	}
+
+	if memberCount == 0 {
+		if err := r.DB.Delete(&model.Group{}, "id = ?", groupID).Error; err != nil {
+			return "not found", err
+		}
 	}
 
 	r.Redis.Del(ctx, fmt.Sprintf("group:%s:joined:%s", groupID, userID))
 	r.Redis.Del(ctx, fmt.Sprintf("group:%s:isAdmin:%s", groupID, userID))
 	r.Redis.Del(ctx, fmt.Sprintf("group:%s", groupID))
-	return &boolean, nil
+	return "success", nil
 }
 
 // PromoteMember is the resolver for the promoteMember field.

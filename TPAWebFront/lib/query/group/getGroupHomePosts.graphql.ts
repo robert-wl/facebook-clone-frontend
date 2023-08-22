@@ -19,6 +19,15 @@ export const GET_GROUP_HOME_POSTS = gql`
             commentCount
             shareCount
             liked
+            group {
+                id
+                name
+                about
+                privacy
+                background
+                isAdmin
+                joined
+            }
             postTags {
                 user {
                     firstName

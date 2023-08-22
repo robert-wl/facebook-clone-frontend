@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -466,6 +467,35 @@ func (r *postResolver) CommentCount(ctx context.Context, obj *model.Post) (int, 
 	}
 
 	return int(commentCount), nil
+}
+
+// Group is the resolver for the group field.
+func (r *postResolver) Group(ctx context.Context, obj *model.Post) (*model.Group, error) {
+	if obj.GroupID == nil {
+		return nil, nil
+	}
+
+	var group *model.Group
+
+	if groupSerialized, err := r.Redis.Get(ctx, fmt.Sprintf("group:%s", *obj.GroupID)).Result(); err != nil {
+
+		if err := r.DB.
+			Find(&group, "id = ?", *obj.GroupID).Error; err != nil {
+			return nil, err
+		}
+
+		if groupSerialized, err := json.Marshal(group); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf("group:%s", *obj.GroupID), groupSerialized, 10*time.Second)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(groupSerialized), &group); err != nil {
+			return nil, err
+		}
+	}
+
+	return group, nil
 }
 
 // Liked is the resolver for the liked field.

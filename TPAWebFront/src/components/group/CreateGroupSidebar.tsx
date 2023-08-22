@@ -1,12 +1,12 @@
 import styles from "../../assets/styles/group/createGroupSidebar.module.scss";
 import { Dispatch, SetStateAction, useContext } from "react";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
-import createToast from "../../../controller/toast/handler.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_GROUP } from "../../../lib/query/group/createGroup.graphql.ts";
 import { debouncedError } from "../../../controller/errorHandler.ts";
 import userProfileLoader from "../../../controller/userProfileLoader.ts";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface CreateGroupSidebar {
     groupData: { name: string; privacy: string; about: string };
@@ -19,13 +19,13 @@ export default function CreateGroupSidebar({ groupData, setGroupData }: CreateGr
 
     const handleSubmit = () => {
         if (groupData.name.length == 0) {
-            return createToast("Error: please fill the group name", "red");
+            return toast.error("Error: please fill the group name");
         }
         if (groupData.privacy.length == 0) {
-            return createToast("Error: please fill the group privacy", "red");
+            return toast.error("Error: please fill the group privacy");
         }
         if (groupData.about.length == 0) {
-            return createToast("Error: please fill the group about", "red");
+            return toast.error("Error: please fill the group about");
         }
 
         createGroup({

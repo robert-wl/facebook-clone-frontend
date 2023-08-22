@@ -11,7 +11,7 @@ import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react
 import Comments from "./Comments.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_COMMENT_POST } from "../../../lib/query/post/getCommentPost.graphql.ts";
-import errorHandler, { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../../controller/errorHandler.ts";
 import { CREATE_COMMENT } from "../../../lib/query/post/createComment.graphql.ts";
 import { LIKE_POST } from "../../../lib/query/post/likePost.graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
@@ -19,6 +19,7 @@ import RichText from "../richText/RichText.tsx";
 import domPurify from "../../../controller/domPurify.ts";
 import { FiTrash2 } from "react-icons/fi";
 import { DELETE_POST } from "../../../lib/query/post/deletePost.graphql.ts";
+import GroupProfilePicture from "../GroupProfilePicture.tsx";
 
 interface PostBox {
     post: Post;
@@ -27,16 +28,17 @@ interface PostBox {
     setPostList?: Dispatch<SetStateAction<Post[]>>;
     setGroup?: Dispatch<SetStateAction<Group>>;
     isAdmin?: boolean;
+    isGroup?: boolean;
 }
 
-export default function PostBox({ post: postN, setCurrPost, setShareModalState, setPostList, setGroup, isAdmin }: PostBox) {
+export default function PostBox({ post: postN, setCurrPost, setShareModalState, setPostList, setGroup, isAdmin, isGroup }: PostBox) {
     const [post, setPost] = useState<Post | null>(null);
     const [comment, setComment] = useState("");
     const [showComment, setShowComment] = useState(false);
     const [comments, setComments] = useState<Comment[]>([]);
     const { refetch: getCommentPost } = useQuery(GET_COMMENT_POST, {
         skip: true,
-        onError: errorHandler,
+        onError: debouncedError,
     });
     const { auth } = useContext(AuthContext);
     const [createComment] = useMutation(CREATE_COMMENT);
@@ -118,8 +120,8 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
             });
     };
 
-    const handleDelete = () => {
-        deletePost({
+    const handleDelete = async () => {
+        await deletePost({
             variables: {
                 id: post?.id,
             },
@@ -144,10 +146,18 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
         return (
             <div className={styles.myBox}>
                 <header>
-                    <ProfilePicture
-                        user={post!.user!}
-                        showBox={false}
-                    />
+                    {isGroup ? (
+                        <>
+                            <GroupProfilePicture group={post!.group!} />
+                        </>
+                    ) : (
+                        <>
+                            <ProfilePicture
+                                user={post!.user!}
+                                showBox={false}
+                            />
+                        </>
+                    )}
                     {(auth?.username == post?.user.username || isAdmin) && (
                         <div className={styles.delete}>
                             <FiTrash2
@@ -158,14 +168,20 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
                     )}
                     <div className={styles.bio}>
                         <h4>
-                            {post?.user.firstName} {post?.user.lastName}
-                            {post.postTags?.length != undefined && post.postTags[0] != undefined && (
+                            {isGroup ? (
+                                <>{post?.group?.name}</>
+                            ) : (
                                 <>
-                                    {post.postTags?.length > 0 && <span> is with </span>}
-                                    {post.postTags?.length == 1 && <>{post.postTags[0].user.firstName + " " + post.postTags[0].user.lastName}</>}
-                                    {post.postTags.length > 1 && (
+                                    {post?.user.firstName} {post?.user.lastName}
+                                    {post.postTags?.length != undefined && post.postTags[0] != undefined && (
                                         <>
-                                            <b>{post.postTags[0].user.firstName + " " + post.postTags[0].user.lastName} </b> <span>and {post.postTags.length - 1} others</span>
+                                            {post.postTags?.length > 0 && <span> is with </span>}
+                                            {post.postTags?.length == 1 && <>{post.postTags[0].user.firstName + " " + post.postTags[0].user.lastName}</>}
+                                            {post.postTags.length > 1 && (
+                                                <>
+                                                    <b>{post.postTags[0].user.firstName + " " + post.postTags[0].user.lastName} </b> <span>and {post.postTags.length - 1} others</span>
+                                                </>
+                                            )}
                                         </>
                                     )}
                                 </>
@@ -258,7 +274,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
                                     <IoSend
                                         size={"1rem"}
                                         onClick={() => handleComment()}
-                                        color={comment.length > 8 ? "blue" : ""}
+                                        color={comment.length > 8 ? "rgb(0, 100, 244)" : ""}
                                         disabled={comment.length == 8}
                                     />
                                 </div>

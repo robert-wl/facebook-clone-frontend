@@ -10,10 +10,11 @@ import { MdKeyboardArrowRight, MdLogout } from "react-icons/md";
 import userProfileLoader from "../../../controller/userProfileLoader.ts";
 import SearchBar from "./SearchBar.tsx";
 import NotificationButton from "./buttons/NotificationButton.tsx";
+import { BsFillMoonFill } from "react-icons/bs";
 
 export default function Navbar() {
     const location = useLocation();
-    const { auth } = useContext(AuthContext);
+    const { auth, toggleTheme } = useContext(AuthContext);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const handleClick = () => {
@@ -73,6 +74,20 @@ export default function Navbar() {
                                     <p>My Profile</p>
                                     <MdKeyboardArrowRight size={"1.5rem"} />
                                 </Link>
+                            </button>
+                            <button>
+                                <>
+                                    <BsFillMoonFill />
+                                    <p>Dark Mode</p>
+                                </>
+                                <label>
+                                    <input
+                                        checked={auth?.theme == "dark"}
+                                        type={"checkbox"}
+                                        onChange={() => toggleTheme!()}
+                                    />
+                                    <div className={styles.fill} />
+                                </label>
                             </button>
                             <button onClick={() => handleLogout()}>
                                 <Link to={"/login"}>

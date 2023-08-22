@@ -14,8 +14,8 @@ type Notification {
 }
 
 type BlockNotification {
-    sender: User!
-    receiver: User!
+    sender: User
+    receiver: User
 }
 
 
@@ -35,4 +35,5 @@ extend type Query {
 extend type Mutation {
     createNotification(notification: NewNotification!): Notification! @auth
     getUnreadNotifications: [Notification!]! @auth
+    blockUser(username: String!): BlockNotification! @auth
 }

@@ -13,12 +13,13 @@ interface PostPage {
     setShareModalState: Dispatch<SetStateAction<boolean>>;
     pageRef: RefObject<HTMLDivElement>;
     searchQuery: string;
+    setFinished?: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function PostPage({ setCurrPost, setShareModalState, pageRef, searchQuery }: PostPage) {
+export default function PostPage({ setCurrPost, setShareModalState, pageRef, searchQuery, setFinished }: PostPage) {
     const [postData, setPostData] = useState<Post[]>([]);
     const [stop, setStop] = useState(false);
-    let start = 0;
+    let start = 4;
     const { loading, refetch: getPosts } = useQuery(GET_FILTERED_POSTS, {
         variables: {
             filter: searchQuery ? searchQuery : "",
@@ -31,7 +32,12 @@ export default function PostPage({ setCurrPost, setShareModalState, pageRef, sea
         onCompleted: (data) => {
             const result = data.getFilteredPosts;
 
-            if (result.length < 4) setStop(true);
+            if (result.length < 4) {
+                setStop(true);
+                if (setFinished) {
+                    setFinished(true);
+                }
+            }
             setPostData([...postData, ...result]);
         },
         onError: debouncedError,
@@ -71,12 +77,12 @@ export default function PostPage({ setCurrPost, setShareModalState, pageRef, sea
         if (scrollElement) {
             scrollElement.addEventListener("scroll", handleScroll);
             return () => {
-                scrollElement!.addEventListener("scroll", handleScroll);
+                scrollElement!.removeEventListener("scroll", handleScroll);
             };
         }
     }, []);
 
-    if (!loading && postData.length == 0)
+    if (!loading && postData.length == 0 && !setFinished)
         return (
             <div className={styles.search}>
                 <h4 className={styles.noResult}>No posts found</h4>
@@ -93,6 +99,7 @@ export default function PostPage({ setCurrPost, setShareModalState, pageRef, sea
                         setCurrPost={setCurrPost}
                         setShareModalState={setShareModalState}
                         setPostList={setPostData}
+                        isGroup={!!post.group}
                     />
                 );
             })}

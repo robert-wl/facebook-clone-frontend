@@ -3,8 +3,10 @@ import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_FRIENDS } from "../../../lib/query/friend/getFriends.graphql.ts";
-import { Friend, User } from "../../../gql/graphql.ts";
+import { User } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
+import { debouncedError } from "../../../controller/errorHandler.ts";
+import userProfileLoader from "../../../controller/userProfileLoader.ts";
 
 interface VisibilityModal {
     setVisibilityModalState: Dispatch<SetStateAction<boolean>>;
@@ -15,18 +17,14 @@ export default function VisibilityModal({ setVisibilityModalState, visibilityLis
     const [friends, setFriends] = useState<User[]>([]);
     const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
     const { auth } = useContext(AuthContext);
-    const { data } = useQuery(GET_FRIENDS);
+    const { data } = useQuery(GET_FRIENDS, {
+        onError: debouncedError,
+    });
 
     useEffect(() => {
-        if (data && auth) {
-            const friendList = data.getFriends.map((friend: Friend) => {
-                if (friend.sender.id.toString() != auth.id.toString()) {
-                    return friend.sender;
-                }
-                return friend.receiver;
-            });
-            setFriends(friendList);
-            setFilteredFriends(friendList);
+        if (data) {
+            setFriends(data.getFriends);
+            setFilteredFriends(data.getFriends);
         }
     }, [data, auth]);
 
@@ -78,10 +76,7 @@ export default function VisibilityModal({ setVisibilityModalState, visibilityLis
                                     onClick={() => handleCheck(user)}
                                 >
                                     <div>
-                                        <img
-                                            src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
-                                            alt={"profile picture"}
-                                        />
+                                        <img src={userProfileLoader(user.profile)} />
                                         <span>
                                             {user.firstName} {user.lastName}
                                         </span>

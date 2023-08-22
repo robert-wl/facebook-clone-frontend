@@ -7,7 +7,11 @@ export const CREATE_POST = gql`
             user {
                 firstName
                 lastName
+                username
                 profile
+                email
+                gender
+                dob
             }
             content
             privacy
@@ -19,6 +23,7 @@ export const CREATE_POST = gql`
                 user {
                     firstName
                     lastName
+                    createdAt
                 }
             }
             comments {

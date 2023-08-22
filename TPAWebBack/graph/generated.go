@@ -147,6 +147,7 @@ type ComplexityRoot struct {
 		AddFriend              func(childComplexity int, friendInput model.FriendInput) int
 		ApproveMember          func(childComplexity int, groupID string, userID string) int
 		AuthenticateUser       func(childComplexity int, email string, password string) int
+		BlockUser              func(childComplexity int, username string) int
 		CreateComment          func(childComplexity int, newComment model.NewComment) int
 		CreateConversation     func(childComplexity int, username string) int
 		CreateGroup            func(childComplexity int, group model.NewGroup) int
@@ -176,6 +177,7 @@ type ComplexityRoot struct {
 		SendMessage            func(childComplexity int, conversationID string, message *string, image *string, postID *string) int
 		SharePost              func(childComplexity int, userID string, postID string) int
 		UpdateGroupBackground  func(childComplexity int, groupID string, background string) int
+		UpdateTheme            func(childComplexity int, theme string) int
 		UpdateUser             func(childComplexity int, input model.UpdateUser) int
 		UpdateUserBackground   func(childComplexity int, background string) int
 		UpdateUserProfile      func(childComplexity int, profile string) int
@@ -201,7 +203,7 @@ type ComplexityRoot struct {
 		Content      func(childComplexity int) int
 		CreatedAt    func(childComplexity int) int
 		Files        func(childComplexity int) int
-		GroupID      func(childComplexity int) int
+		Group        func(childComplexity int) int
 		ID           func(childComplexity int) int
 		LikeCount    func(childComplexity int) int
 		Liked        func(childComplexity int) int
@@ -317,6 +319,7 @@ type ComplexityRoot struct {
 	User struct {
 		Active            func(childComplexity int) int
 		Background        func(childComplexity int) int
+		Blocked           func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Dob               func(childComplexity int) int
 		Email             func(childComplexity int) int
@@ -355,6 +358,7 @@ type MutationResolver interface {
 	UpdateUserProfile(ctx context.Context, profile string) (*model.User, error)
 	UpdateUserBackground(ctx context.Context, background string) (*model.User, error)
 	UpdateUser(ctx context.Context, input model.UpdateUser) (*model.User, error)
+	UpdateTheme(ctx context.Context, theme string) (*model.User, error)
 	AddFriend(ctx context.Context, friendInput model.FriendInput) (*model.Friend, error)
 	AcceptFriend(ctx context.Context, friend string) (*model.Friend, error)
 	RejectFriend(ctx context.Context, friend string) (*model.Friend, error)
@@ -367,12 +371,13 @@ type MutationResolver interface {
 	ApproveMember(ctx context.Context, groupID string, userID string) (*model.Member, error)
 	DenyMember(ctx context.Context, groupID string, userID string) (*model.Member, error)
 	KickMember(ctx context.Context, groupID string, userID string) (*bool, error)
-	LeaveGroup(ctx context.Context, groupID string) (*bool, error)
+	LeaveGroup(ctx context.Context, groupID string) (string, error)
 	PromoteMember(ctx context.Context, groupID string, userID string) (*model.Member, error)
 	CreateConversation(ctx context.Context, username string) (*model.Conversation, error)
 	SendMessage(ctx context.Context, conversationID string, message *string, image *string, postID *string) (*model.Message, error)
 	CreateNotification(ctx context.Context, notification model.NewNotification) (*model.Notification, error)
 	GetUnreadNotifications(ctx context.Context) ([]*model.Notification, error)
+	BlockUser(ctx context.Context, username string) (*model.BlockNotification, error)
 	CreatePost(ctx context.Context, newPost model.NewPost) (*model.Post, error)
 	CreateComment(ctx context.Context, newComment model.NewComment) (*model.Comment, error)
 	SharePost(ctx context.Context, userID string, postID string) (*string, error)
@@ -389,6 +394,8 @@ type MutationResolver interface {
 type PostResolver interface {
 	LikeCount(ctx context.Context, obj *model.Post) (int, error)
 	CommentCount(ctx context.Context, obj *model.Post) (int, error)
+
+	Group(ctx context.Context, obj *model.Post) (*model.Group, error)
 
 	Liked(ctx context.Context, obj *model.Post) (*bool, error)
 }
@@ -443,6 +450,7 @@ type UserResolver interface {
 	MutualCount(ctx context.Context, obj *model.User) (int, error)
 	NotificationCount(ctx context.Context, obj *model.User) (int, error)
 	Friended(ctx context.Context, obj *model.User) (string, error)
+	Blocked(ctx context.Context, obj *model.User) (bool, error)
 }
 
 type executableSchema struct {
@@ -912,6 +920,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AuthenticateUser(childComplexity, args["email"].(string), args["password"].(string)), true
 
+	case "Mutation.blockUser":
+		if e.complexity.Mutation.BlockUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_blockUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.BlockUser(childComplexity, args["username"].(string)), true
+
 	case "Mutation.createComment":
 		if e.complexity.Mutation.CreateComment == nil {
 			break
@@ -1255,6 +1275,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateGroupBackground(childComplexity, args["groupId"].(string), args["background"].(string)), true
 
+	case "Mutation.updateTheme":
+		if e.complexity.Mutation.UpdateTheme == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTheme_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTheme(childComplexity, args["theme"].(string)), true
+
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
 			break
@@ -1408,12 +1440,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Files(childComplexity), true
 
-	case "Post.groupId":
-		if e.complexity.Post.GroupID == nil {
+	case "Post.group":
+		if e.complexity.Post.Group == nil {
 			break
 		}
 
-		return e.complexity.Post.GroupID(childComplexity), true
+		return e.complexity.Post.Group(childComplexity), true
 
 	case "Post.id":
 		if e.complexity.Post.ID == nil {
@@ -2094,6 +2126,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Background(childComplexity), true
 
+	case "User.blocked":
+		if e.complexity.User.Blocked == nil {
+			break
+		}
+
+		return e.complexity.User.Blocked(childComplexity), true
+
 	case "User.createdAt":
 		if e.complexity.User.CreatedAt == nil {
 			break
@@ -2450,6 +2489,21 @@ func (ec *executionContext) field_Mutation_authenticateUser_args(ctx context.Con
 		}
 	}
 	args["password"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_blockUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["username"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["username"] = arg0
 	return args, nil
 }
 
@@ -2963,6 +3017,21 @@ func (ec *executionContext) field_Mutation_updateGroupBackground_args(ctx contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateTheme_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["theme"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("theme"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["theme"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateUserBackground_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3457,14 +3526,11 @@ func (ec *executionContext) _BlockNotification_sender(ctx context.Context, field
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_BlockNotification_sender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3507,6 +3573,8 @@ func (ec *executionContext) fieldContext_BlockNotification_sender(ctx context.Co
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -3537,14 +3605,11 @@ func (ec *executionContext) _BlockNotification_receiver(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_BlockNotification_receiver(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3587,6 +3652,8 @@ func (ec *executionContext) fieldContext_BlockNotification_receiver(ctx context.
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -3711,6 +3778,8 @@ func (ec *executionContext) fieldContext_Comment_user(ctx context.Context, field
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -3906,8 +3975,8 @@ func (ec *executionContext) fieldContext_Comment_parentPost(ctx context.Context,
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -4302,6 +4371,8 @@ func (ec *executionContext) fieldContext_CommentLike_user(ctx context.Context, f
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -4646,6 +4717,8 @@ func (ec *executionContext) fieldContext_ConversationUsers_user(ctx context.Cont
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -4726,6 +4799,8 @@ func (ec *executionContext) fieldContext_Friend_sender(ctx context.Context, fiel
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -4806,6 +4881,8 @@ func (ec *executionContext) fieldContext_Friend_receiver(ctx context.Context, fi
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -5372,8 +5449,8 @@ func (ec *executionContext) fieldContext_Group_posts(ctx context.Context, field 
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -5783,6 +5860,8 @@ func (ec *executionContext) fieldContext_GroupFile_uploadedBy(ctx context.Contex
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -5951,6 +6030,8 @@ func (ec *executionContext) fieldContext_Member_user(ctx context.Context, field 
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -6251,6 +6332,8 @@ func (ec *executionContext) fieldContext_Message_sender(ctx context.Context, fie
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -6396,8 +6479,8 @@ func (ec *executionContext) fieldContext_Message_post(ctx context.Context, field
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -6530,6 +6613,8 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -6621,6 +6706,8 @@ func (ec *executionContext) fieldContext_Mutation_activateUser(ctx context.Conte
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -6822,6 +6909,8 @@ func (ec *executionContext) fieldContext_Mutation_resetPassword(ctx context.Cont
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -6933,6 +7022,8 @@ func (ec *executionContext) fieldContext_Mutation_updateUserProfile(ctx context.
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -7044,6 +7135,8 @@ func (ec *executionContext) fieldContext_Mutation_updateUserBackground(ctx conte
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -7155,6 +7248,8 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -7169,6 +7264,119 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateTheme(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTheme(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateTheme(rctx, fc.Args["theme"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.User`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateTheme(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "dob":
+				return ec.fieldContext_User_dob(ctx, field)
+			case "gender":
+				return ec.fieldContext_User_gender(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "background":
+				return ec.fieldContext_User_background(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "posts":
+				return ec.fieldContext_User_posts(ctx, field)
+			case "friendCount":
+				return ec.fieldContext_User_friendCount(ctx, field)
+			case "mutualCount":
+				return ec.fieldContext_User_mutualCount(ctx, field)
+			case "notificationCount":
+				return ec.fieldContext_User_notificationCount(ctx, field)
+			case "friended":
+				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
+			case "theme":
+				return ec.fieldContext_User_theme(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateTheme_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -8235,21 +8443,24 @@ func (ec *executionContext) _Mutation_leaveGroup(ctx context.Context, field grap
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*bool); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *bool`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*bool)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_leaveGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8259,7 +8470,7 @@ func (ec *executionContext) fieldContext_Mutation_leaveGroup(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
@@ -8716,6 +8927,87 @@ func (ec *executionContext) fieldContext_Mutation_getUnreadNotifications(ctx con
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_blockUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_blockUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().BlockUser(rctx, fc.Args["username"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.BlockNotification); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yahkerobertkertasnya/TPAWebBack/graph/model.BlockNotification`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.BlockNotification)
+	fc.Result = res
+	return ec.marshalNBlockNotification2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐBlockNotification(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_blockUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "sender":
+				return ec.fieldContext_BlockNotification_sender(ctx, field)
+			case "receiver":
+				return ec.fieldContext_BlockNotification_receiver(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type BlockNotification", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_blockUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createPost(ctx, field)
 	if err != nil {
@@ -8790,8 +9082,8 @@ func (ec *executionContext) fieldContext_Mutation_createPost(ctx context.Context
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -9917,6 +10209,8 @@ func (ec *executionContext) fieldContext_Notification_user(ctx context.Context, 
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -9997,6 +10291,8 @@ func (ec *executionContext) fieldContext_Notification_sender(ctx context.Context
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -10373,6 +10669,8 @@ func (ec *executionContext) fieldContext_Post_user(ctx context.Context, field gr
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -10696,8 +10994,8 @@ func (ec *executionContext) fieldContext_Post_shareCount(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Post_groupId(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Post_groupId(ctx, field)
+func (ec *executionContext) _Post_group(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Post_group(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10710,7 +11008,7 @@ func (ec *executionContext) _Post_groupId(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GroupID, nil
+		return ec.resolvers.Post().Group(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10719,19 +11017,47 @@ func (ec *executionContext) _Post_groupId(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.Group)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOGroup2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐGroup(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Post_groupId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Post_group(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Post",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Group_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Group_name(ctx, field)
+			case "about":
+				return ec.fieldContext_Group_about(ctx, field)
+			case "privacy":
+				return ec.fieldContext_Group_privacy(ctx, field)
+			case "background":
+				return ec.fieldContext_Group_background(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
+			case "memberCount":
+				return ec.fieldContext_Group_memberCount(ctx, field)
+			case "joined":
+				return ec.fieldContext_Group_joined(ctx, field)
+			case "isAdmin":
+				return ec.fieldContext_Group_isAdmin(ctx, field)
+			case "chat":
+				return ec.fieldContext_Group_chat(ctx, field)
+			case "posts":
+				return ec.fieldContext_Group_posts(ctx, field)
+			case "files":
+				return ec.fieldContext_Group_files(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Group_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
 	}
 	return fc, nil
@@ -11090,6 +11416,8 @@ func (ec *executionContext) fieldContext_PostLike_user(ctx context.Context, fiel
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -11214,6 +11542,8 @@ func (ec *executionContext) fieldContext_PostTag_user(ctx context.Context, field
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -11338,6 +11668,8 @@ func (ec *executionContext) fieldContext_PostVisibility_user(ctx context.Context
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -11435,6 +11767,8 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -11523,6 +11857,8 @@ func (ec *executionContext) fieldContext_Query_getUsers(ctx context.Context, fie
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -11733,6 +12069,8 @@ func (ec *executionContext) fieldContext_Query_getAuth(ctx context.Context, fiel
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -11830,6 +12168,8 @@ func (ec *executionContext) fieldContext_Query_getFilteredUsers(ctx context.Cont
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -11938,6 +12278,8 @@ func (ec *executionContext) fieldContext_Query_getFriends(ctx context.Context, f
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -12035,6 +12377,8 @@ func (ec *executionContext) fieldContext_Query_getFriendRequests(ctx context.Con
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -12132,6 +12476,8 @@ func (ec *executionContext) fieldContext_Query_getUserFriends(ctx context.Contex
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -12240,6 +12586,8 @@ func (ec *executionContext) fieldContext_Query_getUserMutuals(ctx context.Contex
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -12348,6 +12696,8 @@ func (ec *executionContext) fieldContext_Query_getPeopleMightKnow(ctx context.Co
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -12545,6 +12895,8 @@ func (ec *executionContext) fieldContext_Query_getGroupInvite(ctx context.Contex
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -13246,8 +13598,8 @@ func (ec *executionContext) fieldContext_Query_getPost(ctx context.Context, fiel
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -13350,8 +13702,8 @@ func (ec *executionContext) fieldContext_Query_getPosts(ctx context.Context, fie
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -13454,8 +13806,8 @@ func (ec *executionContext) fieldContext_Query_getGroupPosts(ctx context.Context
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -13654,8 +14006,8 @@ func (ec *executionContext) fieldContext_Query_getFilteredPosts(ctx context.Cont
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -13758,8 +14110,8 @@ func (ec *executionContext) fieldContext_Query_getGroupHomePosts(ctx context.Con
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -14223,6 +14575,8 @@ func (ec *executionContext) fieldContext_Query_getUserWithStories(ctx context.Co
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -14476,6 +14830,8 @@ func (ec *executionContext) fieldContext_Reel_user(ctx context.Context, field gr
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -15017,6 +15373,8 @@ func (ec *executionContext) fieldContext_ReelComment_user(ctx context.Context, f
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -15600,6 +15958,8 @@ func (ec *executionContext) fieldContext_ReelCommentLike_user(ctx context.Contex
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -15724,6 +16084,8 @@ func (ec *executionContext) fieldContext_ReelLike_user(ctx context.Context, fiel
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -15848,6 +16210,8 @@ func (ec *executionContext) fieldContext_Story_user(ctx context.Context, field g
 				return ec.fieldContext_User_notificationCount(ctx, field)
 			case "friended":
 				return ec.fieldContext_User_friended(ctx, field)
+			case "blocked":
+				return ec.fieldContext_User_blocked(ctx, field)
 			case "theme":
 				return ec.fieldContext_User_theme(ctx, field)
 			}
@@ -16679,8 +17043,8 @@ func (ec *executionContext) fieldContext_User_posts(ctx context.Context, field g
 				return ec.fieldContext_Post_commentCount(ctx, field)
 			case "shareCount":
 				return ec.fieldContext_Post_shareCount(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Post_groupId(ctx, field)
+			case "group":
+				return ec.fieldContext_Post_group(ctx, field)
 			case "files":
 				return ec.fieldContext_Post_files(ctx, field)
 			case "likes":
@@ -16869,6 +17233,50 @@ func (ec *executionContext) fieldContext_User_friended(ctx context.Context, fiel
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_blocked(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_blocked(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().Blocked(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_blocked(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -19377,14 +19785,8 @@ func (ec *executionContext) _BlockNotification(ctx context.Context, sel ast.Sele
 			out.Values[i] = graphql.MarshalString("BlockNotification")
 		case "sender":
 			out.Values[i] = ec._BlockNotification_sender(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "receiver":
 			out.Values[i] = ec._BlockNotification_receiver(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20206,6 +20608,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "updateTheme":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTheme(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "addFriend":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_addFriend(ctx, field)
@@ -20279,6 +20688,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_leaveGroup(ctx, field)
 			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "promoteMember":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_promoteMember(ctx, field)
@@ -20304,6 +20716,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "getUnreadNotifications":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_getUnreadNotifications(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "blockUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_blockUser(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -20581,8 +21000,39 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "groupId":
-			out.Values[i] = ec._Post_groupId(ctx, field, obj)
+		case "group":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Post_group(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "files":
 			out.Values[i] = ec._Post_files(ctx, field, obj)
 		case "likes":
@@ -22119,6 +22569,42 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "blocked":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_blocked(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "theme":
 			out.Values[i] = ec._User_theme(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -22472,6 +22958,20 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNBlockNotification2githubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐBlockNotification(ctx context.Context, sel ast.SelectionSet, v model.BlockNotification) graphql.Marshaler {
+	return ec._BlockNotification(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNBlockNotification2ᚖgithubᚗcomᚋyahkerobertkertasnyaᚋTPAWebBackᚋgraphᚋmodelᚐBlockNotification(ctx context.Context, sel ast.SelectionSet, v *model.BlockNotification) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._BlockNotification(ctx, sel, v)
+}
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)

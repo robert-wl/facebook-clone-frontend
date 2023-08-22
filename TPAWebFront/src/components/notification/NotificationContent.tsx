@@ -17,6 +17,8 @@ function getNotificationLink(notification: Notification) {
         return `/reels/${notification.reelId}`;
     } else if (notification.storyId) {
         return `/stories/${notification.sender.username}`;
+    } else if (notification.message.includes("friend request")) {
+        return `/friends`;
     }
 
     return "";

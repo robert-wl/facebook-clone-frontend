@@ -16,6 +16,7 @@ export const GET_USER = gql`
             friended
             friendCount
             mutualCount
+            blocked
             posts {
                 id
                 user {

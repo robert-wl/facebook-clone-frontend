@@ -10,7 +10,7 @@
     height: 100%;
     background-color: var(--background-color);
     color: var(--color);
-    z-index: 10000;
+    z-index: 1;
     //border-top: var(--border);
 
     > header {
@@ -41,7 +41,6 @@
 
         hr {
             width: calc(100% - 2rem);
-            background-color: var(--main-color);
             border-color: transparent;
             padding: 0 1rem;
         }
@@ -82,7 +81,7 @@
             margin-left: 0.5rem;
             margin-right: 1rem;
             border-radius: 1rem;
-            background-color: var(--main-color);
+            background-color: rgba(100, 100, 100, 0.1);
             text-align: start;
             font-size: 1rem;
             margin-bottom: 0.2rem;

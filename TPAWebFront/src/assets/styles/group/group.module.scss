@@ -38,6 +38,8 @@
             overflow-y: auto;
             width: 100%;
 
+            @include scrollbar;
+
             .grid {
                 display: grid;
                 width: calc(100% - 2rem);

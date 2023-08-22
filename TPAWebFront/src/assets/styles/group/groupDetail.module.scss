@@ -9,16 +9,7 @@
     padding: 0;
     background-color: var(--background-color);
 
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-        color: var(--color);
-        background-color: var(--background-color);
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: gray;
-        border-radius: 0.5rem;
-    }
+    @include scrollbar;
 
     .content {
         display: flex;
@@ -28,6 +19,8 @@
         overflow-y: auto;
         overflow-x: hidden;
         background-color: var(--background-color);
+
+        @include scrollbar;
 
         .contentCenter {
             flex: 1;
@@ -141,6 +134,7 @@
 
             article {
                 display: flex;
+                position: relative;
                 flex: 1;
                 flex-direction: row;
                 justify-content: center;
@@ -189,10 +183,14 @@
                     }
                 }
                 .content {
+                    position: relative;
                     display: flex;
                     flex-direction: column;
                     width: 44.5rem;
                     overflow-y: hidden;
+                    z-index: 1000;
+
+                    @include scrollbar;
 
                     .inputBox {
                         width: 42.5rem;
@@ -218,12 +216,12 @@
                                 text-align: start;
                                 font-size: 1rem;
                                 color: gray;
+                                border: none;
                                 padding: 0.6em 1.2em;
-                                border-color: transparent;
 
                                 &:hover {
                                     background-color: rgb(100, 100, 100, 0.15);
-                                    border: 1px solid darkgray;
+
                                 }
                             }
                         }

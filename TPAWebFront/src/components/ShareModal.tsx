@@ -7,7 +7,8 @@ import { Post, User } from "../../gql/graphql.ts";
 import { AuthContext } from "././context/AuthContextProvider";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 import { SHARE_POST } from "../../lib/query/post/sharePost.graphql.ts";
-import errorHandler from "../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 interface ShareModal {
     setShareModalState: Dispatch<SetStateAction<boolean>>;
@@ -50,7 +51,7 @@ export default function ShareModal({ setShareModalState, currPost }: ShareModal)
                     user: userID,
                     post: currPost?.id,
                 },
-            }).catch(errorHandler);
+            }).catch(debouncedError);
     };
 
     return (
@@ -83,7 +84,7 @@ export default function ShareModal({ setShareModalState, currPost }: ShareModal)
                                 >
                                     <div>
                                         <img
-                                            src={user.profile ? user.profile : "../src/assets/default-profile.jpg"}
+                                            src={userProfileLoader(user.profile)}
                                             alt={"profile picture"}
                                         />
                                         <span>

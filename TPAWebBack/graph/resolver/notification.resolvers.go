@@ -16,7 +16,13 @@ import (
 
 // CreateNotification is the resolver for the createNotification field.
 func (r *mutationResolver) CreateNotification(ctx context.Context, notification model.NewNotification) (*model.Notification, error) {
+	var blocked *model.BlockNotification
 	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.First(&blocked, "sender_id = ? AND receiver_id = ?", userID, notification.UserID).Error; err == nil && blocked != nil {
+		return nil, nil
+	}
+
 	newNotification := &model.Notification{
 		ID:        uuid.NewString(),
 		Message:   notification.Message,
@@ -35,7 +41,7 @@ func (r *mutationResolver) CreateNotification(ctx context.Context, notification 
 		return nil, err
 	}
 
-	r.Redis.Del(ctx, fmt.Sprintf("notifications:%s:user", userID))
+	r.Redis.Del(ctx, fmt.Sprintf("notifications:%s:user", notification.UserID))
 
 	return newNotification, nil
 }
@@ -63,6 +69,55 @@ func (r *mutationResolver) GetUnreadNotifications(ctx context.Context) ([]*model
 	}()
 
 	return notifications, nil
+}
+
+// BlockUser is the resolver for the blockUser field.
+func (r *mutationResolver) BlockUser(ctx context.Context, username string) (*model.BlockNotification, error) {
+	var user *model.User
+	userID := ctx.Value("UserID").(string)
+
+	if err := r.DB.First(&user, "username = ?", username).Error; err != nil {
+		return nil, err
+	}
+
+	if serializedUser, err := r.Redis.Get(ctx, fmt.Sprintf(`user:%s`, user.ID)).Result(); err != nil {
+
+		if serializedUser, err := json.Marshal(user); err != nil {
+			return nil, err
+		} else {
+			r.Redis.Set(ctx, fmt.Sprintf(`user:%s`, username), serializedUser, 10*60*time.Minute)
+		}
+
+	} else {
+		if err := json.Unmarshal([]byte(serializedUser), &user); err != nil {
+			return nil, err
+		}
+	}
+
+	var blockNotif *model.BlockNotification
+
+	if err := r.DB.First(&blockNotif, "sender_id = ? AND receiver_id = ?", user.ID, userID).Error; err == nil && blockNotif != nil {
+
+		if err := r.DB.Delete(&blockNotif).Error; err != nil {
+			return nil, err
+		}
+
+		r.Redis.Del(ctx, fmt.Sprintf("user:%s:blocked:%s", userID, user.ID))
+		return blockNotif, nil
+	}
+
+	blockNotif = &model.BlockNotification{
+		SenderID:   user.ID,
+		ReceiverID: userID,
+	}
+
+	if err := r.DB.Save(&blockNotif).Error; err != nil {
+		return nil, err
+	}
+
+	r.Redis.Del(ctx, fmt.Sprintf("user:%s:blocked:%s", userID, user.ID))
+
+	return blockNotif, nil
 }
 
 // GetNotifications is the resolver for the getNotifications field.

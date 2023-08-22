@@ -1,7 +1,7 @@
 import styles from "../../assets/styles/group/groupFileBox.module.scss";
 import { AiOutlineFile, AiOutlineSearch } from "react-icons/ai";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
-import uploadStorage from "../../../controller/firebase/storage.ts";
+import uploadStorage, { deleteStorage, FileUpload } from "../../../controller/firebase/storage.ts";
 import { useMutation, useQuery } from "@apollo/client";
 import { UPLOAD_FILE } from "../../../lib/query/group/uploadFile.graphql.ts";
 import { Link, useParams } from "react-router-dom";
@@ -13,6 +13,8 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { PiTrashBold } from "react-icons/pi";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { DELETE_FILE } from "../../../lib/query/group/deleteFile.graphql.ts";
+import { toast } from "react-toastify";
+import promiseToast from "../../../controller/toast/promiseToast.ts";
 
 interface GroupFileBox {
     group: Group | undefined;
@@ -26,7 +28,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
     const [search, setSearch] = useState("");
     const [sort, setSort] = useState<"asc" | "desc">("asc");
     const [data, setData] = useState<GroupFile[] | null>(null);
-    const [filteredData, setFilteredData] = useState<GroupFile[] | null>(null);
+    const [filteredData, setFilteredData] = useState<GroupFile[]>([]);
     const { data: rawData } = useQuery(GET_GROUP_FILES, {
         variables: {
             id: groupId,
@@ -49,6 +51,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
 
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
+        setInputKey(inputKey + 1);
         const file = e.target.files[0];
 
         const url = await uploadStorage("groups", file);
@@ -64,26 +67,26 @@ export default function GroupFileBox({ group }: GroupFileBox) {
             },
         }).catch(debouncedError);
 
-        console.log(dataRes);
         if (dataRes) {
             setSearch("");
             setData((prev) => {
-                return [dataRes.data.uploadFile, ...prev!];
+                return [...prev!, dataRes.data.uploadFile];
             });
             setFilteredData((prev) => {
-                return [dataRes.data.uploadFile, ...prev!];
+                return [...prev!, dataRes.data.uploadFile];
             });
         }
 
         setInputKey(inputKey + 1);
+        toast.success("File uploaded successfully");
     };
 
-    const handleDelete = (file: GroupFile) => {
+    const handleDelete = async (file: GroupFile) => {
         if (data && filteredData) {
             const filtered = data?.filter((f) => {
                 return f.id.toString() != file.id.toString();
             });
-            setData(filtered);
+            if (filtered) setData(filtered);
 
             const filteredF = filteredData?.filter((f) => {
                 return f.id.toString() != file.id.toString();
@@ -92,11 +95,16 @@ export default function GroupFileBox({ group }: GroupFileBox) {
             setFilteredData(filteredF);
         }
 
-        deleteFile({
+        const filez = JSON.parse(file.url) as FileUpload;
+
+        await deleteStorage(filez.directory);
+        await deleteFile({
             variables: {
                 id: file.id,
             },
         }).catch(debouncedError);
+
+        toast.success("File deleted successfully");
     };
 
     const handleSort = () => {
@@ -137,7 +145,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
                         ref={inputRef}
                         type={"file"}
                         hidden={true}
-                        onChange={handleUpload}
+                        onChange={(e) => promiseToast(() => handleUpload(e))}
                     />
                 </div>
             </header>
@@ -188,7 +196,7 @@ export default function GroupFileBox({ group }: GroupFileBox) {
                                         {(group?.isAdmin || file.uploadedBy.username == auth?.username) && (
                                             <div
                                                 className={styles.button}
-                                                onClick={() => handleDelete(file)}
+                                                onClick={() => promiseToast(() => handleDelete(file))}
                                             >
                                                 <PiTrashBold size={"1.5rem"} />
                                             </div>
@@ -197,6 +205,13 @@ export default function GroupFileBox({ group }: GroupFileBox) {
                                 </tr>
                             );
                     })}
+                    {filteredData?.length == 0 && (
+                        <>
+                            <tr className={styles.noFile}>
+                                <th>No files</th>
+                            </tr>
+                        </>
+                    )}
                 </tbody>
             </table>
         </div>
