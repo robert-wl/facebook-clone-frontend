@@ -3,17 +3,23 @@
   align-items: center;
   justify-content: center;
   width: 8rem;
-  margin: auto;
+  margin: auto auto 0.33rem;
   height: 3.3rem;
   color: var(--color);
+  transition: color 0.2s, background-color 0.2s;
+
+  &:hover {
+    background-color: #f0f2f5;
+    border-radius: 0.5rem;
+  }
 }
 
 .buttonActive {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 3.3rem;
-  width: 8rem;
-  margin: auto;
+  @extend .button;
   border-bottom: 0.25rem solid #1877f2;
+
+  &:hover {
+    background-color: #f0f2f5;
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
 }

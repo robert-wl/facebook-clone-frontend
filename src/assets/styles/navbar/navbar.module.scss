@@ -72,6 +72,7 @@
     flex-direction: row;
     align-items: center;
     color: var(--color);
+    border-bottom: white;
   }
 
   .end {
@@ -149,14 +150,15 @@
       }
 
       .dropDown {
-        display: none;
+        //display: flex;
         flex-direction: column;
         width: 9rem;
         position: absolute;
-        right: 0;
+        left: -300%;
+        border: none;
+        border-radius: 0.5rem;
         background-color: var(--main-color);
         box-shadow: var(--box-shadow);
-        opacity: 100%;
 
         > button,
         > button a {
