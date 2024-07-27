@@ -8,13 +8,13 @@ import { client } from "./controller/apollo/handler.ts";
 import AuthContextProvider from "./components/context/AuthContextProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-    <React.StrictMode>
-        <ApolloProvider client={client}>
-            <AuthContextProvider>
-                <BrowserRouter>
-                    <App />
-                </BrowserRouter>
-            </AuthContextProvider>
-        </ApolloProvider>
-    </React.StrictMode>,
+  <React.StrictMode>
+    <ApolloProvider client={client}>
+      <AuthContextProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthContextProvider>
+    </ApolloProvider>
+  </React.StrictMode>,
 );

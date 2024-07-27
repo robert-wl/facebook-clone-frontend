@@ -1,8 +1,9 @@
 {
   "arrowParens": "always",
-  "bracketSameLine": false,
+  "bracketSameLine": true,
   "bracketSpacing": true,
   "semi": true,
+  "experimentalTernaries": false,
   "singleQuote": false,
   "jsxSingleQuote": false,
   "quoteProps": "as-needed",
@@ -12,9 +13,11 @@
   "vueIndentScriptAndStyle": false,
   "proseWrap": "preserve",
   "insertPragma": false,
-  "printWidth": 500,
+  "printWidth": 150,
   "requirePragma": false,
-  "tabWidth": 4,
+  "tabWidth": 2,
   "useTabs": false,
-  "embeddedLanguageFormatting": "auto"
+  "embeddedLanguageFormatting": "auto",
+  "plugins": [
+  ]
 }
