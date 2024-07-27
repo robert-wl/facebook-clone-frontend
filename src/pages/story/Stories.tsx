@@ -2,17 +2,17 @@ import styles from "@/assets/styles/story/stories.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import Sidebar from "@/components/sidebar/Sidebar.tsx";
 import SidebarButton from "@/components/sidebar/SidebarButton.tsx";
-import {useContext, useEffect, useState} from "react";
-import {IoAddOutline} from "react-icons/io5";
-import {Link, Navigate, useParams} from "react-router-dom";
-import {useLazyQuery} from "@apollo/client";
-import {GET_STORIES} from "@/lib/query/story/getStories.graphql.ts";
-import {Story, User} from "@/gql/graphql.ts";
+import { useEffect, useState } from "react";
+import { IoAddOutline } from "react-icons/io5";
+import { Link, Navigate, useParams } from "react-router-dom";
+import { useLazyQuery } from "@apollo/client";
+import { GET_STORIES } from "@/lib/query/story/getStories.graphql.ts";
+import { Story, User } from "@/gql/graphql.ts";
 import StoryBox from "@/components/stories/StoryBox.tsx";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {GET_USER_WITH_STORIES} from "@/lib/query/story/getUserWithStories.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { GET_USER_WITH_STORIES } from "@/lib/query/story/getUserWithStories.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function Stories() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -22,8 +22,8 @@ export default function Stories() {
     onError: debouncedError,
   });
 
-  const {username} = useParams();
-  const {auth} = useContext(AuthContext);
+  const { username } = useParams();
+  const { auth } = useAuth();
 
   const [getStories] = useLazyQuery(GET_STORIES);
 
@@ -47,7 +47,7 @@ export default function Stories() {
   }, [username]);
 
   if (friends.length != 0 && friends.filter((friend) => friend.username == username).length == 0) {
-    return <Navigate to={"/stories/create"}/>;
+    return <Navigate to={"/stories/create"} />;
   }
 
   if (auth && username)
@@ -56,7 +56,7 @@ export default function Stories() {
         <div
           id={"page"}
           className={styles.page}>
-          <Navbar/>
+          <Navbar />
           <div className={styles.content}>
             <>
               <Sidebar title={"Stories"}>
@@ -115,8 +115,7 @@ export default function Stories() {
                           </div>
                         );
                     })}
-                  {friends.length == 0 || (friends.length == 1 && friends[0].username == auth?.username &&
-                      <h5>No available stories</h5>)}
+                  {friends.length == 0 || (friends.length == 1 && friends[0].username == auth?.username && <h5>No available stories</h5>)}
                 </>
               </Sidebar>
             </>

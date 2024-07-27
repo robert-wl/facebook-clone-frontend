@@ -2,20 +2,20 @@ import styles from "@/assets/styles/home/home.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import ProfilePicture from "@/components/ProfilePicture.tsx";
 import NewPostModal from "@/components/post/NewPostModal.tsx";
-import {useContext, useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import PostBox from "@/components/post/PostBox.tsx";
-import {GET_POSTS} from "@/lib/query/post/getPosts.graphql.ts";
-import {useQuery} from "@apollo/client";
-import {Post, User} from "@/gql/graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { GET_POSTS } from "@/lib/query/post/getPosts.graphql.ts";
+import { useQuery } from "@apollo/client";
+import { Post, User } from "@/gql/graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import Loading from "@/components/Loading.tsx";
-import {debounce} from "@/controller/debouncer.ts";
+import { debounce } from "@/controller/debouncer.ts";
 import PostSkeleton from "@/components/post/PostSkeleton.tsx";
 import ShareModal from "@/components/ShareModal.tsx";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
 import HomeTop from "@/components/home/HomeTop.tsx";
 import TagFriendModal from "@/components/post/TagFriendModal.tsx";
 import VisibilityModal from "@/components/post/VisibilityModal.tsx";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function Home() {
   const [modalState, setModalState] = useState(false);
@@ -29,7 +29,7 @@ export default function Home() {
   const [visibilityList, setVisibilityList] = useState<User[]>([]);
   const pageRef = useRef<HTMLDivElement>(null);
   let start = 3;
-  const {refetch: getPosts} = useQuery(GET_POSTS, {
+  const { refetch: getPosts } = useQuery(GET_POSTS, {
     variables: {
       pagination: {
         start: 0,
@@ -47,7 +47,7 @@ export default function Home() {
     skip: start > 3,
   });
   const [loading, setLoading] = useState(false);
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
 
   const handleFetch = () => {
     getPosts({
@@ -90,7 +90,7 @@ export default function Home() {
   }, []);
   return (
     <>
-      {loading && <Loading/>}
+      {loading && <Loading />}
       <NewPostModal
         modalState={modalState}
         setModalState={setModalState}
@@ -127,9 +127,9 @@ export default function Home() {
       <div
         className={styles.page}
         ref={pageRef}>
-        <Navbar/>
+        <Navbar />
         <div className={styles.content}>
-          <HomeTop/>
+          <HomeTop />
           <div className={styles.inputBox}>
             <div className={styles.inputHeader}>
               <ProfilePicture
@@ -151,7 +151,7 @@ export default function Home() {
                 isGroup={!!post.group}
               />
             ))}
-            {!hideSkeleton && <PostSkeleton/>}
+            {!hideSkeleton && <PostSkeleton />}
           </div>
         </div>
       </div>

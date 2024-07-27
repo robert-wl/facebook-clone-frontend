@@ -1,19 +1,19 @@
 import styles from "@/assets/styles/messages/messages.module.scss";
 import MessageInput from "./MessageInput.tsx";
-import {Message} from "@/gql/graphql.ts";
-import {Navigate, useParams} from "react-router-dom";
-import {useSubscription} from "@apollo/client";
-import {VIEW_CONVERSATION} from "@/lib/query/message/viewConversation.graphql.ts";
-import {useContext, useState} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { Message } from "@/gql/graphql.ts";
+import { Navigate, useParams } from "react-router-dom";
+import { useSubscription } from "@apollo/client";
+import { VIEW_CONVERSATION } from "@/lib/query/message/viewConversation.graphql.ts";
+import { useState } from "react";
 import domPurify from "@/controller/domPurify.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function MessageBox() {
-  const {conversationID} = useParams();
-  const {auth} = useContext(AuthContext);
+  const { conversationID } = useParams();
+  const { auth } = useAuth();
   const [stop, setStop] = useState<boolean>(false);
-  const {data, error} = useSubscription(VIEW_CONVERSATION, {
+  const { data, error } = useSubscription(VIEW_CONVERSATION, {
     variables: {
       conversation: conversationID,
     },
@@ -21,14 +21,14 @@ export default function MessageBox() {
   });
 
   if (error && !error.message.includes("must be defined") && !stop) {
-    return <Navigate to={"/messages"}/>;
+    return <Navigate to={"/messages"} />;
   } else if (error && error.message.includes("must be defined") && !stop) {
     setStop(true);
   }
 
   return (
     <div className={styles.chat}>
-      <MessageInput conversationID={conversationID!}/>
+      <MessageInput conversationID={conversationID!} />
       {data &&
         data.viewConversation.map((message: Message, index: number) => {
           return (
@@ -55,7 +55,7 @@ export default function MessageBox() {
                             src={message.post.files ? message.post.files[0]! : ""}
                             alt={""}
                           />
-                          <div dangerouslySetInnerHTML={{__html: domPurify(message.post.content)}}/>
+                          <div dangerouslySetInnerHTML={{ __html: domPurify(message.post.content) }} />
                         </div>
                       </div>
                     ) : (
@@ -87,7 +87,7 @@ export default function MessageBox() {
                             src={message.post.files ? message.post.files[0]! : ""}
                             alt={""}
                           />
-                          <div dangerouslySetInnerHTML={{__html: domPurify(message.post.content)}}/>
+                          <div dangerouslySetInnerHTML={{ __html: domPurify(message.post.content) }} />
                         </div>
                       </div>
                     ) : (

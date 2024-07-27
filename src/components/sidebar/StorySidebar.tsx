@@ -1,9 +1,9 @@
 import styles from "@/assets/styles/sidebar/sidebarStory.module.scss";
-import {Dispatch, SetStateAction, useContext} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { Dispatch, SetStateAction } from "react";
 import ColorButton from "@/components/stories/ColorButton.tsx";
-import {Content} from "@/pages/story/CreateStory.tsx";
+import { Content } from "@/pages/story/CreateStory.tsx";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface Sidebar {
   title: string;
@@ -15,12 +15,12 @@ interface Sidebar {
   loading: boolean;
 }
 
-export default function StorySidebar({title, content, setContent, tab, setTab, handleSubmit, loading}: Sidebar) {
-  const {auth} = useContext(AuthContext);
+export default function StorySidebar({ title, content, setContent, tab, setTab, handleSubmit, loading }: Sidebar) {
+  const { auth } = useAuth();
 
   return (
     <>
-      <div className={styles.barSpace}/>
+      <div className={styles.barSpace} />
       <div className={styles.bar}>
         <header>
           <div className={styles.bio}>
@@ -34,17 +34,17 @@ export default function StorySidebar({title, content, setContent, tab, setTab, h
           />
           <h3>{auth?.username}</h3>
         </div>
-        <hr/>
+        <hr />
         {tab == "text" ? (
           <div className={styles.content}>
             <textarea
               placeholder={"Start typing..."}
-              onChange={(e) => setContent({...content, text: e.target.value})}
+              onChange={(e) => setContent({ ...content, text: e.target.value })}
             />
             <select
               value={content.font}
               className={content.font == "normal" ? "" : styles.roman}
-              onChange={(e) => setContent({...content, font: e.target.value})}>
+              onChange={(e) => setContent({ ...content, font: e.target.value })}>
               <option value={"normal"}>Normal</option>
               <option value={"roman"}>Roman</option>
             </select>
@@ -78,13 +78,13 @@ export default function StorySidebar({title, content, setContent, tab, setTab, h
                 <button onClick={() => setTab("create")}>Cancel</button>
                 <button onClick={() => handleSubmit()}>Post</button>
               </div>
-              <hr/>
+              <hr />
             </footer>
           </div>
         ) : (
           <div className={styles.contentImage}>
             <footer>
-              <hr/>
+              <hr />
               <div className={styles.buttons}>
                 <button onClick={() => setTab("create")}>Cancel</button>
                 <button

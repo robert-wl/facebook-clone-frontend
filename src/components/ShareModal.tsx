@@ -1,26 +1,26 @@
 import styles from "@/assets/styles/shareModal.module.scss";
-import {AiOutlineClose, AiOutlineSearch} from "react-icons/ai";
-import {useMutation, useQuery} from "@apollo/client";
-import {GET_FRIENDS} from "@/lib/query/friend/getFriends.graphql.ts";
-import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {Post, User} from "@/gql/graphql.ts";
-import {AuthContext} from "././context/AuthContextProvider";
-import {MdOutlineArrowForwardIos} from "react-icons/md";
-import {SHARE_POST} from "@/lib/query/post/sharePost.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_FRIENDS } from "@/lib/query/friend/getFriends.graphql.ts";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Post, User } from "@/gql/graphql.ts";
+import { MdOutlineArrowForwardIos } from "react-icons/md";
+import { SHARE_POST } from "@/lib/query/post/sharePost.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface ShareModal {
   setShareModalState: Dispatch<SetStateAction<boolean>>;
   currPost: Post | null;
 }
 
-export default function ShareModal({setShareModalState, currPost}: ShareModal) {
+export default function ShareModal({ setShareModalState, currPost }: ShareModal) {
   const [friends, setFriends] = useState<User[]>([]);
   const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
   const [sharePost] = useMutation(SHARE_POST);
-  const {data} = useQuery(GET_FRIENDS);
-  const {auth} = useContext(AuthContext);
+  const { data } = useQuery(GET_FRIENDS);
+  const { auth } = useAuth();
 
   useEffect(() => {
     if (data && auth) {
@@ -65,9 +65,9 @@ export default function ShareModal({setShareModalState, currPost}: ShareModal) {
               onClick={() => setShareModalState(false)}
             />
           </header>
-          <hr/>
+          <hr />
           <div className={styles.content}>
-            <AiOutlineSearch size={"1.2rem"}/>
+            <AiOutlineSearch size={"1.2rem"} />
             <input
               type={"text"}
               placeholder={"Search friends..."}
@@ -90,7 +90,7 @@ export default function ShareModal({setShareModalState, currPost}: ShareModal) {
                       {user.firstName} {user.lastName}
                     </span>
                   </div>
-                  <MdOutlineArrowForwardIos/>
+                  <MdOutlineArrowForwardIos />
                 </div>
               );
             })}

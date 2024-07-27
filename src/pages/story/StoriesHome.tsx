@@ -2,16 +2,16 @@ import styles from "@/assets/styles/story/stories.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import Sidebar from "@/components/sidebar/Sidebar.tsx";
 import SidebarButton from "@/components/sidebar/SidebarButton.tsx";
-import {useContext, useState} from "react";
-import {IoAddOutline} from "react-icons/io5";
-import {Link} from "react-router-dom";
-import {useQuery} from "@apollo/client";
-import {User} from "@/gql/graphql.ts";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {GET_USER_WITH_STORIES} from "@/lib/query/story/getUserWithStories.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { useState } from "react";
+import { IoAddOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { User } from "@/gql/graphql.ts";
+import { GET_USER_WITH_STORIES } from "@/lib/query/story/getUserWithStories.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import EmptyStory from "@/components/stories/EmptyStory.tsx";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function StoriesHome() {
   const [friends, setFriends] = useState<User[]>([]);
@@ -23,7 +23,7 @@ export default function StoriesHome() {
     },
   });
 
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
 
   if (auth)
     return (
@@ -31,7 +31,7 @@ export default function StoriesHome() {
         <div
           id={"page"}
           className={styles.page}>
-          <Navbar/>
+          <Navbar />
           <div className={styles.content}>
             <>
               <Sidebar title={"Stories"}>
@@ -93,7 +93,7 @@ export default function StoriesHome() {
                 </>
               </Sidebar>
             </>
-            <EmptyStory/>
+            <EmptyStory />
           </div>
         </div>
       </>

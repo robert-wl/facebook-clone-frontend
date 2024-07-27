@@ -1,12 +1,12 @@
 import styles from "@/assets/styles/shareModal.module.scss";
-import {AiOutlineClose, AiOutlineSearch} from "react-icons/ai";
-import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {useQuery} from "@apollo/client";
-import {GET_FRIENDS} from "@/lib/query/friend/getFriends.graphql.ts";
-import {User} from "@/gql/graphql.ts";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_FRIENDS } from "@/lib/query/friend/getFriends.graphql.ts";
+import { User } from "@/gql/graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface VisibilityModal {
   setVisibilityModalState: Dispatch<SetStateAction<boolean>>;
@@ -14,11 +14,11 @@ interface VisibilityModal {
   setVisibilityList: Dispatch<SetStateAction<User[]>>;
 }
 
-export default function VisibilityModal({setVisibilityModalState, visibilityList, setVisibilityList}: VisibilityModal) {
+export default function VisibilityModal({ setVisibilityModalState, visibilityList, setVisibilityList }: VisibilityModal) {
   const [friends, setFriends] = useState<User[]>([]);
   const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
-  const {auth} = useContext(AuthContext);
-  const {data} = useQuery(GET_FRIENDS, {
+  const { auth } = useAuth();
+  const { data } = useQuery(GET_FRIENDS, {
     onError: debouncedError,
   });
 
@@ -56,10 +56,10 @@ export default function VisibilityModal({setVisibilityModalState, visibilityList
               onClick={() => setVisibilityModalState(false)}
             />
           </header>
-          <hr/>
+          <hr />
           <div>
             <div className={styles.content}>
-              <AiOutlineSearch size={"1.2rem"}/>
+              <AiOutlineSearch size={"1.2rem"} />
               <input
                 type={"text"}
                 placeholder={"Search friends..."}
@@ -76,7 +76,7 @@ export default function VisibilityModal({setVisibilityModalState, visibilityList
                   className={styles.friend}
                   onClick={() => handleCheck(user)}>
                   <div>
-                    <img src={userProfileLoader(user.profile)}/>
+                    <img src={userProfileLoader(user.profile)} />
                     <span>
                       {user.firstName} {user.lastName}
                     </span>

@@ -1,18 +1,18 @@
 import styles from "@/assets/styles/reels/reelComment.module.scss";
-import {ReelComment} from "@/gql/graphql.ts";
-import {IoSend} from "react-icons/io5";
-import {Dispatch, SetStateAction, useContext, useState} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider";
-import {useMutation} from "@apollo/client";
-import {LIKE_REEL_COMMENT} from "@/lib/query/reels/likeReelComment.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {CREATE_REEL_COMMENT} from "@/lib/query/reels/createReelComment.graphql.ts";
-import {PiArrowBendDownRightDuotone} from "react-icons/pi";
+import { ReelComment } from "@/gql/graphql.ts";
+import { IoSend } from "react-icons/io5";
+import { Dispatch, SetStateAction, useState } from "react";
+import { useMutation } from "@apollo/client";
+import { LIKE_REEL_COMMENT } from "@/lib/query/reels/likeReelComment.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { CREATE_REEL_COMMENT } from "@/lib/query/reels/createReelComment.graphql.ts";
+import { PiArrowBendDownRightDuotone } from "react-icons/pi";
 import domPurify from "@/controller/domPurify.ts";
 import RichText from "@/components/richText/RichText.tsx";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import LikeLabel from "@/components/post/LikeLabel.tsx";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface ReelCommentBox {
   comment: ReelComment;
@@ -21,13 +21,8 @@ interface ReelCommentBox {
   setComment?: Dispatch<SetStateAction<ReelComment>>;
 }
 
-export default function ReelCommentBox({
-                                         comment: iComment,
-                                         reply,
-                                         parent,
-                                         setComment: setParentComment
-                                       }: ReelCommentBox) {
-  const {auth} = useContext(AuthContext);
+export default function ReelCommentBox({ comment: iComment, reply, parent, setComment: setParentComment }: ReelCommentBox) {
+  const { auth } = useAuth();
   const [comment, setComment] = useState<ReelComment>(iComment);
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [LikeReelComment] = useMutation(LIKE_REEL_COMMENT);
@@ -141,8 +136,8 @@ export default function ReelCommentBox({
               {comment.user.firstName}
               {" " + comment.user.lastName}
             </h4>
-            <div dangerouslySetInnerHTML={{__html: domPurify(comment.content)}}/>
-            {comment?.likeCount != undefined && comment?.likeCount > 0 && <LikeLabel count={comment.likeCount}/>}
+            <div dangerouslySetInnerHTML={{ __html: domPurify(comment.content) }} />
+            {comment?.likeCount != undefined && comment?.likeCount > 0 && <LikeLabel count={comment.likeCount} />}
           </div>
           <div className={styles.buttons}>
             <p
@@ -161,7 +156,7 @@ export default function ReelCommentBox({
             <p
               className={styles.reply}
               onClick={() => setShowReply(true)}>
-              <PiArrowBendDownRightDuotone size={"1rem"}/>
+              <PiArrowBendDownRightDuotone size={"1rem"} />
               {comment?.comments?.length} Replies
             </p>
           )}

@@ -1,45 +1,40 @@
 import styles from "@/assets/styles/login/login.module.scss";
-import {Link, useNavigate} from "react-router-dom";
-import {useMutation} from "@apollo/client";
-import {AUTHENTICATE_USER} from "@/lib/query/user/authenticateUser.graphql.ts";
-import {FormEvent, useContext, useState} from "react";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { AUTHENTICATE_USER } from "@/lib/query/user/authenticateUser.graphql.ts";
+import { FormEvent, useState } from "react";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import Footer from "@/components/misc/Footer.tsx";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function Login() {
   const [authenticateUser] = useMutation(AUTHENTICATE_USER);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { getUser, setToken } = useAuth();
   const navigate = useNavigate();
-  const {getUser} = useContext(AuthContext);
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    let error = "Unknown error";
     if (email.length == 0) {
-      error = "Error: Email cannot be empty";
-    } else if (password.length == 0) {
-      error = "Error: Password cannot be empty";
-    } else {
-      return authenticateUser({
-        variables: {
-          email: email,
-          password: password,
-        },
-      })
-        .then(async (token) => {
-          localStorage.setItem("token", token.data.authenticateUser);
-
-          if (getUser) {
-            await getUser();
-          }
-          return navigate("/");
-        })
-        .catch(debouncedError);
+      return toast.error("Error: Email cannot be empty");
+    }
+    if (password.length == 0) {
+      return toast.error("Error: Password cannot be empty");
     }
 
-    toast.error(error);
+    const result = await authenticateUser({
+      variables: {
+        email: email,
+        password: password,
+      },
+    }).catch(debouncedError);
+
+    if (result) {
+      setToken!(result.data.authenticateUser);
+      await getUser!();
+      return navigate("/");
+    }
   };
 
   return (
@@ -47,8 +42,11 @@ export default function Login() {
       <h5>FaREbook</h5>
       <div className={styles.loginBox}>
         <p>Log in to Facebook</p>
-        <form className={styles.inputBox}>
+        <form
+          autoComplete="on"
+          className={styles.inputBox}>
           <input
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={styles.email}
@@ -56,6 +54,7 @@ export default function Login() {
             autoComplete={"on"}
           />
           <input
+            name="password"
             type={"password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -69,13 +68,13 @@ export default function Login() {
           <p>
             <Link to={"/forgot"}>Forgot Account</Link>
           </p>
-          <hr/>
+          <hr />
           <button className={styles.newAccount}>
             <Link to={"/register"}>Create new account</Link>
           </button>
         </form>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

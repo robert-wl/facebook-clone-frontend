@@ -1,24 +1,24 @@
 import styles from "@/assets/styles/messages/messages.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
-import {Link, useParams} from "react-router-dom";
-import {AiOutlineSearch} from "react-icons/ai";
-import {useContext, useEffect, useState} from "react";
-import {useQuery} from "@apollo/client";
-import {GET_CONVERSATIONS} from "@/lib/query/message/getConversations.graphql.ts";
-import {Conversation} from "@/gql/graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { Link, useParams } from "react-router-dom";
+import { AiOutlineSearch } from "react-icons/ai";
+import { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_CONVERSATIONS } from "@/lib/query/message/getConversations.graphql.ts";
+import { Conversation } from "@/gql/graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import MessageBox from "@/components/message/MessageBox.tsx";
 import domPurify from "@/controller/domPurify.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
 import groupBackgroundLoader from "@/controller/groupBackgroundLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function Messages() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [filteredConversations, setFilteredConversations] = useState<Conversation[]>([]);
-  const {conversationID} = useParams();
-  const {auth} = useContext(AuthContext);
-  const {data: conversationData} = useQuery(GET_CONVERSATIONS, {
+  const { conversationID } = useParams();
+  const { auth } = useAuth();
+  const { data: conversationData } = useQuery(GET_CONVERSATIONS, {
     fetchPolicy: "network-only",
     onError: debouncedError,
   });
@@ -45,7 +45,7 @@ export default function Messages() {
       <div
         id={"page"}
         className={styles.page}>
-        <Navbar/>
+        <Navbar />
         <div className={styles.content}>
           <div className={styles.conversation}>
             <div className={styles.bar}>
@@ -54,10 +54,10 @@ export default function Messages() {
                   <h2>Messages</h2>
                 </div>
               </header>
-              <hr/>
+              <hr />
               <div className={styles.content}>
                 <div className={styles.search}>
-                  <AiOutlineSearch size={"1.2rem"}/>
+                  <AiOutlineSearch size={"1.2rem"} />
                   <input
                     type={"text"}
                     placeholder={"Seach Messenger"}
@@ -116,10 +116,10 @@ export default function Messages() {
                 </div>
               </div>
             </div>
-            <div className={styles.barSpace}/>
+            <div className={styles.barSpace} />
             {conversationID ? (
               <>
-                <MessageBox key={conversationID + "messageBoks"}/>
+                <MessageBox key={conversationID + "messageBoks"} />
               </>
             ) : (
               <div className={styles.empty}>

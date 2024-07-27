@@ -1,21 +1,21 @@
 import styles from "@/assets/styles/search/search.module.scss";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {User} from "@/gql/graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {useMutation} from "@apollo/client";
-import {ADD_FRIEND} from "@/lib/query/friend/addFriend.graphql.ts";
-import {Dispatch, SetStateAction, useContext} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { User } from "@/gql/graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { useMutation } from "@apollo/client";
+import { ADD_FRIEND } from "@/lib/query/friend/addFriend.graphql.ts";
+import { Dispatch, SetStateAction } from "react";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface UserLoneBox {
   user: User;
   setUsers: Dispatch<SetStateAction<User[]>>;
 }
 
-export default function UserLoneBox({user, setUsers}: UserLoneBox) {
+export default function UserLoneBox({ user, setUsers }: UserLoneBox) {
   const [addFriend] = useMutation(ADD_FRIEND);
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
   const handleAddFriend = async () => {
     // if (ref.current) ref.current.style.display = "none";
     await addFriend({
@@ -26,8 +26,7 @@ export default function UserLoneBox({user, setUsers}: UserLoneBox) {
         },
       },
     })
-      .then(() => {
-      })
+      .then(() => {})
       .catch(debouncedError);
 
     setUsers((prev) => {

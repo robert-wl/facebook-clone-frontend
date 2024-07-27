@@ -1,14 +1,13 @@
 import styles from "@/assets/styles/home/homeTop.module.scss";
-import {Link} from "react-router-dom";
-import {MdOutlineAdd} from "react-icons/md";
-import {AiOutlineShareAlt} from "react-icons/ai";
-import {BsFillCameraVideoFill} from "react-icons/bs";
-import {BiSolidMessageRoundedDetail} from "react-icons/bi";
-import {useContext} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { Link } from "react-router-dom";
+import { MdOutlineAdd } from "react-icons/md";
+import { AiOutlineShareAlt } from "react-icons/ai";
+import { BsFillCameraVideoFill } from "react-icons/bs";
+import { BiSolidMessageRoundedDetail } from "react-icons/bi";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function HomeTopReels() {
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
   return (
     <>
       <div className={styles.left}>
@@ -19,7 +18,7 @@ export default function HomeTopReels() {
               src={auth?.profile ? auth.profile : "@/src/assets/default-profile.jpg"}
               alt={""}
             />
-            <BsFillCameraVideoFill size={"3rem"}/>
+            <BsFillCameraVideoFill size={"3rem"} />
           </Link>
           <div className={styles.create}>
             <h4>Create Reel</h4>
@@ -34,11 +33,11 @@ export default function HomeTopReels() {
       </div>
       <div className={styles.right}>
         <p>
-          <AiOutlineShareAlt size={"1.5rem"}/>
+          <AiOutlineShareAlt size={"1.5rem"} />
           Make and share a short video
         </p>
         <p>
-          <BiSolidMessageRoundedDetail size={"1.5rem"}/>
+          <BiSolidMessageRoundedDetail size={"1.5rem"} />
           Your reels are visible to everyone
         </p>
       </div>

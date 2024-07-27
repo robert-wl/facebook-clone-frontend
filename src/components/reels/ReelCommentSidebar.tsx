@@ -1,23 +1,23 @@
 import styles from "@/assets/styles/reels/reelCommentSidebar.module.scss";
-import {IoSend} from "react-icons/io5";
-import {Dispatch, SetStateAction, useContext, useState} from "react";
-import {Reel, ReelComment} from "@/gql/graphql.ts";
-import {AuthContext} from "@/components/context/AuthContextProvider";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {useMutation, useQuery} from "@apollo/client";
-import {CREATE_REEL_COMMENT} from "@/lib/query/reels/createReelComment.graphql.ts";
+import { IoSend } from "react-icons/io5";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Reel, ReelComment } from "@/gql/graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_REEL_COMMENT } from "@/lib/query/reels/createReelComment.graphql.ts";
 import ReelCommentBox from "./ReelComment.tsx";
-import {GET_REEL_COMMENTS} from "@/lib/query/reels/getReelComments.graphql.ts";
+import { GET_REEL_COMMENTS } from "@/lib/query/reels/getReelComments.graphql.ts";
 import RichText from "@/components/richText/RichText.tsx";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface ReelCommentSidebar {
   reelData: Reel;
   setReelData: Dispatch<SetStateAction<Reel | null | undefined>>;
 }
 
-export default function ReelCommentSidebar({reelData, setReelData}: ReelCommentSidebar) {
-  const {auth} = useContext(AuthContext);
+export default function ReelCommentSidebar({ reelData, setReelData }: ReelCommentSidebar) {
+  const { auth } = useAuth();
   const [createReelComment] = useMutation(CREATE_REEL_COMMENT);
   useQuery(GET_REEL_COMMENTS, {
     variables: {
@@ -86,7 +86,7 @@ export default function ReelCommentSidebar({reelData, setReelData}: ReelCommentS
           </h5>
         </div>
         <p>{reelData?.content}</p>
-        <hr/>
+        <hr />
       </header>
       <div className={styles.content}>
         {comments?.map((cmnt, index) => {

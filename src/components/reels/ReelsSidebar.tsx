@@ -1,11 +1,11 @@
 import styles from "@/assets/styles/reels/reelsSidebar.module.scss";
-import {Dispatch, SetStateAction, useContext, useEffect, useRef, useState} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider";
-import {RiVideoAddFill} from "react-icons/ri";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { RiVideoAddFill } from "react-icons/ri";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {Link} from "react-router-dom";
-import {toast} from "react-toastify";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import promiseToast from "@/controller/toast/promiseToast.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface ReelsSidebar {
   setVideo: Dispatch<SetStateAction<File | null>>;
@@ -14,8 +14,8 @@ interface ReelsSidebar {
   handleSubmit: () => Promise<void>;
 }
 
-export default function ReelsSidebar({setVideo, content, setContent, handleSubmit}: ReelsSidebar) {
-  const {auth} = useContext(AuthContext);
+export default function ReelsSidebar({ setVideo, content, setContent, handleSubmit }: ReelsSidebar) {
+  const { auth } = useAuth();
   const videoInputRef = useRef<HTMLInputElement>(null);
   const [currVideo, setCurrVideo] = useState<File | null>(null);
   const handleInputClick = () => {
@@ -49,7 +49,7 @@ export default function ReelsSidebar({setVideo, content, setContent, handleSubmi
 
   return (
     <>
-      <div className={styles.barSpace}/>
+      <div className={styles.barSpace} />
       <div className={styles.bar}>
         <header>
           <div className={styles.bio}>
@@ -63,12 +63,12 @@ export default function ReelsSidebar({setVideo, content, setContent, handleSubmi
           />
           <h3>{auth?.username}</h3>
         </div>
-        <hr/>
+        <hr />
         <div
           className={styles.content}
           onClick={() => handleInputClick()}>
           <div>
-            <RiVideoAddFill size={"1.75rem"}/>
+            <RiVideoAddFill size={"1.75rem"} />
             <h4>Upload a Video</h4>
           </div>
           <input

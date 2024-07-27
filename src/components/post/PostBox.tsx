@@ -1,25 +1,25 @@
 import styles from "@/assets/styles/post/post.module.scss";
 import ProfilePicture from "@/components/ProfilePicture.tsx";
-import {AiFillLike, AiOutlineLike} from "react-icons/ai";
-import {GoComment} from "react-icons/go";
-import {PiShareFatThin} from "react-icons/pi";
-import {Comment, Group, Post} from "@/gql/graphql.ts";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { GoComment } from "react-icons/go";
+import { PiShareFatThin } from "react-icons/pi";
+import { Comment, Group, Post } from "@/gql/graphql.ts";
 import getTimeDiff from "@/controller/timeConverter.ts";
 import ImageCarousel from "@/components/ImageCarousel.tsx";
-import {IoSend} from "react-icons/io5";
-import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
+import { IoSend } from "react-icons/io5";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Comments from "./Comments.tsx";
-import {useMutation, useQuery} from "@apollo/client";
-import {GET_COMMENT_POST} from "@/lib/query/post/getCommentPost.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {CREATE_COMMENT} from "@/lib/query/post/createComment.graphql.ts";
-import {LIKE_POST} from "@/lib/query/post/likePost.graphql.ts";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_COMMENT_POST } from "@/lib/query/post/getCommentPost.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { CREATE_COMMENT } from "@/lib/query/post/createComment.graphql.ts";
+import { LIKE_POST } from "@/lib/query/post/likePost.graphql.ts";
 import RichText from "@/components/richText/RichText.tsx";
 import domPurify from "@/controller/domPurify.ts";
-import {FiTrash2} from "react-icons/fi";
-import {DELETE_POST} from "@/lib/query/post/deletePost.graphql.ts";
+import { FiTrash2 } from "react-icons/fi";
+import { DELETE_POST } from "@/lib/query/post/deletePost.graphql.ts";
 import GroupProfilePicture from "@/components/GroupProfilePicture.tsx";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface PostBox {
   post: Post;
@@ -31,24 +31,16 @@ interface PostBox {
   isGroup?: boolean;
 }
 
-export default function PostBox({
-                                  post: postN,
-                                  setCurrPost,
-                                  setShareModalState,
-                                  setPostList,
-                                  setGroup,
-                                  isAdmin,
-                                  isGroup
-                                }: PostBox) {
+export default function PostBox({ post: postN, setCurrPost, setShareModalState, setPostList, setGroup, isAdmin, isGroup }: PostBox) {
   const [post, setPost] = useState<Post | null>(null);
   const [comment, setComment] = useState("");
   const [showComment, setShowComment] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
-  const {refetch: getCommentPost} = useQuery(GET_COMMENT_POST, {
+  const { refetch: getCommentPost } = useQuery(GET_COMMENT_POST, {
     skip: true,
     onError: debouncedError,
   });
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
   const [createComment] = useMutation(CREATE_COMMENT);
   const [likePost] = useMutation(LIKE_POST);
   const [deletePost] = useMutation(DELETE_POST);
@@ -156,7 +148,7 @@ export default function PostBox({
         <header>
           {isGroup ? (
             <>
-              <GroupProfilePicture group={post!.group!}/>
+              <GroupProfilePicture group={post!.group!} />
             </>
           ) : (
             <>
@@ -202,7 +194,7 @@ export default function PostBox({
         <div className={styles.content}>
           <div
             className={styles.text}
-            dangerouslySetInnerHTML={{__html: domPurify(post?.content)}}
+            dangerouslySetInnerHTML={{ __html: domPurify(post?.content) }}
           />
           {post?.files && post?.files.length > 0 && (
             <ImageCarousel
@@ -223,7 +215,7 @@ export default function PostBox({
               </p>
             </div>
           </div>
-          <hr/>
+          <hr />
           <div className={styles.buttons}>
             <button onClick={() => handleLike()}>
               <div>
@@ -241,7 +233,7 @@ export default function PostBox({
                 <p className={post.liked ? styles.liked : ""}>Like</p>
               </div>
             </button>
-            <div/>
+            <div />
             <button onClick={() => handleShowComment()}>
               <div>
                 <GoComment
@@ -251,7 +243,7 @@ export default function PostBox({
                 <p>Comment</p>
               </div>
             </button>
-            <div/>
+            <div />
             <button onClick={() => handleShare()}>
               <div>
                 <PiShareFatThin
@@ -262,7 +254,7 @@ export default function PostBox({
               </div>
             </button>
           </div>
-          <hr/>
+          <hr />
         </div>
         {showComment && (
           <>

@@ -2,30 +2,30 @@ import styles from "@/assets/styles/group/groupDetail.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import GroupDetailSidebar from "@/components/group/GroupDetailSidebar.tsx";
 import groupBackgroundLoader from "@/controller/groupBackgroundLoader.ts";
-import {Navigate, useNavigate, useParams} from "react-router-dom";
-import {useMutation, useQuery} from "@apollo/client";
-import {GET_GROUP} from "@/lib/query/group/getGroup.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {ChangeEvent, useContext, useEffect, useRef, useState} from "react";
-import {Group, Post} from "@/../gql/graphql.ts";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_GROUP } from "@/lib/query/group/getGroup.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { Group, Post } from "@/../gql/graphql.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
 import PostBox from "@/components/post/PostBox.tsx";
 import NewGroupPostModal from "@/components/group/NewGroupPostModal.tsx";
 import InviteGroupModal from "@/components/group/InviteGroupModal.tsx";
 import ShareModal from "@/components/ShareModal.tsx";
 import GroupSidebar from "@/components/group/GroupSidebar.tsx";
-import {IoMdReverseCamera} from "react-icons/io";
+import { IoMdReverseCamera } from "react-icons/io";
 import uploadStorage from "@/controller/firebase/storage.ts";
-import {UPDATE_GROUP_BACKGROUND} from "@/lib/query/group/updateGroupBackground.graphql.ts";
+import { UPDATE_GROUP_BACKGROUND } from "@/lib/query/group/updateGroupBackground.graphql.ts";
 import GroupFileBox from "@/components/group/GroupFileBox.tsx";
 import JoinRequestsModal from "@/components/group/JoinRequestsModal.tsx";
 import MembersModal from "@/components/group/MembersModal.tsx";
 import GroupUser from "@/components/group/GroupUser.tsx";
-import {HANDLE_REQUEST} from "@/lib/query/group/handleRequest.graphql.ts";
-import {LEAVE_GROUP} from "@/lib/query/group/leaveGroup.graphql.ts";
-import {toast} from "react-toastify";
+import { HANDLE_REQUEST } from "@/lib/query/group/handleRequest.graphql.ts";
+import { LEAVE_GROUP } from "@/lib/query/group/leaveGroup.graphql.ts";
+import { toast } from "react-toastify";
 import promiseToast from "@/controller/toast/promiseToast.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function GroupDetail() {
   const navigate = useNavigate();
@@ -41,9 +41,9 @@ export default function GroupDetail() {
   const [handleRequest] = useMutation(HANDLE_REQUEST);
   const [leaveGroup] = useMutation(LEAVE_GROUP);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
-  const {auth} = useContext(AuthContext);
-  const {groupId} = useParams();
-  const {data, refetch} = useQuery(GET_GROUP, {
+  const { auth } = useAuth();
+  const { groupId } = useParams();
+  const { data, refetch } = useQuery(GET_GROUP, {
     variables: {
       id: groupId,
     },
@@ -61,8 +61,7 @@ export default function GroupDetail() {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleFilter = (filter: string) => {
-  };
+  const handleFilter = (filter: string) => {};
 
   const handleBackgroundInput = () => {
     if (backgroundInputRef.current) {
@@ -120,7 +119,7 @@ export default function GroupDetail() {
     }
   };
 
-  if (group?.members?.length == 0) return <Navigate to={"/group"}/>;
+  if (group?.members?.length == 0) return <Navigate to={"/group"} />;
 
   return (
     <>
@@ -131,7 +130,7 @@ export default function GroupDetail() {
           setInviteModalState={setInviteGroupModalState}
         />
       )}
-      {joinRequestModalState && <JoinRequestsModal setJoinRequestsModalState={setJoinRequestModalState}/>}
+      {joinRequestModalState && <JoinRequestsModal setJoinRequestsModalState={setJoinRequestModalState} />}
       {membersModalState && (
         <MembersModal
           setMembersModalState={setMembersModalState}
@@ -154,7 +153,7 @@ export default function GroupDetail() {
       <div
         key={"mainPage"}
         className={styles.page}>
-        <Navbar/>
+        <Navbar />
         <div className={styles.content}>
           {group?.joined == "joined" ? (
             <GroupDetailSidebar
@@ -221,7 +220,7 @@ export default function GroupDetail() {
                     </button>
                   )}
                 </div>
-                <hr/>
+                <hr />
                 <nav>
                   {group?.joined == "joined" ? (
                     <>

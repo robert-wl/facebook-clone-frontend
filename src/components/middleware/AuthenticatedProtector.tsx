@@ -1,26 +1,22 @@
-import {Navigate} from "react-router-dom";
-import {useContext} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { Navigate } from "react-router-dom";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface AuthenticatedProtector {
   children: JSX.Element;
 }
 
-export default function AuthenticatedProtector({children}: AuthenticatedProtector) {
-  const {loading, auth} = useContext(AuthContext);
+export default function AuthenticatedProtector({ children }: AuthenticatedProtector) {
+  const { loading, auth, token } = useAuth();
 
   if (loading || !auth) return <></>;
 
-  return (
-    <>
-      {localStorage.getItem("token") ? (
-        children
-      ) : (
-        <Navigate
-          to={"/login"}
-          replace={true}
-        />
-      )}
-    </>
-  );
+  if (!token)
+    return (
+      <Navigate
+        to={"/login"}
+        replace={true}
+      />
+    );
+
+  return children;
 }

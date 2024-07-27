@@ -1,33 +1,33 @@
-import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {User} from "@/gql/graphql.ts";
-import {useMutation, useQuery} from "@apollo/client";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { User } from "@/gql/graphql.ts";
+import { useMutation, useQuery } from "@apollo/client";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import styles from "@/assets/styles/shareModal.module.scss";
-import {AiOutlineClose, AiOutlineSearch} from "react-icons/ai";
-import {MdOutlineArrowForwardIos} from "react-icons/md";
-import {GET_GROUP_INVITE} from "@/lib/query/group/getGroupInvite.graphql.ts";
-import {useParams} from "react-router-dom";
-import {INVITE_TO_GROUP} from "@/lib/query/group/inviteToGroup.graphql.ts";
+import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
+import { MdOutlineArrowForwardIos } from "react-icons/md";
+import { GET_GROUP_INVITE } from "@/lib/query/group/getGroupInvite.graphql.ts";
+import { useParams } from "react-router-dom";
+import { INVITE_TO_GROUP } from "@/lib/query/group/inviteToGroup.graphql.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface InviteGroupModal {
   inviteModalState: boolean;
   setInviteModalState: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function InviteGroupModal({inviteModalState, setInviteModalState}: InviteGroupModal) {
-  const {groupId} = useParams();
+export default function InviteGroupModal({ inviteModalState, setInviteModalState }: InviteGroupModal) {
+  const { groupId } = useParams();
   const [friends, setFriends] = useState<User[]>([]);
   const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
-  const {data} = useQuery(GET_GROUP_INVITE, {
+  const { data } = useQuery(GET_GROUP_INVITE, {
     variables: {
       id: groupId,
     },
     onError: debouncedError,
   });
   const [inviteToGroup] = useMutation(INVITE_TO_GROUP);
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
 
   useEffect(() => {
     if (data && auth) {
@@ -67,9 +67,9 @@ export default function InviteGroupModal({inviteModalState, setInviteModalState}
                 onClick={() => setInviteModalState(false)}
               />
             </header>
-            <hr/>
+            <hr />
             <div className={styles.content}>
-              <AiOutlineSearch size={"1.2rem"}/>
+              <AiOutlineSearch size={"1.2rem"} />
               <input
                 type={"text"}
                 placeholder={"Search friends..."}
@@ -92,7 +92,7 @@ export default function InviteGroupModal({inviteModalState, setInviteModalState}
                         {user.firstName} {user.lastName}
                       </span>
                     </div>
-                    <MdOutlineArrowForwardIos/>
+                    <MdOutlineArrowForwardIos />
                   </div>
                 );
               })}

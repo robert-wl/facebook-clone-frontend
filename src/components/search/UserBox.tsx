@@ -1,21 +1,21 @@
 import styles from "@/assets/styles/search/search.module.scss";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {User} from "@/gql/graphql.ts";
-import {useMutation} from "@apollo/client";
-import {ADD_FRIEND} from "@/lib/query/friend/addFriend.graphql.ts";
-import {Dispatch, SetStateAction, useContext} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { User } from "@/gql/graphql.ts";
+import { useMutation } from "@apollo/client";
+import { ADD_FRIEND } from "@/lib/query/friend/addFriend.graphql.ts";
+import { Dispatch, SetStateAction } from "react";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface UserBox {
   user: User;
   setUsers: Dispatch<SetStateAction<User[]>>;
 }
 
-export default function UserBox({user, setUsers}: UserBox) {
+export default function UserBox({ user, setUsers }: UserBox) {
   const [addFriend] = useMutation(ADD_FRIEND);
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
   const handleAddFriend = async () => {
     // if (ref.current) ref.current.style.display = "none";
     await addFriend({

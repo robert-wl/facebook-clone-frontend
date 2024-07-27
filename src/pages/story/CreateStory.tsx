@@ -1,23 +1,23 @@
-import {ChangeEvent, useContext, useState} from "react";
+import { ChangeEvent, useState } from "react";
 import styles from "@/assets/styles/story/createStory.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import Sidebar from "@/components/sidebar/Sidebar.tsx";
 import SidebarButton from "@/components/sidebar/SidebarButton.tsx";
 import CreateStories from "@/components/stories/CreateStories.tsx";
 import StorySidebar from "@/components/sidebar/StorySidebar.tsx";
-import {useMutation, useQuery} from "@apollo/client";
-import {CREATE_IMAGE_STORY} from "@/lib/query/story/createImageStory.graphql.ts";
-import {CREATE_TEXT_STORY} from "@/lib/query/story/createTextStory.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_IMAGE_STORY } from "@/lib/query/story/createImageStory.graphql.ts";
+import { CREATE_TEXT_STORY } from "@/lib/query/story/createTextStory.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import uploadStorage from "@/controller/firebase/storage.ts";
-import {User} from "@/gql/graphql.ts";
-import {GET_USER_WITH_STORIES} from "@/lib/query/story/getUserWithStories.graphql.ts";
-import {Link} from "react-router-dom";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {IoIosAdd} from "react-icons/io";
-import {toast} from "react-toastify";
+import { User } from "@/gql/graphql.ts";
+import { GET_USER_WITH_STORIES } from "@/lib/query/story/getUserWithStories.graphql.ts";
+import { Link } from "react-router-dom";
+import { IoIosAdd } from "react-icons/io";
+import { toast } from "react-toastify";
 import promiseToast from "@/controller/toast/promiseToast.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 export interface Content {
   text: string;
@@ -37,9 +37,9 @@ export default function CreateStory() {
   const [createImageStory] = useMutation(CREATE_IMAGE_STORY);
   const [friends, setFriends] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
 
-  const {refetch} = useQuery(GET_USER_WITH_STORIES, {
+  const { refetch } = useQuery(GET_USER_WITH_STORIES, {
     onCompleted: (data) => {
       setFriends(Array.from(new Set(data.getUserWithStories)));
     },
@@ -103,7 +103,7 @@ export default function CreateStory() {
       <div
         id={"page"}
         className={styles.page}>
-        <Navbar/>
+        <Navbar />
         <div className={styles.content}>
           {tab == "create" && (
             <>
@@ -114,7 +114,7 @@ export default function CreateStory() {
                     <SidebarButton
                       active={true}
                       text={"Create a Story"}>
-                      <IoIosAdd size={"1.7rem"}/>
+                      <IoIosAdd size={"1.7rem"} />
                     </SidebarButton>
                   </div>
                   {friends.length > 0 &&
@@ -160,8 +160,7 @@ export default function CreateStory() {
                           </div>
                         );
                     })}
-                  {friends.length == 0 || (friends.length == 1 && friends[0].username == auth?.username &&
-                      <h5>No available stories</h5>)}
+                  {friends.length == 0 || (friends.length == 1 && friends[0].username == auth?.username && <h5>No available stories</h5>)}
                 </>
               </Sidebar>
               <CreateStories

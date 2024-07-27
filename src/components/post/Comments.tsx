@@ -1,31 +1,31 @@
 import styles from "@/assets/styles/post/comment.module.scss";
-import {Comment, Maybe} from "@/gql/graphql.ts";
-import {useContext, useState} from "react";
-import {IoSend} from "react-icons/io5";
-import {useMutation} from "@apollo/client";
-import {CREATE_COMMENT} from "@/lib/query/post/createComment.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { Comment, Maybe } from "@/gql/graphql.ts";
+import { useState } from "react";
+import { IoSend } from "react-icons/io5";
+import { useMutation } from "@apollo/client";
+import { CREATE_COMMENT } from "@/lib/query/post/createComment.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import Reply from "./Reply.tsx";
-import {LIKE_COMMENT} from "@/lib/query/post/likeComment.graphql.ts";
-import {PiArrowBendDownRightDuotone} from "react-icons/pi";
-import {AiFillLike} from "react-icons/ai";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { LIKE_COMMENT } from "@/lib/query/post/likeComment.graphql.ts";
+import { PiArrowBendDownRightDuotone } from "react-icons/pi";
+import { AiFillLike } from "react-icons/ai";
 import RichText from "@/components/richText/RichText.tsx";
 import domPurify from "@/controller/domPurify.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface Comments {
   comment: Comment | Maybe<Comment>;
 }
 
-export default function Comments({comment}: Comments) {
+export default function Comments({ comment }: Comments) {
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const [commentContent, setCommentContent] = useState("");
   const [currComment, setCurrComment] = useState(comment);
   const [reset, setReset] = useState(0);
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
   const [createComment] = useMutation(CREATE_COMMENT);
   const [likecomment] = useMutation(LIKE_COMMENT);
 
@@ -105,12 +105,12 @@ export default function Comments({comment}: Comments) {
             {comment?.content && (
               <div
                 className={styles.text}
-                dangerouslySetInnerHTML={{__html: domPurify(comment.content)}}
+                dangerouslySetInnerHTML={{ __html: domPurify(comment.content) }}
               />
             )}
             {currComment?.likeCount != undefined && currComment?.likeCount > 0 && (
               <div className={styles.like}>
-                <AiFillLike size={"1rem"}/>
+                <AiFillLike size={"1rem"} />
                 {currComment?.likeCount}
               </div>
             )}
@@ -134,7 +134,7 @@ export default function Comments({comment}: Comments) {
               <p
                 className={styles.reply}
                 onClick={() => setShowReply(true)}>
-                <PiArrowBendDownRightDuotone size={"1rem"}/>
+                <PiArrowBendDownRightDuotone size={"1rem"} />
                 {currComment?.comments?.length} Replies
               </p>
             )}

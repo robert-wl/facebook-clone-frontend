@@ -1,14 +1,14 @@
-import {User} from "@/gql/graphql.ts";
+import { User } from "@/gql/graphql.ts";
 import styles from "@/assets/styles/user/user.module.scss";
 import UserFriendBox from "@/components/friend/UserFriendBox.tsx";
 import NoFriendBox from "@/components/friend/NoFriendBox.tsx";
-import {useQuery} from "@apollo/client";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {GET_USER_MUTUALS} from "@/lib/query/friend/getUserMutuals.graphql.ts";
-import {useParams} from "react-router-dom";
-import {useContext, useState} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {GET_USER_FRIENDS} from "@/lib/query/friend/getUserFriends.graphql.ts";
+import { useQuery } from "@apollo/client";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { GET_USER_MUTUALS } from "@/lib/query/friend/getUserMutuals.graphql.ts";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { GET_USER_FRIENDS } from "@/lib/query/friend/getUserFriends.graphql.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface UserFriend {
   isPost: boolean;
@@ -17,8 +17,9 @@ interface UserFriend {
 export default function UserFriend() {
   const [friends, setFriends] = useState<User[]>([]);
   const [mutuals, setMutuals] = useState<User[]>([]);
-  const {username} = useParams();
-  const {auth} = useContext(AuthContext);
+  const { username } = useParams();
+  const { auth } = useAuth();
+
   useQuery(GET_USER_FRIENDS, {
     variables: {
       username: username,
@@ -55,7 +56,7 @@ export default function UserFriend() {
                   />
                 );
               })}
-              {mutuals.length == 0 && <NoFriendBox description={"No mutuals"}/>}
+              {mutuals.length == 0 && <NoFriendBox description={"No mutuals"} />}
             </div>
           </>
         )}
@@ -72,7 +73,7 @@ export default function UserFriend() {
               </>
             );
           })}
-          {friends?.length == 0 && <NoFriendBox description={"This user has no friends"}/>}
+          {friends?.length == 0 && <NoFriendBox description={"This user has no friends"} />}
         </div>
       </div>
     </>

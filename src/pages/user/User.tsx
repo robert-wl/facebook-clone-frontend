@@ -1,39 +1,38 @@
 import Loading from "@/components/Loading.tsx";
 import styles from "@/assets/styles/user/user.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
-import {ChangeEvent, useContext, useState} from "react";
-import {LiaBirthdayCakeSolid, LiaUserFriendsSolid} from "react-icons/lia";
-import {BsFillPersonPlusFill, BsGenderAmbiguous} from "react-icons/bs";
-import {MdOutlineMarkEmailRead} from "react-icons/md";
-import {FriendInput, Maybe, Post} from "@/gql/graphql.ts";
-import {User} from "@/gql/graphql.ts";
+import { ChangeEvent, useState } from "react";
+import { LiaBirthdayCakeSolid, LiaUserFriendsSolid } from "react-icons/lia";
+import { BsFillPersonPlusFill, BsGenderAmbiguous } from "react-icons/bs";
+import { MdOutlineMarkEmailRead } from "react-icons/md";
+import { FriendInput, Maybe, Post, User } from "@/gql/graphql.ts";
 import PostBox from "@/components/post/PostBox.tsx";
-import {useNavigate, useParams} from "react-router-dom";
-import {useMutation, useQuery} from "@apollo/client";
-import {GET_USER} from "@/lib/query/user/getUser.graphql.ts";
-import {BiSolidMessageRoundedDetail, BiSolidPencil} from "react-icons/bi";
-import {IoIosArrowDown, IoIosArrowUp, IoMdReverseCamera} from "react-icons/io";
-import uploadStorage, {deleteStorage} from "@/controller/firebase/storage.ts";
-import {UPDATE_USER_PROFILE} from "@/lib/query/user/updateUserProfile.graphql.ts";
-import {UPDATE_USER_BACKGROUND} from "@/lib/query/user/updateUserBackground.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_USER } from "@/lib/query/user/getUser.graphql.ts";
+import { BiSolidMessageRoundedDetail, BiSolidPencil } from "react-icons/bi";
+import { IoIosArrowDown, IoIosArrowUp, IoMdReverseCamera } from "react-icons/io";
+import uploadStorage, { deleteStorage } from "@/controller/firebase/storage.ts";
+import { UPDATE_USER_PROFILE } from "@/lib/query/user/updateUserProfile.graphql.ts";
+import { UPDATE_USER_BACKGROUND } from "@/lib/query/user/updateUserBackground.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import EditUserModal from "@/components/user/EditUserModal.tsx";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {ADD_FRIEND} from "@/lib/query/friend/addFriend.graphql.ts";
-import {CREATE_CONVERSATION} from "@/lib/query/message/createConversation.graphql.ts";
+import { ADD_FRIEND } from "@/lib/query/friend/addFriend.graphql.ts";
+import { CREATE_CONVERSATION } from "@/lib/query/message/createConversation.graphql.ts";
 import ShareModal from "@/components/ShareModal.tsx";
 import UserFriend from "@/components/user/UserFriend.tsx";
 import PeopleMightKnowContainer from "@/components/friend/PeopleMightKnowContainer.tsx";
-import {IoPeopleCircleOutline} from "react-icons/io5";
+import { IoPeopleCircleOutline } from "react-icons/io5";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
 import userBackgroundLoader from "@/controller/userBackgroundLoader.ts";
-import {PiBellSimpleFill, PiBellSimpleSlashFill} from "react-icons/pi";
-import {BLOCK_USER} from "@/lib/query/notification/blockUser.graphql.ts";
+import { PiBellSimpleFill, PiBellSimpleSlashFill } from "react-icons/pi";
+import { BLOCK_USER } from "@/lib/query/notification/blockUser.graphql.ts";
 import promiseToast from "@/controller/toast/promiseToast.ts";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function User() {
-  const {username} = useParams();
+  const { username } = useParams();
   const [user, setUser] = useState<User | null>(null);
   const [isPost, setIsPost] = useState(true);
   const [modalState, setModalState] = useState(false);
@@ -41,7 +40,7 @@ export default function User() {
   const [shareModalState, setShareModalState] = useState(false);
   const [peopleMightKnowState, setPeopleMightKnowState] = useState(false);
 
-  const {loading} = useQuery(GET_USER, {
+  const { loading } = useQuery(GET_USER, {
     variables: {
       username: username,
     },
@@ -51,7 +50,7 @@ export default function User() {
     fetchPolicy: "cache-and-network",
     onError: debouncedError,
   });
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
   const [updateProfile] = useMutation(UPDATE_USER_PROFILE);
   const [updateBackground] = useMutation(UPDATE_USER_BACKGROUND);
   const [addFriend] = useMutation(ADD_FRIEND);
@@ -194,11 +193,11 @@ export default function User() {
           currPost={currPost}
         />
       )}
-      {loading && <Loading/>}
+      {loading && <Loading />}
       <div
         id={"page"}
         className={styles.pageUser}>
-        <Navbar/>
+        <Navbar />
         <header className={styles.header}>
           <div className={styles.headerContent}>
             {auth?.username == username ? (
@@ -256,42 +255,42 @@ export default function User() {
             <span>
               {auth?.username == username ? (
                 <button onClick={() => setModalState(true)}>
-                  <BiSolidPencil size={"1.2rem"}/>
+                  <BiSolidPencil size={"1.2rem"} />
                   Edit Profile
                 </button>
               ) : (
                 <div className={styles.container}>
                   {user?.friended == "friends" && (
                     <button onClick={() => handleFriend()}>
-                      <BsFillPersonPlusFill/>
+                      <BsFillPersonPlusFill />
                       Remove Friend
                     </button>
                   )}
                   {user?.friended == "not friends" && (
                     <button onClick={() => handleFriend()}>
-                      <BsFillPersonPlusFill/>
+                      <BsFillPersonPlusFill />
                       Add Friend
                     </button>
                   )}
                   {user?.friended == "pending" && (
                     <button onClick={() => handleFriend()}>
-                      <BsFillPersonPlusFill/>
+                      <BsFillPersonPlusFill />
                       Cancel Request
                     </button>
                   )}
                   <button onClick={() => handleSendMessage()}>
-                    <BiSolidMessageRoundedDetail size={"1rem"}/>
+                    <BiSolidMessageRoundedDetail size={"1rem"} />
                     Message
                   </button>
                   {user?.username != auth?.username && (
                     <button onClick={() => handleBlock()}>
                       {user?.blocked ? (
                         <>
-                          <PiBellSimpleSlashFill size={"1rem"}/>
+                          <PiBellSimpleSlashFill size={"1rem"} />
                         </>
                       ) : (
                         <>
-                          <PiBellSimpleFill size={"1rem"}/>
+                          <PiBellSimpleFill size={"1rem"} />
                         </>
                       )}
                     </button>
@@ -301,22 +300,22 @@ export default function User() {
               <button
                 className={styles.mightKnow}
                 onClick={() => setPeopleMightKnowState(!peopleMightKnowState)}>
-                {peopleMightKnowState ? <IoIosArrowDown size={"1.2rem"}/> : <IoIosArrowUp size={"1.2rem"}/>}
+                {peopleMightKnowState ? <IoIosArrowDown size={"1.2rem"} /> : <IoIosArrowUp size={"1.2rem"} />}
               </button>
             </span>
           </div>
-          {peopleMightKnowState && <PeopleMightKnowContainer key={"pplMightKnow"}/>}
+          {peopleMightKnowState && <PeopleMightKnowContainer key={"pplMightKnow"} />}
           <div className={styles.info}>
             <p>
-              <BsGenderAmbiguous size={"1.3rem"}/>
+              <BsGenderAmbiguous size={"1.3rem"} />
               {user?.gender}
             </p>
             <p>
-              <MdOutlineMarkEmailRead size={"1.3rem"}/>
+              <MdOutlineMarkEmailRead size={"1.3rem"} />
               {user?.email}
             </p>
             <p>
-              <LiaBirthdayCakeSolid size={"1.3rem"}/>
+              <LiaBirthdayCakeSolid size={"1.3rem"} />
               {new Date(user?.dob).toLocaleDateString("en-us", {
                 day: "2-digit",
                 month: "long",
@@ -324,12 +323,12 @@ export default function User() {
               })}
             </p>
             <p>
-              <LiaUserFriendsSolid size={"1.3rem"}/>
+              <LiaUserFriendsSolid size={"1.3rem"} />
               {user?.friendCount}
             </p>
             {user?.id != auth?.id && (
               <p>
-                <IoPeopleCircleOutline size={"1.3rem"}/>
+                <IoPeopleCircleOutline size={"1.3rem"} />
                 {user?.mutualCount}
               </p>
             )}
@@ -367,7 +366,7 @@ export default function User() {
               </div>
             </>
           ) : (
-            <UserFriend/>
+            <UserFriend />
           )}
         </div>
       </div>

@@ -1,18 +1,18 @@
-import {FaBookOpen} from "react-icons/fa";
-import {MdOutlineAdd, MdOutlineVideoLibrary} from "react-icons/md";
+import { FaBookOpen } from "react-icons/fa";
+import { MdOutlineAdd, MdOutlineVideoLibrary } from "react-icons/md";
 import styles from "@/assets/styles/home/homeTop.module.scss";
-import {useContext, useState} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {AiOutlineShareAlt} from "react-icons/ai";
-import {BsClockHistory} from "react-icons/bs";
-import {BiSolidMessageRoundedDetail} from "react-icons/bi";
-import {Link} from "react-router-dom";
+import { useState } from "react";
+import { AiOutlineShareAlt } from "react-icons/ai";
+import { BsClockHistory } from "react-icons/bs";
+import { BiSolidMessageRoundedDetail } from "react-icons/bi";
+import { Link } from "react-router-dom";
 import HomeTopReels from "./HomeTopReels.tsx";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 export default function HomeTop() {
   const [tab, setTab] = useState("stories");
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
 
   return (
     <div className={styles.myBox}>
@@ -20,17 +20,17 @@ export default function HomeTop() {
         <h4
           onClick={() => setTab("stories")}
           className={tab == "stories" ? styles.h4Active : ""}>
-          <FaBookOpen size={"1.5rem"}/>
+          <FaBookOpen size={"1.5rem"} />
           Stories
         </h4>
         <h4
           onClick={() => setTab("reels")}
           className={tab == "reels" ? styles.h4Active : ""}>
-          <MdOutlineVideoLibrary size={"1.5rem"}/>
+          <MdOutlineVideoLibrary size={"1.5rem"} />
           Reels
         </h4>
       </header>
-      <hr/>
+      <hr />
       <div className={styles.content}>
         {tab == "stories" ? (
           <>
@@ -55,21 +55,21 @@ export default function HomeTop() {
             </div>
             <div className={styles.right}>
               <p>
-                <AiOutlineShareAlt size={"1.5rem"}/>
+                <AiOutlineShareAlt size={"1.5rem"} />
                 Share a photo or write something
               </p>
               <p>
-                <BsClockHistory size={"1.5rem"}/>
+                <BsClockHistory size={"1.5rem"} />
                 Stories disappears after 24 hours
               </p>
               <p>
-                <BiSolidMessageRoundedDetail size={"1.5rem"}/>
+                <BiSolidMessageRoundedDetail size={"1.5rem"} />
                 Your stories are private
               </p>
             </div>
           </>
         ) : (
-          <HomeTopReels/>
+          <HomeTopReels />
         )}
       </div>
     </div>

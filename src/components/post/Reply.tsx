@@ -1,17 +1,17 @@
-import {Comment, Maybe} from "@/gql/graphql.ts";
+import { Comment, Maybe } from "@/gql/graphql.ts";
 import styles from "@/assets/styles/post/reply.module.scss";
-import {AiFillLike} from "react-icons/ai";
-import {Dispatch, SetStateAction, useContext, useState} from "react";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {useMutation} from "@apollo/client";
-import {LIKE_COMMENT} from "@/lib/query/post/likeComment.graphql.ts";
+import { AiFillLike } from "react-icons/ai";
+import { Dispatch, SetStateAction, useState } from "react";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { useMutation } from "@apollo/client";
+import { LIKE_COMMENT } from "@/lib/query/post/likeComment.graphql.ts";
 import domPurify from "@/controller/domPurify.ts";
 import RichText from "@/components/richText/RichText.tsx";
-import {IoSend} from "react-icons/io5";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {CREATE_COMMENT} from "@/lib/query/post/createComment.graphql.ts";
+import { IoSend } from "react-icons/io5";
+import { CREATE_COMMENT } from "@/lib/query/post/createComment.graphql.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface Reply {
   c: Comment | Maybe<Comment>;
@@ -19,10 +19,10 @@ interface Reply {
   setCurrComment: Dispatch<SetStateAction<Comment | null>>;
 }
 
-export default function Reply({c, parentId, setCurrComment}: Reply) {
+export default function Reply({ c, parentId, setCurrComment }: Reply) {
   const [comment, setComment] = useState(c);
   const [showReplyInput, setShowReplyInput] = useState(false);
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
   const [likecomment] = useMutation(LIKE_COMMENT);
   const [replyContent, setReplyContent] = useState("");
   const [createComment] = useMutation(CREATE_COMMENT);
@@ -63,9 +63,9 @@ export default function Reply({c, parentId, setCurrComment}: Reply) {
             console.log(comment);
             if (comment) {
               if (comment.comments) {
-                return {...comment, comments: [...comment.comments, newComment]};
+                return { ...comment, comments: [...comment.comments, newComment] };
               }
-              return {...comment, comments: [newComment]};
+              return { ...comment, comments: [newComment] };
             }
             return comment;
           });
@@ -110,10 +110,10 @@ export default function Reply({c, parentId, setCurrComment}: Reply) {
             <h4>
               {comment?.user.firstName} {comment?.user.lastName}
             </h4>
-            <div dangerouslySetInnerHTML={{__html: domPurify(comment?.content)}}/>
+            <div dangerouslySetInnerHTML={{ __html: domPurify(comment?.content) }} />
             {comment?.likeCount != undefined && comment?.likeCount > 0 && (
               <div className={styles.like}>
-                <AiFillLike size={"1rem"}/>
+                <AiFillLike size={"1rem"} />
                 {comment?.likeCount}
               </div>
             )}

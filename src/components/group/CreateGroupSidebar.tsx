@@ -1,22 +1,22 @@
 import styles from "@/assets/styles/group/createGroupSidebar.module.scss";
-import {Dispatch, SetStateAction, useContext} from "react";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
-import {useMutation} from "@apollo/client";
-import {CREATE_GROUP} from "@/lib/query/group/createGroup.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { Dispatch, SetStateAction } from "react";
+import { useMutation } from "@apollo/client";
+import { CREATE_GROUP } from "@/lib/query/group/createGroup.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {Link, useNavigate} from "react-router-dom";
-import {toast} from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface CreateGroupSidebar {
   groupData: { name: string; privacy: string; about: string };
   setGroupData: Dispatch<SetStateAction<{ name: string; privacy: string; about: string }>>;
 }
 
-export default function CreateGroupSidebar({groupData, setGroupData}: CreateGroupSidebar) {
+export default function CreateGroupSidebar({ groupData, setGroupData }: CreateGroupSidebar) {
   const [createGroup] = useMutation(CREATE_GROUP);
   const navigate = useNavigate();
-  const {auth} = useContext(AuthContext);
+  const { auth } = useAuth();
 
   const handleSubmit = () => {
     if (groupData.name.length == 0) {
@@ -46,7 +46,7 @@ export default function CreateGroupSidebar({groupData, setGroupData}: CreateGrou
 
   return (
     <>
-      <div className={styles.barSpace}/>
+      <div className={styles.barSpace} />
       <div className={styles.bar}>
         <header>
           <div className={styles.bio}>
@@ -65,7 +65,7 @@ export default function CreateGroupSidebar({groupData, setGroupData}: CreateGrou
             <p>Admin</p>
           </div>
         </div>
-        <hr/>
+        <hr />
         <div className={styles.content}>
           <input
             value={groupData.name}

@@ -1,10 +1,10 @@
 import styles from "@/assets/styles/shareModal.module.scss";
-import {AiOutlineClose, AiOutlineSearch} from "react-icons/ai";
-import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {useQuery} from "@apollo/client";
-import {GET_FRIENDS} from "@/lib/query/friend/getFriends.graphql.ts";
-import {Friend, User} from "@/gql/graphql.ts";
-import {AuthContext} from "@/components/context/AuthContextProvider.tsx";
+import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_FRIENDS } from "@/lib/query/friend/getFriends.graphql.ts";
+import { Friend, User } from "@/gql/graphql.ts";
+import useAuth from "@/hooks/use-auth.ts";
 
 interface TagFriendModal {
   setTagModalState: Dispatch<SetStateAction<boolean>>;
@@ -12,11 +12,11 @@ interface TagFriendModal {
   setTagList: Dispatch<SetStateAction<User[]>>;
 }
 
-export default function TagFriendModal({setTagModalState, tagList, setTagList}: TagFriendModal) {
+export default function TagFriendModal({ setTagModalState, tagList, setTagList }: TagFriendModal) {
   const [friends, setFriends] = useState<User[]>([]);
   const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
-  const {auth} = useContext(AuthContext);
-  const {data} = useQuery(GET_FRIENDS);
+  const { auth } = useAuth();
+  const { data } = useQuery(GET_FRIENDS);
 
   useEffect(() => {
     if (data && auth) {
@@ -58,10 +58,10 @@ export default function TagFriendModal({setTagModalState, tagList, setTagList}: 
               onClick={() => setTagModalState(false)}
             />
           </header>
-          <hr/>
+          <hr />
           <div>
             <div className={styles.content}>
-              <AiOutlineSearch size={"1.2rem"}/>
+              <AiOutlineSearch size={"1.2rem"} />
               <input
                 type={"text"}
                 placeholder={"Search friends..."}
