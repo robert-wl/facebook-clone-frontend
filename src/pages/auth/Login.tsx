@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { AUTHENTICATE_USER } from "../../../lib/query/user/authenticateUser.graphql.ts";
 import { FormEvent, useContext, useState } from "react";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import Footer from "../../components/misc/Footer.tsx";
 import { toast } from "react-toastify";

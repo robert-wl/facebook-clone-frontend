@@ -4,19 +4,19 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { GET_REELS } from "../../../lib/query/reels/getReels.graphql.ts";
 import React, { useEffect, useState } from "react";
 import { GET_REEL } from "../../../lib/query/reels/getReel.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { Reel } from "../../../gql/graphql.ts";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { AiFillLike } from "react-icons/ai";
 import { PiShareFatFill } from "react-icons/pi";
 import { BiSolidCommentDetail } from "react-icons/bi";
-import statsConverter from "../../../controller/statsConverter.ts";
+import statsConverter from "../../controller/statsConverter.ts";
 import { LIKE_REEL } from "../../../lib/query/reels/likeReel.graphql.ts";
 import ReelCommentSidebar from "../../components/reels/ReelCommentSidebar.tsx";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
-import reelLoader from "../../../controller/reelLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
+import reelLoader from "../../controller/reelLoader.ts";
 
 export default function Reels() {
     const { reelId } = useParams();

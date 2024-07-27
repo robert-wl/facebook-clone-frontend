@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { User } from "../../../gql/graphql.ts";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER } from "../../../lib/query/user/updateUser.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { toast } from "react-toastify";
 
 interface EditUserModal {

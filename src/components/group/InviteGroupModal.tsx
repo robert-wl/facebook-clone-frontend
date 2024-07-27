@@ -2,14 +2,14 @@ import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react
 import { User } from "../../../gql/graphql.ts";
 import { useMutation, useQuery } from "@apollo/client";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import styles from "../../assets/styles/shareModal.module.scss";
 import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 import { GET_GROUP_INVITE } from "../../../lib/query/group/getGroupInvite.graphql.ts";
 import { useParams } from "react-router-dom";
 import { INVITE_TO_GROUP } from "../../../lib/query/group/inviteToGroup.graphql.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 interface InviteGroupModal {
     inviteModalState: boolean;

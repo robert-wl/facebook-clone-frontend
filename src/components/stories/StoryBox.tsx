@@ -3,7 +3,7 @@ import { useState } from "react";
 import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
 import { Story } from "../../../gql/graphql.ts";
 import ProgressBar from "./ProgressBar.tsx";
-import storyImageLoader from "../../../controller/storyImageLoader.ts";
+import storyImageLoader from "../../controller/storyImageLoader.ts";
 
 interface StoryBox {
     stories: Story[];

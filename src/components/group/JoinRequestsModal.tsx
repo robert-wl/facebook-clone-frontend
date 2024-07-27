@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_JOIN_REQUESTS } from "../../../lib/query/group/getJoinRequest.graphql.ts";
 import { useParams } from "react-router-dom";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { Member, User } from "../../../gql/graphql.ts";
 import { RxCross1 } from "react-icons/rx";
 import { APPROVE_MEMBER } from "../../../lib/query/group/approveMember.graphql.ts";

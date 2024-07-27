@@ -2,10 +2,10 @@ import styles from "../../assets/styles/reels/reelsSidebar.module.scss";
 import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../context/AuthContextProvider";
 import { RiVideoAddFill } from "react-icons/ri";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import promiseToast from "../../../controller/toast/promiseToast.ts";
+import promiseToast from "../../controller/toast/promiseToast.ts";
 
 interface ReelsSidebar {
     setVideo: Dispatch<SetStateAction<File | null>>;

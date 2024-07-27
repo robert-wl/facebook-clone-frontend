@@ -1,7 +1,7 @@
 import styles from "../../assets/styles/friends/userFriendBox.module.scss";
 import { Link } from "react-router-dom";
 import { User } from "../../../gql/graphql.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 interface UserFriendBox {
     friend: User;

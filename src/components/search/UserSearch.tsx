@@ -2,7 +2,7 @@ import styles from "../../assets/styles/search/search.module.scss";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
 import { useQuery } from "@apollo/client";
 import { GET_FILTERED_USERS } from "../../../lib/query/search/getFilteredUsers.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { User } from "../../../gql/graphql.ts";
 import { Dispatch, SetStateAction, useState } from "react";
 import UserBox from "./UserBox.tsx";

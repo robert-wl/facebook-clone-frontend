@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import "./index.scss";
 import { BrowserRouter } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
-import { client } from "../controller/apollo/handler.ts";
+import { client } from "./controller/apollo/handler.ts";
 import AuthContextProvider from "./components/context/AuthContextProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

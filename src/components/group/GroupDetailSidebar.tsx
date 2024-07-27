@@ -1,11 +1,11 @@
 import styles from "../../assets/styles/group/groupDetailSidebar.module.scss";
 import { Group } from "../../../gql/graphql.ts";
-import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
+import groupBackgroundLoader from "../../controller/groupBackgroundLoader.ts";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_JOINED_GROUPS } from "../../../lib/query/group/getJoinedGroups.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { BsPersonPlus } from "react-icons/bs";
 import { MdPeopleOutline } from "react-icons/md";
 import { HiMiniHome } from "react-icons/hi2";

@@ -9,9 +9,9 @@ import { useQuery } from "@apollo/client";
 import { User } from "../../../gql/graphql.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import { GET_USER_WITH_STORIES } from "../../../lib/query/story/getUserWithStories.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import EmptyStory from "../../components/stories/EmptyStory.tsx";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 export default function StoriesHome() {
     const [friends, setFriends] = useState<User[]>([]);

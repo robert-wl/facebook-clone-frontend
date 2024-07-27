@@ -13,10 +13,10 @@ import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER } from "../../../lib/query/user/getUser.graphql.ts";
 import { BiSolidMessageRoundedDetail, BiSolidPencil } from "react-icons/bi";
 import { IoIosArrowDown, IoIosArrowUp, IoMdReverseCamera } from "react-icons/io";
-import uploadStorage, { deleteStorage } from "../../../controller/firebase/storage.ts";
+import uploadStorage, { deleteStorage } from "../../controller/firebase/storage.ts";
 import { UPDATE_USER_PROFILE } from "../../../lib/query/user/updateUserProfile.graphql.ts";
 import { UPDATE_USER_BACKGROUND } from "../../../lib/query/user/updateUserBackground.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import EditUserModal from "../../components/user/EditUserModal.tsx";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import { ADD_FRIEND } from "../../../lib/query/friend/addFriend.graphql.ts";
@@ -25,11 +25,11 @@ import ShareModal from "../../components/ShareModal.tsx";
 import UserFriend from "../../components/user/UserFriend.tsx";
 import PeopleMightKnowContainer from "../../components/friend/PeopleMightKnowContainer.tsx";
 import { IoPeopleCircleOutline } from "react-icons/io5";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
-import userBackgroundLoader from "../../../controller/userBackgroundLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
+import userBackgroundLoader from "../../controller/userBackgroundLoader.ts";
 import { PiBellSimpleFill, PiBellSimpleSlashFill } from "react-icons/pi";
 import { BLOCK_USER } from "../../../lib/query/notification/blockUser.graphql.ts";
-import promiseToast from "../../../controller/toast/promiseToast.ts";
+import promiseToast from "../../controller/toast/promiseToast.ts";
 import { toast } from "react-toastify";
 
 export default function User() {

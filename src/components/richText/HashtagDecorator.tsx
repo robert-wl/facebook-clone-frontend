@@ -1,6 +1,6 @@
 import styles from "../../assets/styles/richText/richText.module.scss";
 import { ContentBlock } from "react-draft-wysiwyg";
-import findWithRegex from "../../../controller/regexFunction.ts";
+import findWithRegex from "../../controller/regexFunction.ts";
 import { Link } from "react-router-dom";
 
 function hashtagStrategy(contentBlock: ContentBlock, callback: (start: number, end: number) => void) {

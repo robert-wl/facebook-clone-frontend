@@ -4,10 +4,10 @@ import { BsFillPersonPlusFill } from "react-icons/bs";
 import { User } from "../../../gql/graphql.ts";
 import { Dispatch, SetStateAction, useContext, useRef } from "react";
 import { useMutation } from "@apollo/client";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { ADD_FRIEND } from "../../../lib/query/friend/addFriend.graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 interface RecommendFriendBox {
     friend: User;

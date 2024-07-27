@@ -6,9 +6,9 @@ import { Dispatch, SetStateAction } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_JOINED_GROUPS } from "../../../lib/query/group/getJoinedGroups.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { Group } from "../../../gql/graphql.ts";
-import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
+import groupBackgroundLoader from "../../controller/groupBackgroundLoader.ts";
 
 interface GroupSidebar {
     redirect: boolean;

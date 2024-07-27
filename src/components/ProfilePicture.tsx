@@ -1,7 +1,7 @@
 import styles from "../assets/styles/profilePicture.module.scss";
 import { User } from "../../gql/graphql.ts";
 import { Link } from "react-router-dom";
-import userProfileLoader from "../../controller/userProfileLoader.ts";
+import userProfileLoader from "../controller/userProfileLoader.ts";
 
 interface ProfilePicture {
     user: User | null;

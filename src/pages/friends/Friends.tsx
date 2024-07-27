@@ -8,7 +8,7 @@ import { BsFillPersonCheckFill, BsFillPersonFill, BsFillPersonPlusFill } from "r
 import FriendRequestSection from "../../components/friend/FriendRequestSection.tsx";
 import AllFriendsSection from "../../components/friend/AllFriendsSection.tsx";
 import { useQuery } from "@apollo/client";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { User } from "../../../gql/graphql.ts";
 import PeopleMightKnowSection from "../../components/friend/PeopleMightKnowSection.tsx";
 import { GET_FRIENDS } from "../../../lib/query/friend/getFriends.graphql.ts";

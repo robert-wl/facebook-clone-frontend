@@ -2,15 +2,15 @@ import { Comment, Maybe } from "../../../gql/graphql.ts";
 import styles from "../../assets/styles/post/reply.module.scss";
 import { AiFillLike } from "react-icons/ai";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { useMutation } from "@apollo/client";
 import { LIKE_COMMENT } from "../../../lib/query/post/likeComment.graphql.ts";
-import domPurify from "../../../controller/domPurify.ts";
+import domPurify from "../../controller/domPurify.ts";
 import RichText from "../richText/RichText.tsx";
 import { IoSend } from "react-icons/io5";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { CREATE_COMMENT } from "../../../lib/query/post/createComment.graphql.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
 
 interface Reply {

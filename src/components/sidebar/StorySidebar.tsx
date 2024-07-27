@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useContext } from "react";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import ColorButton from "../stories/ColorButton.tsx";
 import { Content } from "../../pages/story/CreateStory.tsx";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 interface Sidebar {
     title: string;

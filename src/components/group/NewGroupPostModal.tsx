@@ -2,14 +2,14 @@ import styles from "../../assets/styles/post/newPost.module.scss";
 import ProfilePicture from "../ProfilePicture.tsx";
 import { ChangeEvent, Dispatch, SetStateAction, useContext, useState } from "react";
 import ImageList from "../ImageList.tsx";
-import uploadStorage from "../../../controller/firebase/storage.ts";
+import uploadStorage from "../../controller/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "../../../lib/query/post/createPost.graphql.ts";
 import { Group } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { useParams } from "react-router-dom";
 import RichText from "../richText/RichText.tsx";
-import promiseToast from "../../../controller/toast/promiseToast.ts";
+import promiseToast from "../../controller/toast/promiseToast.ts";
 import { toast } from "react-toastify";
 
 interface NewGroupPostModal {

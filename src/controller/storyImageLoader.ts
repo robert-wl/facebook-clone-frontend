@@ -1,4 +1,4 @@
-import { FileUpload } from "./firebase/storage";
+import { FileUpload } from "./firebase/storage.ts";
 
 export default function storyImageLoader(image: string | undefined | null) {
     if (!image) return "";

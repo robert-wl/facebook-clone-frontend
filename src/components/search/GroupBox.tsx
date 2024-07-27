@@ -1,8 +1,8 @@
 import styles from "../../assets/styles/search/search.module.scss";
 import { Group } from "../../../gql/graphql.ts";
-import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
+import groupBackgroundLoader from "../../controller/groupBackgroundLoader.ts";
 import { Link } from "react-router-dom";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { useMutation } from "@apollo/client";
 import { HANDLE_REQUEST } from "../../../lib/query/group/handleRequest.graphql.ts";
 import { Dispatch, SetStateAction } from "react";

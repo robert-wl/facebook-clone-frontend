@@ -8,7 +8,7 @@ import { BsClockHistory } from "react-icons/bs";
 import { BiSolidMessageRoundedDetail } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import HomeTopReels from "./HomeTopReels.tsx";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 export default function HomeTop() {
     const [tab, setTab] = useState("stories");

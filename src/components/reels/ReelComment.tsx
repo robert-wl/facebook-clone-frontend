@@ -5,12 +5,12 @@ import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContextProvider";
 import { useMutation } from "@apollo/client";
 import { LIKE_REEL_COMMENT } from "../../../lib/query/reels/likeReelComment.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { CREATE_REEL_COMMENT } from "../../../lib/query/reels/createReelComment.graphql.ts";
 import { PiArrowBendDownRightDuotone } from "react-icons/pi";
-import domPurify from "../../../controller/domPurify.ts";
+import domPurify from "../../controller/domPurify.ts";
 import RichText from "../richText/RichText.tsx";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
 import LikeLabel from "../post/LikeLabel.tsx";
 

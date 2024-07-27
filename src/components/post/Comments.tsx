@@ -4,15 +4,15 @@ import { useContext, useState } from "react";
 import { IoSend } from "react-icons/io5";
 import { useMutation } from "@apollo/client";
 import { CREATE_COMMENT } from "../../../lib/query/post/createComment.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import Reply from "./Reply.tsx";
 import { LIKE_COMMENT } from "../../../lib/query/post/likeComment.graphql.ts";
 import { PiArrowBendDownRightDuotone } from "react-icons/pi";
 import { AiFillLike } from "react-icons/ai";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import RichText from "../richText/RichText.tsx";
-import domPurify from "../../../controller/domPurify.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import domPurify from "../../controller/domPurify.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
 
 interface Comments {

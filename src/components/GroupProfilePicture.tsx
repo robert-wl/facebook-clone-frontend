@@ -1,7 +1,7 @@
 import styles from "../assets/styles/profilePicture.module.scss";
 import { Link } from "react-router-dom";
 import { Group } from "../../gql/graphql.ts";
-import groupBackgroundLoader from "../../controller/groupBackgroundLoader.ts";
+import groupBackgroundLoader from "../controller/groupBackgroundLoader.ts";
 
 interface GroupProfilePicture {
     group: Group;

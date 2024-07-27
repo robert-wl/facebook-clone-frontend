@@ -3,13 +3,13 @@ import { IoSend } from "react-icons/io5";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { Reel, ReelComment } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_REEL_COMMENT } from "../../../lib/query/reels/createReelComment.graphql.ts";
 import ReelCommentBox from "./ReelComment.tsx";
 import { GET_REEL_COMMENTS } from "../../../lib/query/reels/getReelComments.graphql.ts";
 import RichText from "../richText/RichText.tsx";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 interface ReelCommentSidebar {
     reelData: Reel;

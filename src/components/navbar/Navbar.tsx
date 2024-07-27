@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { Link, useLocation } from "react-router-dom";
 import { BiSolidMessageRoundedDetail, BiUserCircle } from "react-icons/bi";
 import { MdKeyboardArrowRight, MdLogout } from "react-icons/md";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 import SearchBar from "./SearchBar.tsx";
 import NotificationButton from "./buttons/NotificationButton.tsx";
 import { BsFillMoonFill } from "react-icons/bs";

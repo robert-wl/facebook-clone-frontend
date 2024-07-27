@@ -5,7 +5,7 @@ import GroupBox from "../../components/group/GroupBox.tsx";
 import { useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_GROUPS } from "../../../lib/query/group/getGroups.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { Group, Post } from "../../../gql/graphql.ts";
 import ShareModal from "../../components/ShareModal.tsx";
 import GroupFeed from "../../components/group/GroupFeed.tsx";

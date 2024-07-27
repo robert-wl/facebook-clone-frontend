@@ -1,8 +1,8 @@
 import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
 import { Post } from "../../../gql/graphql.ts";
 import { useQuery } from "@apollo/client";
-import { debouncedError } from "../../../controller/errorHandler.ts";
-import { debounce } from "../../../controller/debouncer.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
+import { debounce } from "../../controller/debouncer.ts";
 import styles from "../../assets/styles/search/search.module.scss";
 import PostSkeleton from "../post/PostSkeleton.tsx";
 import PostBox from "../post/PostBox.tsx";

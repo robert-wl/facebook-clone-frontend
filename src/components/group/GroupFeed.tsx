@@ -3,10 +3,10 @@ import PostSkeleton from "../post/PostSkeleton.tsx";
 import PostBox from "../post/PostBox.tsx";
 import { useQuery } from "@apollo/client";
 import { GET_GROUP_HOME_POSTS } from "../../../lib/query/group/getGroupHomePosts.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { Post } from "../../../gql/graphql.ts";
 import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
-import { debounce } from "../../../controller/debouncer.ts";
+import { debounce } from "../../controller/debouncer.ts";
 
 interface GroupFeed {
     setShareModalState: Dispatch<SetStateAction<boolean>>;

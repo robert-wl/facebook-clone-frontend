@@ -7,8 +7,8 @@ import { BiLogOut } from "react-icons/bi";
 import { useMutation } from "@apollo/client";
 import { PROMOTE_MEMBER } from "../../../lib/query/group/promoteMember.graphql.ts";
 import { useParams } from "react-router-dom";
-import { debouncedError } from "../../../controller/errorHandler.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 import { RiAdminLine } from "react-icons/ri";
 import { KICK_MEMBER } from "../../../lib/query/group/kickMember.graphql.ts";
 

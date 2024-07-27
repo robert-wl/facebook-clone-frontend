@@ -1,7 +1,7 @@
 import styles from "../assets/styles/imageCarousel.module.scss";
 import { useRef, useState } from "react";
 import { BiSolidLeftArrowCircle, BiSolidRightArrowCircle } from "react-icons/bi";
-import { FileUpload } from "../../controller/firebase/storage.ts";
+import { FileUpload } from "../controller/firebase/storage.ts";
 import { Maybe } from "../../gql/graphql.ts";
 
 interface ImageCarousel {

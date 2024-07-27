@@ -5,7 +5,7 @@ import { BsSendFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { SEND_MESSAGE } from "../../../lib/query/message/sendMessage.graphql.ts";
-import uploadStorage from "../../../controller/firebase/storage.ts";
+import uploadStorage from "../../controller/firebase/storage.ts";
 import { RxCross2 } from "react-icons/rx";
 
 interface MessageInput {

@@ -2,17 +2,17 @@ import styles from "../../assets/styles/post/newPost.module.scss";
 import ProfilePicture from "../ProfilePicture.tsx";
 import { ChangeEvent, Dispatch, SetStateAction, useContext, useState } from "react";
 import ImageList from "../ImageList.tsx";
-import uploadStorage from "../../../controller/firebase/storage.ts";
+import uploadStorage from "../../controller/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "../../../lib/query/post/createPost.graphql.ts";
 import { Post, User } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import RichText from "../richText/RichText.tsx";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { HiPencilSquare } from "react-icons/hi2";
-import cleanRichText from "../../../controller/cleanRichText.ts";
+import cleanRichText from "../../controller/cleanRichText.ts";
 import { RxCross2 } from "react-icons/rx";
-import promiseToast from "../../../controller/toast/promiseToast.ts";
+import promiseToast from "../../controller/toast/promiseToast.ts";
 import { toast } from "react-toastify";
 
 interface NewPostModal {

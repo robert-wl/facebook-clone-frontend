@@ -4,7 +4,7 @@ import { NewUser } from "../../../gql/graphql.ts";
 import { useMutation } from "@apollo/client";
 import { REGISTER_USER } from "../../../lib/query/user/createUser.graphql.ts";
 import { Link, useNavigate } from "react-router-dom";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import Footer from "../../components/misc/Footer.tsx";
 import { toast } from "react-toastify";
 

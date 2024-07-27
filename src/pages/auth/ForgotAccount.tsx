@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { FORGOT_PASSWORD } from "../../../lib/query/user/forgotPassword.graphql.ts";
 import { useState } from "react";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import Footer from "../../components/misc/Footer.tsx";
 import { toast } from "react-toastify";
 

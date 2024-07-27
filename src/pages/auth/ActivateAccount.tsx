@@ -2,7 +2,7 @@ import styles from "../../assets/styles/activateAccount/activateAccount.module.s
 import { useMutation } from "@apollo/client";
 import { ACTIVATE_USER } from "../../../lib/query/user/activateUser.graphql.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import Footer from "../../components/misc/Footer.tsx";
 import { toast } from "react-toastify";
 

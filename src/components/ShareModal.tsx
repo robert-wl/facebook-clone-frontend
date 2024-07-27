@@ -7,8 +7,8 @@ import { Post, User } from "../../gql/graphql.ts";
 import { AuthContext } from "././context/AuthContextProvider";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 import { SHARE_POST } from "../../lib/query/post/sharePost.graphql.ts";
-import { debouncedError } from "../../controller/errorHandler.ts";
-import userProfileLoader from "../../controller/userProfileLoader.ts";
+import { debouncedError } from "../controller/errorHandler.ts";
+import userProfileLoader from "../controller/userProfileLoader.ts";
 
 interface ShareModal {
     setShareModalState: Dispatch<SetStateAction<boolean>>;

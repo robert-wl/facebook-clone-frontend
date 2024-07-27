@@ -1,7 +1,7 @@
 import styles from "../../assets/styles/notification/notification.module.scss";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 import { Notification } from "../../../gql/graphql.ts";
-import getTimeDiff from "../../../controller/timeConverter.ts";
+import getTimeDiff from "../../controller/timeConverter.ts";
 import { Link } from "react-router-dom";
 
 interface NotificationContent {

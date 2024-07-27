@@ -2,7 +2,7 @@ import styles from "../../assets/styles/resetPassword/resetPassword.module.scss"
 import { useMutation } from "@apollo/client";
 import { RESET_PASSWORD } from "../../../lib/query/user/resetPassword.graphql.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { useState } from "react";
 import { toast } from "react-toastify";
 

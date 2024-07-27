@@ -11,8 +11,8 @@ import { Story, User } from "../../../gql/graphql.ts";
 import StoryBox from "../../components/stories/StoryBox.tsx";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import { GET_USER_WITH_STORIES } from "../../../lib/query/story/getUserWithStories.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 export default function Stories() {
     const [stories, setStories] = useState<Story[]>([]);

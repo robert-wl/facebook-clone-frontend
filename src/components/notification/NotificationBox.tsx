@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import NotificationContent from "./NotificationContent.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_NOTIFICATIONS } from "../../../lib/query/notification/getNotifications.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { Notification } from "../../../gql/graphql.ts";
 import { GET_UNREAD_NOTIFICATIONS } from "../../../lib/query/notification/getUnreadNotifications.graphql.ts";
 

@@ -1,4 +1,4 @@
-import def from "../src/assets/default-profile.jpg";
+import def from "../assets/default-profile.jpg";
 import { FileUpload } from "./firebase/storage.ts";
 
 export const defaultUserProfile = def;

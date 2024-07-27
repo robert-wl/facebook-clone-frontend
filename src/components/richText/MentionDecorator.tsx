@@ -1,5 +1,5 @@
 import { ContentBlock } from "react-draft-wysiwyg";
-import findWithRegex from "../../../controller/regexFunction.ts";
+import findWithRegex from "../../controller/regexFunction.ts";
 import styles from "../../assets/styles/richText/richText.module.scss";
 
 function mentionStrategy(contentBlock: ContentBlock, callback: (start: number, end: number) => void) {

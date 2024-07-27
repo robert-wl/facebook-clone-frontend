@@ -1,10 +1,10 @@
 import styles from "../../assets/styles/search/search.module.scss";
 import { Link } from "react-router-dom";
-import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
+import groupBackgroundLoader from "../../controller/groupBackgroundLoader.ts";
 import { Group } from "../../../gql/graphql.ts";
 import { useMutation } from "@apollo/client";
 import { HANDLE_REQUEST } from "../../../lib/query/group/handleRequest.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { Dispatch, SetStateAction } from "react";
 
 interface GroupLoneBox {

@@ -6,8 +6,8 @@ import { useSubscription } from "@apollo/client";
 import { VIEW_CONVERSATION } from "../../../lib/query/message/viewConversation.graphql.ts";
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
-import domPurify from "../../../controller/domPurify.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import domPurify from "../../controller/domPurify.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 export default function MessageBox() {
     const { conversationID } = useParams();

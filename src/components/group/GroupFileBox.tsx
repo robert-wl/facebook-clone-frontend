@@ -1,11 +1,11 @@
 import styles from "../../assets/styles/group/groupFileBox.module.scss";
 import { AiOutlineFile, AiOutlineSearch } from "react-icons/ai";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
-import uploadStorage, { deleteStorage, FileUpload } from "../../../controller/firebase/storage.ts";
+import uploadStorage, { deleteStorage, FileUpload } from "../../controller/firebase/storage.ts";
 import { useMutation, useQuery } from "@apollo/client";
 import { UPLOAD_FILE } from "../../../lib/query/group/uploadFile.graphql.ts";
 import { Link, useParams } from "react-router-dom";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { GET_GROUP_FILES } from "../../../lib/query/group/getGroupFiles.graphql.ts";
 import { Group, GroupFile } from "../../../gql/graphql.ts";
 import { HiOutlineDownload } from "react-icons/hi";
@@ -14,7 +14,7 @@ import { PiTrashBold } from "react-icons/pi";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { DELETE_FILE } from "../../../lib/query/group/deleteFile.graphql.ts";
 import { toast } from "react-toastify";
-import promiseToast from "../../../controller/toast/promiseToast.ts";
+import promiseToast from "../../controller/toast/promiseToast.ts";
 
 interface GroupFileBox {
     group: Group | undefined;

@@ -5,8 +5,8 @@ import { useQuery } from "@apollo/client";
 import { GET_FRIENDS } from "../../../lib/query/friend/getFriends.graphql.ts";
 import { User } from "../../../gql/graphql.ts";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
-import { debouncedError } from "../../../controller/errorHandler.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 
 interface VisibilityModal {
     setVisibilityModalState: Dispatch<SetStateAction<boolean>>;

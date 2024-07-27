@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction, useContext } from "react";
 import { AuthContext } from "../context/AuthContextProvider.tsx";
 import { useMutation } from "@apollo/client";
 import { CREATE_GROUP } from "../../../lib/query/group/createGroup.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 

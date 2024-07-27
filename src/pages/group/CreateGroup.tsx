@@ -2,8 +2,8 @@ import styles from "../../assets/styles/group/createGroup.module.scss";
 import Navbar from "../../components/navbar/Navbar.tsx";
 import { useState } from "react";
 import CreateGroupSidebar from "../../components/group/CreateGroupSidebar.tsx";
-import { defaultGroupBackground } from "../../../controller/groupBackgroundLoader.ts";
-import { defaultUserProfile } from "../../../controller/userProfileLoader.ts";
+import { defaultGroupBackground } from "../../controller/groupBackgroundLoader.ts";
+import { defaultUserProfile } from "../../controller/userProfileLoader.ts";
 
 export default function CreateGroup() {
     const [groupData, setGroupData] = useState({

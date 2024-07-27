@@ -6,12 +6,12 @@ import { useContext, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_CONVERSATIONS } from "../../../lib/query/message/getConversations.graphql.ts";
 import { Conversation } from "../../../gql/graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { AuthContext } from "../../components/context/AuthContextProvider.tsx";
 import MessageBox from "../../components/message/MessageBox.tsx";
-import domPurify from "../../../controller/domPurify.ts";
-import userProfileLoader from "../../../controller/userProfileLoader.ts";
-import groupBackgroundLoader from "../../../controller/groupBackgroundLoader.ts";
+import domPurify from "../../controller/domPurify.ts";
+import userProfileLoader from "../../controller/userProfileLoader.ts";
+import groupBackgroundLoader from "../../controller/groupBackgroundLoader.ts";
 
 export default function Messages() {
     const [conversations, setConversations] = useState<Conversation[]>([]);

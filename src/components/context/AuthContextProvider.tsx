@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { User } from "../../../gql/graphql.ts";
 import { GET_AUTH } from "../../../lib/query/user/getAuth.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { UPDATE_THEME } from "../../../lib/query/user/updateTheme.graphql.ts";
 
 interface AuthContext {

@@ -1,7 +1,7 @@
 import styles from "../../assets/styles/search/search.module.scss";
 import { useQuery } from "@apollo/client";
 import { GET_FILTERED_GROUPS } from "../../../lib/query/search/getFilteredGroups.graphql.ts";
-import { debouncedError } from "../../../controller/errorHandler.ts";
+import { debouncedError } from "../../controller/errorHandler.ts";
 import { Group } from "../../../gql/graphql.ts";
 import { Dispatch, SetStateAction, useState } from "react";
 import GroupBox from "./GroupBox.tsx";
