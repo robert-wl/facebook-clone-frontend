@@ -135,7 +135,7 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
             <div className={styles.commentInput}>
               <div className={styles.image}>
                 <img
-                  src={auth?.profile ? auth?.profile : "@/src/assets/default-profile.jpg"}
+                  src={userProfileLoader(auth?.profile)}
                   alt={""}
                 />
               </div>

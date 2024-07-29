@@ -16,8 +16,8 @@
       width: 100%;
       height: 15rem;
       object-fit: cover;
-      border-top-right-radius: 1rem;
-      border-top-left-radius: 1rem;
+      border-top-right-radius: 0.5rem;
+      border-top-left-radius: 0.5rem;
     }
   }
 
@@ -26,6 +26,7 @@
     flex-direction: column;
     align-items: center;
     height: 4.5rem;
+    margin: 0.25rem;
 
     h4 {
       align-self: start;

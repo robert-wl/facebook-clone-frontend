@@ -1,7 +1,7 @@
 import def from "../assets/default-profile.jpg";
 import { FileUpload } from "./firebase/storage.ts";
 
-export const defaultUserProfile = def;
+export const defaultUserProfile = def as string;
 
 export default function userProfileLoader(image: string | undefined | null) {
   if (!image) return defaultUserProfile;

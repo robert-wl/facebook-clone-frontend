@@ -1,10 +1,10 @@
 import styles from "@/assets/styles/friends/friends.module.scss";
 import NoFriendBox from "./NoFriendBox.tsx";
-import {useQuery} from "@apollo/client";
-import {GET_PEOPLE_MIGHT_KNOW} from "@/lib/query/friend/getPeopleMightKnow.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {useState} from "react";
-import {User} from "@/gql/graphql.ts";
+import { useQuery } from "@apollo/client";
+import { GET_PEOPLE_MIGHT_KNOW } from "@/lib/query/friend/getPeopleMightKnow.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { useState } from "react";
+import { User } from "@/gql/graphql.ts";
 import RecommendFriendBox from "./RecommendFriendBox.tsx";
 
 export default function PeopleMightKnowSection() {
@@ -29,8 +29,9 @@ export default function PeopleMightKnowSection() {
             />
           );
         })}
-        {people.length == 0 && <NoFriendBox description={"No Recommendations"}/>}
+        {people.length == 0 && <NoFriendBox description={"No Recommendations"} />}
       </div>
+      <hr />
     </>
   );
 }

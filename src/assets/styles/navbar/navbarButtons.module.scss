@@ -3,10 +3,12 @@
   align-items: center;
   justify-content: center;
   width: 8rem;
-  margin: auto auto 0.33rem;
-  height: 3.3rem;
+  height: 3.2rem;
   color: var(--color);
   transition: color 0.2s, background-color 0.2s;
+  margin: auto auto 0.5rem;
+  border-bottom: 0.25rem solid transparent;
+
 
   &:hover {
     background-color: var(--main-hover-color);

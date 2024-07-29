@@ -20,7 +20,7 @@
     align-items: center;
     color: black;
     width: 25rem;
-    padding: 0 1rem 0.5rem;
+    padding: 0.5rem 1.5rem 0.5rem;
 
     h3 {
       align-self: start;
@@ -42,7 +42,7 @@
       margin-top: 0;
       align-self: start;
       text-align: start;
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
 
     input {
@@ -57,7 +57,7 @@
       margin: 1rem 1rem;
 
       &:focus {
-        border: 1px solid gray;
+        border: 1px solid var(--blue-color);
       }
 
       &::placeholder {
@@ -70,19 +70,26 @@
       flex-direction: row;
       align-self: end;
       outline: none;
-
+      padding: 0.5rem 0;
+      
       button:nth-child(1) {
         outline: none;
         border: none;
         padding: 0.5rem 1rem;
-        background-color: gray;
+        background-color: var(--gray-color);
         margin-right: 0.5rem;
-        color: white;
         border-radius: 0.25rem;
+        transition-duration: var(--transition-duration-short);
+
 
         a {
           color: white;
           text-decoration: none;
+        }
+
+        &:hover {
+          cursor: pointer;
+          background-color: var(--gray-color-hover);
         }
       }
 
@@ -93,6 +100,14 @@
         background-color: #1877f2;
         color: white;
         border-radius: 0.25rem;
+        font-weight: bold;
+        transition-duration: var(--transition-duration-short);
+
+
+        &:hover {
+          cursor: pointer;
+          background-color: #166fe5;
+        }
       }
     }
   }

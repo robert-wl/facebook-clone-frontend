@@ -16,11 +16,19 @@
       bottom: 47.5%;
       left: 1%;
       margin: 0;
+      z-index: 2;
+      color: rgb(28, 28, 28);
+      transition-duration: 0.2s;
 
       svg {
         background-color: rgb(255, 255, 255, 0.75);
         cursor: pointer;
         border-radius: 20rem;
+
+      }
+
+      &:hover {
+        color: black;
       }
     }
 
@@ -29,11 +37,18 @@
       bottom: 47.5%;
       right: 1%;
       margin: 0;
+      z-index: 2;
+      color: rgb(28, 28, 28);
+      transition-duration: 0.2s;
 
       svg {
         background-color: rgb(255, 255, 255, 0.75);
         cursor: pointer;
         border-radius: 20rem;
+      }
+
+      &:hover {
+        color: black;
       }
     }
 

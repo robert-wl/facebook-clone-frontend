@@ -1,14 +1,14 @@
 import styles from "@/assets/styles/imageCarousel.module.scss";
-import {useRef, useState} from "react";
-import {BiSolidLeftArrowCircle, BiSolidRightArrowCircle} from "react-icons/bi";
-import {FileUpload} from "@/controller/firebase/storage.ts";
-import {Maybe} from "@/gql/graphql.ts";
+import { useRef, useState } from "react";
+import { BiSolidLeftArrowCircle, BiSolidRightArrowCircle } from "react-icons/bi";
+import { FileUpload } from "@/controller/firebase/storage.ts";
+import { Maybe } from "@/gql/graphql.ts";
 
 interface ImageCarousel {
   files: Maybe<string>[];
 }
 
-export default function ImageCarousel({files: fileOutside}: ImageCarousel) {
+export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [files, _] = useState<FileUpload[]>(() => {
     return fileOutside!.map((file) => {
@@ -33,7 +33,6 @@ export default function ImageCarousel({files: fileOutside}: ImageCarousel) {
       const img = e.target as HTMLImageElement;
       img.style.display = "none";
     } else if (type == "video") {
-      console.log("sini");
       const video = e.target as HTMLVideoElement;
       video.style.display = "none";
     }
@@ -45,7 +44,6 @@ export default function ImageCarousel({files: fileOutside}: ImageCarousel) {
       const img = e.target as HTMLImageElement;
       img.style.display = "block";
     } else if (type == "video" && videoRef.current!.style.display == "none") {
-      console.log("hai");
       const video = e.target as HTMLVideoElement;
       video.style.display = "block";
     }
@@ -62,27 +60,21 @@ export default function ImageCarousel({files: fileOutside}: ImageCarousel) {
               onError={(e) => handleError(e, "video")}
               autoPlay={true}
               controls={true}>
-              <source src={files ? files[i].url : ""}/>
+              <source src={files ? files[i].url : ""} />
             </video>
           )}
           {files && files.length > 1 && (
             <div
               onClick={() => handleLeft()}
               className={styles.leftButton}>
-              <BiSolidLeftArrowCircle
-                size={35}
-                color={"black"}
-              />
+              <BiSolidLeftArrowCircle size={35} />
             </div>
           )}
           {files && files.length > 1 && (
             <div
               onClick={() => handleRight()}
               className={styles.rightButton}>
-              <BiSolidRightArrowCircle
-                size={35}
-                color={"black"}
-              />
+              <BiSolidRightArrowCircle size={35} />
             </div>
           )}
           {files[i].type.includes("image") && (

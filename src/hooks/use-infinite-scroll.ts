@@ -16,7 +16,7 @@ export default function useInfiniteScroll<T extends HTMLElement>({ callback, deb
       const windowHeight = window.innerHeight || document.documentElement.clientHeight;
       const totalHeight = element.scrollHeight;
 
-      if (!(scrollTop + windowHeight + 700 >= totalHeight)) {
+      if (!(scrollTop + windowHeight + 1000 >= totalHeight)) {
         return;
       }
       debouncedCallback();

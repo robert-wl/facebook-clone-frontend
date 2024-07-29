@@ -23,7 +23,7 @@ export default function errorHandler(error: ApolloError) {
     //         background: "red",
     //     },
     // }).showToast();
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
   }
   toast.error(error.message);
   // Toastify({

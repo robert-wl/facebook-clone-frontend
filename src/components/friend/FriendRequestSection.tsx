@@ -1,19 +1,19 @@
 import styles from "@/assets/styles/friends/friends.module.scss";
 import FriendBox from "./FriendBox.tsx";
 import NoFriendBox from "./NoFriendBox.tsx";
-import {useMutation, useQuery} from "@apollo/client";
-import {GET_FRIEND_REQUESTS} from "@/lib/query/friend/getFriendRequests.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {User} from "@/gql/graphql.ts";
-import {Dispatch, SetStateAction, useState} from "react";
-import {ACCEPT_FRIEND} from "@/lib/query/friend/acceptFriend.graphql.ts";
-import {REJECT_FRIEND} from "@/lib/query/friend/rejectFriend.graphql.ts";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_FRIEND_REQUESTS } from "@/lib/query/friend/getFriendRequests.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { User } from "@/gql/graphql.ts";
+import { Dispatch, SetStateAction, useState } from "react";
+import { ACCEPT_FRIEND } from "@/lib/query/friend/acceptFriend.graphql.ts";
+import { REJECT_FRIEND } from "@/lib/query/friend/rejectFriend.graphql.ts";
 
 interface FriendRequestSection {
   setFriends: Dispatch<SetStateAction<User[]>>;
 }
 
-export default function FriendRequestSection({setFriends}: FriendRequestSection) {
+export default function FriendRequestSection({ setFriends }: FriendRequestSection) {
   const [requests, setRequests] = useState<User[]>([]);
   const [acceptFriend] = useMutation(ACCEPT_FRIEND);
   const [rejectFriend] = useMutation(REJECT_FRIEND);
@@ -67,8 +67,9 @@ export default function FriendRequestSection({setFriends}: FriendRequestSection)
             </>
           );
         })}
-        {requests.length == 0 && <NoFriendBox description={"No Friend Requests"}/>}
+        {requests.length == 0 && <NoFriendBox description={"No Friend Requests"} />}
       </div>
+      <hr />
     </>
   );
 }

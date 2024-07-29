@@ -173,7 +173,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
               ) : (
                 <>
                   {post?.user.firstName} {post?.user.lastName}
-                  {post.postTags?.length != undefined && post.postTags[0] != undefined && (
+                  {!!post.postTags?.length && !!post.postTags[0] && (
                     <>
                       {post.postTags?.length > 0 && <span> is with </span>}
                       {post.postTags?.length == 1 && <>{post.postTags[0].user.firstName + " " + post.postTags[0].user.lastName}</>}

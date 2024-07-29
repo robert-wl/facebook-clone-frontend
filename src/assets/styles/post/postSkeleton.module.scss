@@ -6,6 +6,7 @@
   background-color: var(--main-color);
   margin: 1rem auto;
   color: var(--color);
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
   header {
     margin: 0.5rem 1rem;
@@ -85,5 +86,17 @@
       color: transparent;
       border-radius: 1rem;
     }
+  }
+}
+
+
+
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
   }
 }

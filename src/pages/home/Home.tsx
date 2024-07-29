@@ -121,7 +121,11 @@ export default function Home() {
                 isGroup={!!post.group}
               />
             ))}
-            {!hideSkeleton && <PostSkeleton />}
+            {!hideSkeleton && (
+              <>
+                <PostSkeleton />
+              </>
+            )}
           </div>
         </div>
       </div>
