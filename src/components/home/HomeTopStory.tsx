@@ -1,28 +1,28 @@
 import styles from "@/assets/styles/home/homeTop.module.scss";
 import { Link } from "react-router-dom";
+import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { MdOutlineAdd } from "react-icons/md";
 import { AiOutlineShareAlt } from "react-icons/ai";
-import { BsFillCameraVideoFill } from "react-icons/bs";
+import { BsClockHistory } from "react-icons/bs";
 import useAuth from "@/hooks/use-auth.ts";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 
-export default function HomeTopReels() {
+export default function HomeTopStory() {
   const { auth } = useAuth();
+
   return (
     <>
       <div className={styles.left}>
         <div className={styles.story}>
-          <Link to={"/reels"}>
+          <Link to={"/stories"}>
             <img
-              className={styles.vid}
-              src={auth?.profile ? auth.profile : "@/src/assets/default-profile.jpg"}
+              src={userProfileLoader(auth?.profile)}
               alt={""}
             />
-            <BsFillCameraVideoFill size={"3rem"} />
           </Link>
           <div className={styles.create}>
-            <h4>Create Reel</h4>
-            <Link to={"/reels/create"}>
+            <h4>Create Story</h4>
+            <Link to={"/stories/create"}>
               <MdOutlineAdd
                 size={"1.2rem"}
                 color={"white"}
@@ -34,11 +34,15 @@ export default function HomeTopReels() {
       <div className={styles.right}>
         <p>
           <AiOutlineShareAlt size={"1.5rem"} />
-          Make and share a short video
+          Share a photo or write something
+        </p>
+        <p>
+          <BsClockHistory size={"1.5rem"} />
+          Stories disappears after 24 hours
         </p>
         <p>
           <IoChatboxEllipsesOutline size={"1.5rem"} />
-          Your reels are visible to everyone
+          Your stories are private
         </p>
       </div>
     </>

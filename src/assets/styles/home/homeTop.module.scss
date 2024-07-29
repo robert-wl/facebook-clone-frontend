@@ -21,12 +21,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding-top: 1rem;
       padding-bottom: 1rem;
-      margin-left: 1rem;
-      margin-right: 1rem;
       width: 90%;
-      margin-bottom: 0;
+      margin: 0.5rem 1rem 0;
       border-bottom: 3px solid transparent;
+      border-radius: var(--border-radius);
+      transition-duration: var(--transition-duration-short);
 
       svg {
         margin-right: 0.5rem;
@@ -34,17 +35,14 @@
 
       &:hover {
         cursor: pointer;
+        background-color: var(--main-hover-color);
       }
     }
 
     .h4Active {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-bottom: 1rem;
-      width: 90%;
+      @extend h4;
       border-bottom: 3px solid var(--blue-color);
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
       color: var(--blue-color);
 
       svg {
@@ -117,11 +115,12 @@
             padding: 0.5rem;
             border-radius: 10rem;
             border: 3px solid var(--main-color);
+            transition-duration: var(--transition-duration-short);
 
             &:hover {
               cursor: pointer;
               opacity: 100%;
-              background-color: #0867e2;
+              background-color: var(--blue-color-hover)
             }
 
             h4 {

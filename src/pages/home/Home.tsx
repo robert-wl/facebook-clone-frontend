@@ -2,20 +2,23 @@ import styles from "@/assets/styles/home/home.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import ProfilePicture from "@/components/ProfilePicture.tsx";
 import NewPostModal from "@/components/post/NewPostModal.tsx";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import PostBox from "@/components/post/PostBox.tsx";
 import { GET_POSTS } from "@/lib/query/post/getPosts.graphql.ts";
 import { useQuery } from "@apollo/client";
 import { Post, User } from "@/gql/graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import Loading from "@/components/Loading.tsx";
-import { debounce } from "@/controller/debouncer.ts";
 import PostSkeleton from "@/components/post/PostSkeleton.tsx";
 import ShareModal from "@/components/ShareModal.tsx";
 import HomeTop from "@/components/home/HomeTop.tsx";
 import TagFriendModal from "@/components/post/TagFriendModal.tsx";
 import VisibilityModal from "@/components/post/VisibilityModal.tsx";
 import useAuth from "@/hooks/use-auth.ts";
+import useInfiniteScroll from "@/hooks/use-infinite-scroll.ts";
+import { Nullable } from "@/types/utils";
+
+const paginationLimit = 5;
 
 export default function Home() {
   const [modalState, setModalState] = useState(false);
@@ -24,16 +27,15 @@ export default function Home() {
   const [visibilityModalState, setVisibilityModalState] = useState(false);
   const [data, setData] = useState<Post[]>([]);
   const [hideSkeleton, setHideSkeleton] = useState(false);
-  const [currPost, setCurrPost] = useState<Post | null>(null);
+  const [currPost, setCurrPost] = useState<Nullable<Post>>(null);
   const [tagList, setTagList] = useState<User[]>([]);
   const [visibilityList, setVisibilityList] = useState<User[]>([]);
-  const pageRef = useRef<HTMLDivElement>(null);
-  let start = 3;
-  const { refetch: getPosts } = useQuery(GET_POSTS, {
+  const [currPostIndex, setCurrPostIndex] = useState(0);
+  useQuery(GET_POSTS, {
     variables: {
       pagination: {
-        start: 0,
-        limit: 3,
+        start: currPostIndex,
+        limit: paginationLimit,
       },
     },
     fetchPolicy: "cache-and-network",
@@ -41,53 +43,21 @@ export default function Home() {
       const result = dat.getPosts;
 
       if (result.length == 0) setHideSkeleton(true);
-      setData([...data, ...result]);
+      setData((data) => [...data, ...result]);
     },
     onError: debouncedError,
-    skip: start > 3,
   });
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
 
-  const handleFetch = () => {
-    getPosts({
-      pagination: {
-        start: start,
-        limit: 3,
-      },
-    })
-      .then(() => {
-        start += 3;
-      })
-      .catch(debouncedError);
+  const handleFetch = async () => {
+    setCurrPostIndex((prev) => prev + paginationLimit);
   };
 
-  const debouncedHandleScroll = debounce(handleFetch, 50);
-  let scrollElement: HTMLElement | null;
-  const handleScroll = () => {
-    if (scrollElement) {
-      const scrollTop = scrollElement.scrollTop;
-      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      const totalHeight = scrollElement.scrollHeight;
+  const { ref } = useInfiniteScroll<HTMLDivElement>({
+    callback: handleFetch,
+  });
 
-      // console.log(data)
-      if (!(scrollTop + windowHeight + 700 >= totalHeight)) {
-        return;
-      }
-      debouncedHandleScroll();
-    }
-  };
-
-  useEffect(() => {
-    scrollElement = pageRef.current!;
-
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
-      return () => {
-        scrollElement!.addEventListener("scroll", handleScroll);
-      };
-    }
-  }, []);
   return (
     <>
       {loading && <Loading />}
@@ -126,7 +96,7 @@ export default function Home() {
       )}
       <div
         className={styles.page}
-        ref={pageRef}>
+        ref={ref}>
         <Navbar />
         <div className={styles.content}>
           <HomeTop />
@@ -141,7 +111,7 @@ export default function Home() {
             </div>
           </div>
           <div>
-            {data.map((post: Post, index) => (
+            {data.map((post, index) => (
               <PostBox
                 key={index}
                 post={post}

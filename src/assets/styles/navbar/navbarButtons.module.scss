@@ -9,7 +9,7 @@
   transition: color 0.2s, background-color 0.2s;
 
   &:hover {
-    background-color: #f0f2f5;
+    background-color: var(--main-hover-color);
     border-radius: 0.5rem;
   }
 }
