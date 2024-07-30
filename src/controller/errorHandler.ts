@@ -17,19 +17,9 @@ export default function errorHandler(error: ApolloError) {
   } else if (error.message.includes("Token is expired") || error.message.includes("invalid number of segments")) {
     window.location.href = "/login";
     toast.error("Token is expired");
-    // Toastify({
-    //     text: "Error: " + "invalid session",
-    //     style: {
-    //         background: "red",
-    //     },
-    // }).showToast();
+
     sessionStorage.removeItem("token");
   }
   toast.error(error.message);
-  // Toastify({
-  //     text: "Error: " + error.message,
-  //     style: {
-  //         background: "red",
-  //     },
-  // }).showToast();
+  console.log(error);
 }

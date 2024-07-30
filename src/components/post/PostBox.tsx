@@ -52,8 +52,9 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
       postId: post?.id,
     })
       .then((data) => {
-        const comments = data.data.getCommentPost;
-        setComments(comments);
+        const comments: Comment[] = [...data.data.getCommentPost];
+        const sortedComments = comments?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setComments(sortedComments);
         setShowComment(true);
       })
       .catch(debouncedError);
@@ -70,8 +71,9 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
       },
     })
       .then((data) => {
-        const comment = data.data.createComment;
-        setComments([...comments, comment]);
+        const newComments = [data.data.createComment, ...comments];
+        const comment = newComments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setComments(comment);
       })
       .catch(debouncedError);
 
@@ -277,7 +279,6 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
                     size={"1rem"}
                     onClick={() => handleComment()}
                     color={comment.length > 8 ? "rgb(0, 100, 244)" : ""}
-                    disabled={comment.length == 8}
                   />
                 </div>
               </div>

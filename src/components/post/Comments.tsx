@@ -12,8 +12,8 @@ import { AiFillLike } from "react-icons/ai";
 import RichText from "@/components/richText/RichText.tsx";
 import domPurify from "@/controller/domPurify.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
-import { Link } from "react-router-dom";
 import useAuth from "@/hooks/use-auth.ts";
+import ProfilePicture from "@/components/ProfilePicture.tsx";
 
 interface Comments {
   comment: Comment | Maybe<Comment>;
@@ -70,33 +70,10 @@ export default function Comments({ comment }: Comments) {
   return (
     <div className={styles.container}>
       <div className={styles.top}>
-        <div className={styles.image}>
-          <Link to={"/user/" + comment?.user?.username}>
-            <img
-              src={userProfileLoader(comment?.user.profile)}
-              alt={""}
-            />
-          </Link>
-          <div className={styles.profile}>
-            <div className={styles.content}>
-              <Link to={"/user/" + comment?.user?.username}>
-                <img
-                  src={userProfileLoader(comment?.user?.profile)}
-                  alt={""}
-                />
-              </Link>
-              <div className={styles.bio}>
-                <h4>
-                  {comment?.user?.firstName} {comment?.user?.lastName}
-                </h4>
-                <p>{comment?.user?.username}</p>
-                <p>{comment?.user?.gender}</p>
-                <p>{comment?.user?.email}</p>
-                <p>{new Date(comment?.user?.dob).toLocaleDateString()}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProfilePicture
+          user={auth}
+          showBox={false}
+        />
         <div className={styles.content}>
           <div className={styles.contentBox}>
             <h4>
@@ -171,7 +148,6 @@ export default function Comments({ comment }: Comments) {
                       size={"1rem"}
                       onClick={() => handleReply()}
                       color={commentContent.length > 8 ? "rgb(0, 100, 244)" : ""}
-                      disabled={commentContent.length == 8}
                     />
                   </div>
                 </div>

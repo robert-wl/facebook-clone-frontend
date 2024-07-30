@@ -30,7 +30,9 @@ export const GET_COMMENT_POST = gql`
           gender
           dob
         }
+        createdAt
       }
+      createdAt
     }
   }
 `;
