@@ -21,15 +21,20 @@
   align-items: center;
   width: inherit;
   justify-content: space-between;
-  background-color: var(--background-color);
+  background-color: var(--main-color);
   height: 3rem;
 
   svg {
     margin: 0 0.5rem;
     display: flex;
+    color: var(--blue-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    transition-duration: var(--transition-duration);
 
     &:hover {
       cursor: pointer;
+      background: var(--gray-color-hover);
     }
   }
 

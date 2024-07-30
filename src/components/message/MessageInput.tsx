@@ -1,18 +1,18 @@
 import styles from "@/assets/styles/messages/messageInput.module.scss";
-import {FaImages} from "react-icons/fa6";
-import {BiSolidMicrophoneAlt} from "react-icons/bi";
-import {BsSendFill} from "react-icons/bs";
-import {useRef, useState} from "react";
-import {useMutation} from "@apollo/client";
-import {SEND_MESSAGE} from "@/lib/query/message/sendMessage.graphql.ts";
+import { FaImages } from "react-icons/fa6";
+import { BiSolidMicrophoneAlt } from "react-icons/bi";
+import { BsSendFill } from "react-icons/bs";
+import { useRef, useState } from "react";
+import { useMutation } from "@apollo/client";
+import { SEND_MESSAGE } from "@/lib/query/message/sendMessage.graphql.ts";
 import uploadStorage from "@/controller/firebase/storage.ts";
-import {RxCross2} from "react-icons/rx";
+import { RxCross2 } from "react-icons/rx";
 
-interface MessageInput {
+interface IProps {
   conversationID: string;
 }
 
-export default function MessageInput({conversationID}: MessageInput) {
+export default function MessageInput({ conversationID }: IProps) {
   const [text, setText] = useState<string>("");
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [sendMessage] = useMutation(SEND_MESSAGE);
@@ -49,7 +49,7 @@ export default function MessageInput({conversationID}: MessageInput) {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
 
       if (!file.type.includes("image")) return;
@@ -63,19 +63,14 @@ export default function MessageInput({conversationID}: MessageInput) {
       <div className={styles.inputBoxHolder}>aaa</div>
       <div
         className={styles.imageHolder}
-        hidden={!image}>
-        a
-      </div>
+        hidden={!image}
+      />
       <div className={styles.inputBox}>
         <FaImages
           size={"1.75rem"}
-          color={"blue"}
           onClick={() => handleImageInput()}
         />
-        <BiSolidMicrophoneAlt
-          size={"1.75rem"}
-          color={"blue"}
-        />
+        <BiSolidMicrophoneAlt size={"1.75rem"} />
         <input
           type={"text"}
           value={text}
@@ -97,8 +92,7 @@ export default function MessageInput({conversationID}: MessageInput) {
         />
         <BsSendFill
           onClick={() => handleSubmit()}
-          size={"1.75rem"}
-          color={"blue"}
+          size={"1.5rem"}
         />
         <div
           className={styles.imageUpload}

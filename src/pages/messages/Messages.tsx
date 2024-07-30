@@ -64,9 +64,8 @@ export default function Messages() {
                     onChange={(e) => handleFilter(e.target.value)}
                   />
                 </div>
-                <div className={styles.top}></div>
                 <div className={styles.messageContainer}>
-                  {filteredConversations.length > 0 &&
+                  {filteredConversations.length > 0 ? (
                     filteredConversations.map((conv, index) => {
                       if (conv.users[0] && conv.users[1]) {
                         const user = conv.users[0].user.username == auth?.username ? conv.users[1].user : conv.users[0].user;
@@ -112,7 +111,12 @@ export default function Messages() {
                           </div>
                         );
                       }
-                    })}
+                    })
+                  ) : (
+                    <div className={styles.noMessage}>
+                      <h3>No conversations found</h3>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

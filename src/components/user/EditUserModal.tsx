@@ -1,18 +1,19 @@
 import styles from "@/assets/styles/user/user.module.scss";
-import {Dispatch, SetStateAction, useState} from "react";
-import {User} from "@/gql/graphql.ts";
-import {useMutation} from "@apollo/client";
-import {UPDATE_USER} from "@/lib/query/user/updateUser.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {toast} from "react-toastify";
+import { Dispatch, SetStateAction, useState } from "react";
+import { User } from "@/gql/graphql.ts";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER } from "@/lib/query/user/updateUser.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { toast } from "react-toastify";
+import { Nullable } from "@/types/utils";
 
-interface EditUserModal {
+interface IProps {
   userDat: User;
-  setUserDat: Dispatch<SetStateAction<User | null>>;
+  setUserDat: Dispatch<SetStateAction<Nullable<User>>>;
   setModalState: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function EditUserModal({userDat, setUserDat, setModalState}: EditUserModal) {
+export default function EditUserModal({ userDat, setUserDat, setModalState }: IProps) {
   const [user, setUser] = useState(userDat);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -50,18 +51,14 @@ export default function EditUserModal({userDat, setUserDat, setModalState}: Edit
       <div className={styles.registerBox}>
         <header>
           <h2>Update Profile</h2>
-          <div
-            className={styles.close}
-            onClick={() => handleClose()}>
+          <div onClick={() => handleClose()}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
-              fill="black"
               className="bi bi-x-lg"
               viewBox="0 0 16 16">
-              <path
-                d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
             </svg>
           </div>
         </header>
@@ -70,12 +67,12 @@ export default function EditUserModal({userDat, setUserDat, setModalState}: Edit
             <input
               placeholder={"First Name"}
               value={user.firstName}
-              onChange={(e) => setUser({...user, firstName: e.target.value})}
+              onChange={(e) => setUser({ ...user, firstName: e.target.value })}
             />
             <input
               placeholder={"Last Name"}
               value={user.lastName}
-              onChange={(e) => setUser({...user, lastName: e.target.value})}
+              onChange={(e) => setUser({ ...user, lastName: e.target.value })}
             />
           </div>
           <input
@@ -97,7 +94,7 @@ export default function EditUserModal({userDat, setUserDat, setModalState}: Edit
               <input
                 type="radio"
                 checked={user.gender == "female"}
-                onChange={() => setUser({...user, gender: "female"})}
+                onChange={() => setUser({ ...user, gender: "female" })}
               />
             </label>
             <label>
@@ -105,7 +102,7 @@ export default function EditUserModal({userDat, setUserDat, setModalState}: Edit
               <input
                 type="radio"
                 checked={user.gender == "male"}
-                onChange={() => setUser({...user, gender: "male"})}
+                onChange={() => setUser({ ...user, gender: "male" })}
               />
             </label>
             <label>
@@ -113,11 +110,11 @@ export default function EditUserModal({userDat, setUserDat, setModalState}: Edit
               <input
                 type="radio"
                 checked={user.gender == "walmart"}
-                onChange={() => setUser({...user, gender: "walmart"})}
+                onChange={() => setUser({ ...user, gender: "walmart" })}
               />
             </label>
           </div>
-          <hr/>
+          <hr />
           <button onClick={() => handleSubmit()}>Update Profile</button>
         </div>
       </div>

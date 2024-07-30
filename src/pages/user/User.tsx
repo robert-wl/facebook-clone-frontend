@@ -104,7 +104,7 @@ export default function User() {
 
   const handleProfileFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const file = e.target.files[0] as File;
+      const file = e.target?.files?.[0] as File;
 
       const url = await uploadStorage("profile", file);
 
@@ -128,7 +128,7 @@ export default function User() {
 
   const handleBackgroundFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const file = e.target.files[0] as File;
+      const file = e.target.files?.[0] as File;
 
       const url = await uploadStorage("background", file);
 
@@ -215,10 +215,12 @@ export default function User() {
               accept={"image/*"}
             />
             <img
+              className={styles.profileBackground}
               src={userBackgroundLoader(user?.background)}
               alt={"profile picture"}
             />
             <img
+              className={styles.profilePicture}
               src={userProfileLoader(user?.profile)}
               alt={""}
             />

@@ -8,6 +8,7 @@ import { useState } from "react";
 import domPurify from "@/controller/domPurify.ts";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import { FileUpload } from "@/controller/firebase/storage.ts";
 
 export default function MessageBox() {
   const { conversationID } = useParams();
@@ -25,6 +26,12 @@ export default function MessageBox() {
   } else if (error && error.message.includes("must be defined") && !stop) {
     setStop(true);
   }
+
+  const getImageURL = (obj: string) => {
+    const file: FileUpload = JSON.parse(obj);
+
+    return file.url;
+  };
 
   return (
     <div className={styles.chat}>
@@ -70,7 +77,7 @@ export default function MessageBox() {
                   <div>
                     {message.image ? (
                       <img
-                        src={message.image}
+                        src={getImageURL(message.image)}
                         alt={""}
                       />
                     ) : message.post ? (
