@@ -22,7 +22,11 @@ export const GET_USER = gql`
         user {
           firstName
           lastName
+          username
           profile
+          dob
+          gender
+          email
         }
         content
         privacy

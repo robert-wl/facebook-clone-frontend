@@ -11,7 +11,7 @@ import SearchBar from "./SearchBar.tsx";
 import NotificationButton from "./buttons/NotificationButton.tsx";
 import { BsFillMoonFill } from "react-icons/bs";
 import useAuth from "@/hooks/use-auth.ts";
-import useTheme from "@/hooks/useTheme.ts";
+import useTheme from "@/hooks/use-theme.ts";
 
 export default function Navbar() {
   const location = useLocation();

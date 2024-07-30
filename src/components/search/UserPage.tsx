@@ -1,13 +1,13 @@
 import styles from "@/assets/styles/search/search.module.scss";
-import {Dispatch, RefObject, SetStateAction, useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
-import {User} from "@/gql/graphql.ts";
-import {useQuery} from "@apollo/client";
-import {GET_FILTERED_USERS} from "@/lib/query/search/getFilteredUsers.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { User } from "@/gql/graphql.ts";
+import { useQuery } from "@apollo/client";
+import { GET_FILTERED_USERS } from "@/lib/query/search/getFilteredUsers.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
 import UserLoneBox from "./UserLoneBox.tsx";
-import {debounce} from "@/controller/debouncer.ts";
+import { debounce } from "@/utils/debouncer.ts";
 
 interface UserPage {
   pageRef: RefObject<HTMLDivElement>;
@@ -15,11 +15,11 @@ interface UserPage {
   finished?: boolean;
 }
 
-export default function UserPage({pageRef, setFinished, finished}: UserPage) {
-  const {searchQuery} = useParams();
+export default function UserPage({ pageRef, setFinished, finished }: UserPage) {
+  const { searchQuery } = useParams();
   const [userData, setUserData] = useState<User[]>([]);
   let start = 10;
-  const {loading, refetch: getUsers} = useQuery(GET_FILTERED_USERS, {
+  const { loading, refetch: getUsers } = useQuery(GET_FILTERED_USERS, {
     variables: {
       filter: searchQuery ? searchQuery : "",
       pagination: {
@@ -90,8 +90,8 @@ export default function UserPage({pageRef, setFinished, finished}: UserPage) {
   if (loading)
     return (
       <>
-        <GroupSearchSkeleton key={"user1"}/>
-        <GroupSearchSkeleton key={"user2"}/>
+        <GroupSearchSkeleton key={"user1"} />
+        <GroupSearchSkeleton key={"user2"} />
       </>
     );
 

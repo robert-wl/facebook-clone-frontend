@@ -1,12 +1,12 @@
-import {Dispatch, RefObject, SetStateAction, useEffect, useState} from "react";
-import {Post} from "@/gql/graphql.ts";
-import {useQuery} from "@apollo/client";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {debounce} from "@/controller/debouncer.ts";
+import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
+import { Post } from "@/gql/graphql.ts";
+import { useQuery } from "@apollo/client";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { debounce } from "@/utils/debouncer.ts";
 import styles from "@/assets/styles/search/search.module.scss";
 import PostSkeleton from "@/components/post/PostSkeleton.tsx";
 import PostBox from "@/components/post/PostBox.tsx";
-import {GET_FILTERED_POSTS} from "@/lib/query/search/getFilteredPosts.graphql.ts";
+import { GET_FILTERED_POSTS } from "@/lib/query/search/getFilteredPosts.graphql.ts";
 
 interface PostPage {
   setCurrPost: Dispatch<SetStateAction<Post | null>>;
@@ -16,11 +16,11 @@ interface PostPage {
   setFinished?: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function PostPage({setCurrPost, setShareModalState, pageRef, searchQuery, setFinished}: PostPage) {
+export default function PostPage({ setCurrPost, setShareModalState, pageRef, searchQuery, setFinished }: PostPage) {
   const [postData, setPostData] = useState<Post[]>([]);
   const [stop, setStop] = useState(false);
   let start = 4;
-  const {loading, refetch: getPosts} = useQuery(GET_FILTERED_POSTS, {
+  const { loading, refetch: getPosts } = useQuery(GET_FILTERED_POSTS, {
     variables: {
       filter: searchQuery ? searchQuery : "",
       pagination: {
@@ -103,8 +103,8 @@ export default function PostPage({setCurrPost, setShareModalState, pageRef, sear
           />
         );
       })}
-      {loading && !stop && <PostSkeleton/>}
-      {!stop && <PostSkeleton/>}
+      {loading && !stop && <PostSkeleton />}
+      {!stop && <PostSkeleton />}
     </div>
   );
 }

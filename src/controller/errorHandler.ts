@@ -1,6 +1,6 @@
 import { ApolloError } from "@apollo/client";
 import Toastify from "toastify-js";
-import { debounce } from "./debouncer.ts";
+import { debounce } from "../utils/debouncer.ts";
 import { toast } from "react-toastify";
 
 // @ts-ignore

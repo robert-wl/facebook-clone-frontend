@@ -1,13 +1,13 @@
-import {Dispatch, RefObject, SetStateAction, useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
-import {Group} from "@/gql/graphql.ts";
-import {useQuery} from "@apollo/client";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {debounce} from "@/controller/debouncer.ts";
+import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Group } from "@/gql/graphql.ts";
+import { useQuery } from "@apollo/client";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { debounce } from "@/utils/debouncer.ts";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
 import styles from "@/assets/styles/search/search.module.scss";
 import GroupLoneBox from "./GroupLoneBox.tsx";
-import {GET_FILTERED_GROUPS} from "@/lib/query/search/getFilteredGroups.graphql.ts";
+import { GET_FILTERED_GROUPS } from "@/lib/query/search/getFilteredGroups.graphql.ts";
 
 interface GroupPage {
   pageRef: RefObject<HTMLDivElement>;
@@ -15,11 +15,11 @@ interface GroupPage {
   finished?: boolean;
 }
 
-export default function GroupPage({pageRef, setFinished, finished}: GroupPage) {
-  const {searchQuery} = useParams();
+export default function GroupPage({ pageRef, setFinished, finished }: GroupPage) {
+  const { searchQuery } = useParams();
   const [groupData, setGroupData] = useState<Group[]>([]);
   let start = 10;
-  const {loading, refetch: getGroups} = useQuery(GET_FILTERED_GROUPS, {
+  const { loading, refetch: getGroups } = useQuery(GET_FILTERED_GROUPS, {
     variables: {
       filter: searchQuery ? searchQuery : "",
       pagination: {
@@ -90,8 +90,8 @@ export default function GroupPage({pageRef, setFinished, finished}: GroupPage) {
   if (loading)
     return (
       <>
-        <GroupSearchSkeleton key={1}/>
-        <GroupSearchSkeleton key={2}/>
+        <GroupSearchSkeleton key={1} />
+        <GroupSearchSkeleton key={2} />
       </>
     );
 

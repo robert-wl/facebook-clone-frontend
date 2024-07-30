@@ -5,13 +5,13 @@ import { ChangeEvent, useState } from "react";
 import { LiaBirthdayCakeSolid, LiaUserFriendsSolid } from "react-icons/lia";
 import { BsFillPersonPlusFill, BsGenderAmbiguous } from "react-icons/bs";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
-import { FriendInput, Maybe, Post, User } from "@/gql/graphql.ts";
+import type { FriendInput, Maybe, Post, User } from "@/gql/graphql.ts";
 import PostBox from "@/components/post/PostBox.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER } from "@/lib/query/user/getUser.graphql.ts";
 import { BiSolidMessageRoundedDetail, BiSolidPencil } from "react-icons/bi";
-import { IoIosArrowDown, IoIosArrowUp, IoMdReverseCamera } from "react-icons/io";
+import { IoIosArrowDown, IoMdReverseCamera } from "react-icons/io";
 import uploadStorage, { deleteStorage } from "@/controller/firebase/storage.ts";
 import { UPDATE_USER_PROFILE } from "@/lib/query/user/updateUserProfile.graphql.ts";
 import { UPDATE_USER_BACKGROUND } from "@/lib/query/user/updateUserBackground.graphql.ts";
@@ -30,13 +30,15 @@ import { BLOCK_USER } from "@/lib/query/notification/blockUser.graphql.ts";
 import promiseToast from "@/controller/toast/promiseToast.ts";
 import { toast } from "react-toastify";
 import useAuth from "@/hooks/use-auth.ts";
+import { Nullable } from "@/types/utils";
+import { AnimatePresence } from "framer-motion";
 
 export default function User() {
   const { username } = useParams();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Nullable<User>>(null);
   const [isPost, setIsPost] = useState(true);
   const [modalState, setModalState] = useState(false);
-  const [currPost, setCurrPost] = useState<Post | null>(null);
+  const [currPost, setCurrPost] = useState<Nullable<Post>>(null);
   const [shareModalState, setShareModalState] = useState(false);
   const [peopleMightKnowState, setPeopleMightKnowState] = useState(false);
 
@@ -154,11 +156,8 @@ export default function User() {
         username: username,
       },
     })
-      .then((data) => {
-        navigate("/messages/" + data.data.createConversation.id);
-      })
+      .then((data) => navigate("/messages/" + data.data.createConversation.id))
       .catch(debouncedError);
-    // navigate("/message/" + data.data.createConversation.id)
   };
 
   const handleBlock = () => {
@@ -177,7 +176,6 @@ export default function User() {
     });
   };
 
-  // if (loading) return <></>;
   return (
     <>
       {modalState && (
@@ -200,14 +198,12 @@ export default function User() {
         <Navbar />
         <header className={styles.header}>
           <div className={styles.headerContent}>
-            {auth?.username == username ? (
+            {auth?.username == username && (
               <IoMdReverseCamera
                 onClick={() => handleBackgroundInput()}
                 color={"black"}
                 size={"1.5rem"}
               />
-            ) : (
-              <div></div>
             )}
             <input
               id={"backgroundInput"}
@@ -298,13 +294,13 @@ export default function User() {
                 </div>
               )}
               <button
-                className={styles.mightKnow}
+                className={peopleMightKnowState ? styles.mightKnow : styles.mightKnowActive}
                 onClick={() => setPeopleMightKnowState(!peopleMightKnowState)}>
-                {peopleMightKnowState ? <IoIosArrowDown size={"1.2rem"} /> : <IoIosArrowUp size={"1.2rem"} />}
+                <IoIosArrowDown size={"1.2rem"} />
               </button>
             </span>
           </div>
-          {peopleMightKnowState && <PeopleMightKnowContainer key={"pplMightKnow"} />}
+          <AnimatePresence>{peopleMightKnowState && <PeopleMightKnowContainer key={"pplMightKnow"} />}</AnimatePresence>
           <div className={styles.info}>
             <p>
               <BsGenderAmbiguous size={"1.3rem"} />
@@ -348,23 +344,21 @@ export default function User() {
         </header>
         <div className={isPost ? styles.content : styles.contentFriend}>
           {isPost ? (
-            <>
-              <div>
-                {user &&
-                  user.posts?.map((post: Maybe<Post>) => {
-                    if (post)
-                      return (
-                        <PostBox
-                          key={post.id}
-                          post={post}
-                          setCurrPost={setCurrPost}
-                          setShareModalState={setShareModalState}
-                        />
-                      );
-                  })}
-                {user && user.posts?.length == 0 && <h4>No Posts</h4>}
-              </div>
-            </>
+            <div>
+              {user &&
+                user.posts?.map((post: Maybe<Post>) => {
+                  if (post)
+                    return (
+                      <PostBox
+                        key={post.id}
+                        post={post}
+                        setCurrPost={setCurrPost}
+                        setShareModalState={setShareModalState}
+                      />
+                    );
+                })}
+              {user && user.posts?.length == 0 && <h4>No Posts</h4>}
+            </div>
           ) : (
             <UserFriend />
           )}

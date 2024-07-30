@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { debounce } from "@/controller/debouncer.ts";
+import { debounce } from "@/utils/debouncer.ts";
 
 interface IProps {
   callback: () => void;

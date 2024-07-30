@@ -15,6 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <ThemeContextProvider>
           <BrowserRouter>
             <App />
+            <div id="modal-portal" />
           </BrowserRouter>
         </ThemeContextProvider>
       </AuthContextProvider>

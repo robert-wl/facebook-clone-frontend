@@ -24,19 +24,14 @@ export default function UserFriend() {
     variables: {
       username: username,
     },
-    onCompleted: (data) => {
-      console.log("hai");
-      setFriends(data.getUserFriends);
-    },
+    onCompleted: (data) => setFriends(data.getUserFriends),
     onError: debouncedError,
   });
   useQuery(GET_USER_MUTUALS, {
     variables: {
       username: username,
     },
-    onCompleted: (data) => {
-      setMutuals(data.getUserMutuals);
-    },
+    onCompleted: (data) => setMutuals(data.getUserMutuals),
     onError: debouncedError,
   });
 

@@ -41,6 +41,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
     onError: debouncedError,
   });
   const { auth } = useAuth();
+
   const [createComment] = useMutation(CREATE_COMMENT);
   const [likePost] = useMutation(LIKE_POST);
   const [deletePost] = useMutation(DELETE_POST);
