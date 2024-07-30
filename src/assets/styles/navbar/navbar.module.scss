@@ -151,7 +151,6 @@
       }
 
       .dropDown {
-        //display: flex;
         flex-direction: column;
         width: 9rem;
         position: absolute;
@@ -165,11 +164,13 @@
         > button a {
           display: flex;
           flex-direction: row;
+          width: 100%;
           border-color: transparent;
           background-color: transparent;
           color: var(--color);
           align-items: center;
           text-decoration: none;
+          border-radius: var(--border-radius);
 
           & a {
             width: 100%;

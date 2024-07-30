@@ -11,10 +11,12 @@ import SearchBar from "./SearchBar.tsx";
 import NotificationButton from "./buttons/NotificationButton.tsx";
 import { BsFillMoonFill } from "react-icons/bs";
 import useAuth from "@/hooks/use-auth.ts";
+import useTheme from "@/hooks/useTheme.ts";
 
 export default function Navbar() {
   const location = useLocation();
-  const { auth, toggleTheme, logout } = useAuth();
+  const { auth, logout } = useAuth();
+  const { toggleTheme } = useTheme();
   const imageRef = useRef<HTMLImageElement>(null);
   const dropdownRef = useRef<HTMLDialogElement>(null);
 

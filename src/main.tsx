@@ -6,14 +6,17 @@ import { BrowserRouter } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "./controller/apollo/handler.ts";
 import AuthContextProvider from "./components/context/AuthContextProvider.tsx";
+import ThemeContextProvider from "@/components/context/ThemeContextProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <AuthContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <ThemeContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ThemeContextProvider>
       </AuthContextProvider>
     </ApolloProvider>
   </React.StrictMode>,
