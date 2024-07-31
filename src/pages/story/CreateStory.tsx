@@ -49,7 +49,7 @@ export default function CreateStory() {
 
   const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const file = e.target.files[0];
+      const file = e.target.files?.[0];
 
       if (file.type != "image/png" && file.type != "image/jpeg") {
         return;
@@ -191,7 +191,7 @@ export default function CreateStory() {
                             fontFamily: content.font == "roman" ? "Times New Roman" : "Arial, serif",
                           }}
                           className={styles.background}>
-                          <p>{content.text}</p>
+                          <div dangerouslySetInnerHTML={{ __html: content.text }} />
                         </div>
                       </div>
                     </div>

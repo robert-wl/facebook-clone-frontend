@@ -18,6 +18,11 @@ interface Sidebar {
 export default function StorySidebar({ title, content, setContent, tab, setTab, handleSubmit, loading }: Sidebar) {
   const { auth } = useAuth();
 
+  const changeContent = (text: string) => {
+    const replaced = text.replace(/\n/g, "<br>");
+    setContent({ ...content, text: replaced });
+  };
+
   return (
     <>
       <div className={styles.barSpace} />
@@ -39,7 +44,7 @@ export default function StorySidebar({ title, content, setContent, tab, setTab, 
           <div className={styles.content}>
             <textarea
               placeholder={"Start typing..."}
-              onChange={(e) => setContent({ ...content, text: e.target.value })}
+              onChange={(e) => changeContent(e.target.value)}
             />
             <select
               value={content.font}

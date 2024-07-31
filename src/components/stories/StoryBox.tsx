@@ -1,7 +1,7 @@
 import styles from "@/assets/styles/story/story.module.scss";
-import {useState} from "react";
-import {MdArrowBackIosNew, MdArrowForwardIos} from "react-icons/md";
-import {Story} from "@/gql/graphql.ts";
+import { useState } from "react";
+import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
+import { Story } from "@/gql/graphql.ts";
 import ProgressBar from "./ProgressBar.tsx";
 import storyImageLoader from "@/controller/storyImageLoader.ts";
 
@@ -9,7 +9,7 @@ interface StoryBox {
   stories: Story[];
 }
 
-export default function StoryBox({stories}: StoryBox) {
+export default function StoryBox({ stories }: StoryBox) {
   const [page, setPage] = useState(0);
 
   const handlePageChange = (num: number) => {
@@ -24,15 +24,6 @@ export default function StoryBox({stories}: StoryBox) {
     <div className={styles.content}>
       <div className={styles.storyBox}>
         <header>
-          {/*{*/}
-          {/*    stories?.map((_, index) => {*/}
-          {/*        return (*/}
-          {/*            <div key={index} className={styles.progress}>*/}
-          {/*                <div className={styles.bar} />*/}
-          {/*            </div>*/}
-          {/*        );*/}
-          {/*    })*/}
-          {/*}*/}
           {stories?.map((_, index) => {
             if (index == page)
               return (
@@ -74,7 +65,7 @@ export default function StoryBox({stories}: StoryBox) {
             className={styles.left}
             onClick={() => handlePageChange(-1)}>
             <MdArrowBackIosNew
-              size={"2rem"}
+              size={"1.5rem"}
               color={"black"}
             />
           </div>
@@ -84,7 +75,7 @@ export default function StoryBox({stories}: StoryBox) {
             className={styles.right}
             onClick={() => handlePageChange(1)}>
             <MdArrowForwardIos
-              size={"2rem"}
+              size={"1.5rem"}
               color={"black"}
             />
           </div>

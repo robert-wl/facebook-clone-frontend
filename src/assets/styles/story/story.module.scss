@@ -44,6 +44,7 @@
       left: -15%;
       padding: 0.75rem;
       border-radius: 20rem;
+      transition-duration: var(--transition-duration-short);
 
       &:hover {
         background-color: gray;
@@ -58,6 +59,7 @@
       right: -15%;
       padding: 0.75rem;
       border-radius: 20rem;
+      transition-duration: var(--transition-duration-short);
 
       &:hover {
         background-color: gray;

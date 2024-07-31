@@ -1,14 +1,14 @@
 import styles from "@/assets/styles/imageCarousel.module.scss";
-import {useRef, useState} from "react";
-import {BiSolidLeftArrowCircle, BiSolidRightArrowCircle} from "react-icons/bi";
-import {FileUpload} from "@/controller/firebase/storage.ts";
-import {Maybe} from "@/gql/graphql.ts";
+import { useRef, useState } from "react";
+import { BiSolidLeftArrowCircle, BiSolidRightArrowCircle } from "react-icons/bi";
+import { FileUpload } from "@/controller/firebase/storage.ts";
+import { Maybe } from "@/gql/graphql.ts";
 
 interface ImageCarousel {
   files: Maybe<string>[];
 }
 
-export default function ImageCarousel({files: fileOutside}: ImageCarousel) {
+export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [files, _] = useState<FileUpload[]>(() => {
     return fileOutside!.map((file) => {
@@ -60,21 +60,21 @@ export default function ImageCarousel({files: fileOutside}: ImageCarousel) {
               onError={(e) => handleError(e, "video")}
               autoPlay={true}
               controls={true}>
-              <source src={files ? files[index].url : ""}/>
+              <source src={"https://youtube.com/shorts/lOvzEP5B5Jo?si=IdHlIK1SM1lWCu_B" || (files ? files[index].url : "")} />
             </video>
           )}
           {files && files.length > 1 && (
             <div
               onClick={() => handleLeft()}
               className={styles.leftButton}>
-              <BiSolidLeftArrowCircle size={35}/>
+              <BiSolidLeftArrowCircle size={35} />
             </div>
           )}
           {files && files.length > 1 && (
             <div
               onClick={() => handleRight()}
               className={styles.rightButton}>
-              <BiSolidRightArrowCircle size={35}/>
+              <BiSolidRightArrowCircle size={35} />
             </div>
           )}
           {files[index].type.includes("image") && (
