@@ -82,6 +82,7 @@
         background-color: rgb(100, 100, 100, 0.3);
         border-radius: 20rem;
       }
+
       > h4 {
         margin: 0;
       }
@@ -124,6 +125,7 @@
         flex: 1;
         width: 100%;
       }
+
       button {
         flex: 1;
         height: 2.5rem;
@@ -132,21 +134,35 @@
         margin: 0.5rem;
 
         &:first-child {
-          background-color: lightgray;
+          background-color: var(--button-color);
           border: 1px solid transparent;
           color: black;
+          transition-duration: var(--transition-duration-short);
+
+          &:hover {
+            background-color: var(--button-color-hover)
+          }
         }
 
         &:nth-child(2) {
-          background-color: #1877f2;
+          background-color: var(--blue-color);
           border: 1px solid transparent;
           color: white;
+          transition-duration: var(--transition-duration-short);
+
+          &:hover {
+            background-color: var(--blue-color-hover);
+          }
         }
 
         &:disabled {
-          background-color: lightgray;
+          background-color: var(--button-color);
           color: black;
           cursor: not-allowed;
+
+          &:hover {
+            background-color: var(--button-color);
+          }
         }
       }
     }

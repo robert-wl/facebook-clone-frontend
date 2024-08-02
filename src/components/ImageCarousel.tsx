@@ -60,7 +60,7 @@ export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
               onError={(e) => handleError(e, "video")}
               autoPlay={true}
               controls={true}>
-              <source src={"https://youtube.com/shorts/lOvzEP5B5Jo?si=IdHlIK1SM1lWCu_B" || (files ? files[index].url : "")} />
+              <source src={files?.[index].url ?? ""} />
             </video>
           )}
           {files && files.length > 1 && (

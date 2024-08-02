@@ -1,5 +1,5 @@
 import styles from "@/assets/styles/reels/reelsSidebar.module.scss";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { RiVideoAddFill } from "react-icons/ri";
 import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
@@ -24,8 +24,17 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
     }
   };
 
+  const changeVideo = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[e.target.files?.length - 1];
+
+    if (file) {
+      setCurrVideo(file);
+    }
+  };
+
   useEffect(() => {
     if (currVideo) {
+      console.log("CURR VIDEO", currVideo);
       if (currVideo && currVideo.type !== "video/mp4") {
         toast.error("Error: video must be in mp4 format");
         return;
@@ -41,6 +50,7 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
           toast.error("Error: video must be at least 1 second");
           return;
         }
+        console.log("IS SETT", currVideo);
         setVideo(currVideo);
       };
       videoHTML.src = URL.createObjectURL(currVideo);
@@ -76,7 +86,7 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
             type={"file"}
             accept={"video/*"}
             hidden={true}
-            onChange={(e) => setCurrVideo(e.target.files ? e.target.files[0] : null)}
+            onChange={(e) => changeVideo(e)}
           />
         </div>
         <textarea
@@ -90,7 +100,7 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
               <button>Cancel</button>
             </Link>
             <button
-              disabled={content == ""}
+              disabled={content == "" || !currVideo}
               onClick={() => promiseToast(handleSubmit)}>
               Post
             </button>

@@ -13,10 +13,10 @@ import useAuth from "@/hooks/use-auth.ts";
 
 interface ReelCommentSidebar {
   reelData: Reel;
-  setReelData: Dispatch<SetStateAction<Reel | null | undefined>>;
+  setReelsData: Dispatch<SetStateAction<Reel[]>>;
 }
 
-export default function ReelCommentSidebar({ reelData, setReelData }: ReelCommentSidebar) {
+export default function ReelCommentSidebar({ reelData, setReelsData }: ReelCommentSidebar) {
   const { auth } = useAuth();
   const [createReelComment] = useMutation(CREATE_REEL_COMMENT);
   useQuery(GET_REEL_COMMENTS, {
@@ -28,14 +28,16 @@ export default function ReelCommentSidebar({ reelData, setReelData }: ReelCommen
       if (!e.message.includes("record not")) debouncedError(e);
     },
     onCompleted: (data) => {
-      setReelData((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          commentCount: data.getReelComments.length,
-        };
-      });
       setComments(data.getReelComments);
+      setReelsData((prev) => {
+        return prev.map((reel) => {
+          if (reel.id != reelData.id) return reel;
+          return {
+            ...reel,
+            commentCount: data.getReelComments.length,
+          };
+        });
+      });
     },
   });
   const [comments, setComments] = useState<ReelComment[]>([]);
@@ -61,12 +63,14 @@ export default function ReelCommentSidebar({ reelData, setReelData }: ReelCommen
       if (!data) return;
 
       setComments([data.data.createReelComment, ...comments]);
-      setReelData((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          commentCount: prev?.commentCount + 1,
-        };
+      setReelsData((prev) => {
+        return prev.map((reel) => {
+          if (reel.id != reelData.id) return reel;
+          return {
+            ...reel,
+            commentCount: reel.commentCount + 1,
+          };
+        });
       });
 
       setReset(reset + 1);

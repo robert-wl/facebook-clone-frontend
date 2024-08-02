@@ -1,13 +1,13 @@
 import styles from "@/assets/styles/reels/createReels.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import ReelsSidebar from "@/components/reels/ReelsSidebar.tsx";
-import {useState} from "react";
+import { useState } from "react";
 import uploadStorage from "@/controller/firebase/storage.ts";
-import {useMutation} from "@apollo/client";
-import {CREATE_REEL} from "@/lib/query/reels/createReel.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {useNavigate} from "react-router-dom";
-import {toast} from "react-toastify";
+import { useMutation } from "@apollo/client";
+import { CREATE_REEL } from "@/lib/query/reels/createReel.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function CreateReels() {
   const [video, setVideo] = useState<File | null>(null);
@@ -37,7 +37,7 @@ export default function CreateReels() {
   return (
     <>
       <div className={styles.page}>
-        <Navbar/>
+        <Navbar />
         <div className={styles.content}>
           <ReelsSidebar
             setVideo={setVideo}
@@ -49,14 +49,14 @@ export default function CreateReels() {
             <div className={styles.container}>
               <div className={styles.containerHor}>
                 <div className={styles.story}>
-                  <div className={video ? styles.storyView : styles.storyEmpty}>
+                  <div className={styles.storyView}>
                     <div className={styles.background}>
                       {!video && <h3>Insert a video</h3>}
                       {video && (
                         <video
                           autoPlay={true}
                           loop={true}>
-                          <source src={URL.createObjectURL(video)}/>
+                          <source src={URL.createObjectURL(video)} />
                         </video>
                       )}
                     </div>
