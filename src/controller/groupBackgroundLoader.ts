@@ -1,4 +1,4 @@
-import def from "../assets/default-group-cover.png";
+import def from "../../public/group/default-group-cover.png";
 import { FileUpload } from "./firebase/storage.ts";
 
 export const defaultGroupBackground = def as string;

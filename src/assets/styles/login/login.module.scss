@@ -9,6 +9,44 @@
   align-items: center;
   overflow-x: hidden;
 
+  > .users {
+    position: absolute;
+    left: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 0.5rem;
+
+    > div {
+      background-color: white;
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
+      max-width: 15rem;
+      width: 15rem;
+
+      > button {
+        align-self: center;
+        width: 7rem;
+        background-color: var(--green-color);
+        border-color: transparent;
+        transition-duration: var(--transition-duration-short);
+        color: white;
+        border-radius: 0.175rem;
+
+        &:hover {
+          background-color: var(--green-color-hover);
+        }
+
+        > div {
+          padding: 0.5rem;
+        }
+      }
+    }
+  }
+
+
   > h5 {
     color: var(--blue-color);
     font-size: 4rem;

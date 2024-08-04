@@ -3,7 +3,6 @@
   flex: 0;
   flex-direction: row;
   width: 100%;
-  height: 100%;
 
   .left {
     a {
@@ -41,21 +40,23 @@
       max-width: 85%;
       justify-content: start;
 
-      > h4 {
-        margin: 0.5rem 0.5rem 0 0.75rem;
+      h4 {
+        margin: 0.5rem 0.9rem 0 0.9rem;
+        padding: 0 0.5rem 0 0;
         font-size: 0.9rem;
+
       }
 
-      > div {
+      div {
+        margin: -0.25rem 0.9rem 0 0.9rem;
+        padding: 0 0.5rem 0.5rem 0;
+        word-wrap: break-word;
+        margin-top: 0.25rem;
         text-align: start;
-        word-wrap: anywhere;
-        max-width: 30rem;
-        > p {
-          margin: 0 0.5rem 0.2rem 0.75rem;
-          text-align: start;
-          word-wrap: anywhere;
-          max-width: 30rem;
-        }
+      }
+
+      p {
+        margin: 0;
       }
 
       .like {
@@ -64,12 +65,13 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        background-color: transparent;
-        right: 0%;
-        bottom: -1.5rem;
+        right: -2rem;
+        bottom: -10%;
+        padding: 0.3rem 0.3rem 0.3rem;
         box-shadow: 1px 1px 5px rgb(100, 100, 100, 0.2);
         border-radius: 10rem;
         font-size: 0.75rem;
+        background-color: var(--main-color);
 
         svg {
           padding: 0.2rem 0.2rem 0.2rem;

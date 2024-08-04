@@ -3,7 +3,7 @@ import styles from "@/assets/styles/misc/footer.module.scss";
 export default function Footer() {
   return (
     <>
-      <div className={styles.footerBox}/>
+      <div className={styles.footerBox} />
       <div className={styles.footer}>
         <div className={styles.mid}>
           <header>
@@ -13,9 +13,9 @@ export default function Footer() {
             <a href={"https://www.facebook.com/policies/cookies/"}>Cookies</a>
             <a href={"https://www.facebook.com/policies?ref=pf"}>Terms</a>
           </header>
-          <hr/>
+          <hr />
           <footer>
-            <p>Meta @ 2023</p>
+            <p>Yahkerobertkertasnya @ 2023</p>
           </footer>
         </div>
       </div>

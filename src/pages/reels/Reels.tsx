@@ -138,6 +138,7 @@ export default function Reels() {
                 <video
                   autoPlay={true}
                   loop={true}
+                  crossOrigin="anonymous"
                   key={currentReel.id}
                   onClick={(e) => pauseHandler(e)}>
                   <source src={reelLoader(currentReel)} />

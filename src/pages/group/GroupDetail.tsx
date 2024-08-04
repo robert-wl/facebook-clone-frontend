@@ -1,7 +1,6 @@
 import styles from "@/assets/styles/group/groupDetail.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import GroupDetailSidebar from "@/components/group/GroupDetailSidebar.tsx";
-import groupBackgroundLoader from "@/controller/groupBackgroundLoader.ts";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_GROUP } from "@/lib/query/group/getGroup.graphql.ts";
@@ -26,6 +25,7 @@ import { LEAVE_GROUP } from "@/lib/query/group/leaveGroup.graphql.ts";
 import { toast } from "react-toastify";
 import promiseToast from "@/controller/toast/promiseToast.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import { catchImageError, defaultGroupCover, getImageURL } from "@/utils/image-utils.ts";
 
 export default function GroupDetail() {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export default function GroupDetail() {
   const backgroundInputRef = useRef<HTMLInputElement>(null);
   const { auth } = useAuth();
   const { groupId } = useParams();
-  const { data, refetch } = useQuery(GET_GROUP, {
+  const { data, refetch, loading } = useQuery(GET_GROUP, {
     variables: {
       id: groupId,
     },
@@ -51,6 +51,7 @@ export default function GroupDetail() {
     onError: debouncedError,
   });
 
+  console.log(data);
   useEffect(() => {
     if (data) {
       setGroup(data.getGroup);
@@ -119,7 +120,8 @@ export default function GroupDetail() {
     }
   };
 
-  if (group?.members?.length == 0) return <Navigate to={"/group"} />;
+  console.log(!loading, group?.members?.length == 0);
+  if (!loading && group?.members?.length == 0) return <Navigate to={"/group"} />;
 
   return (
     <>
@@ -137,8 +139,6 @@ export default function GroupDetail() {
           members={group?.members}
         />
       )}
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/*// @ts-ignore*/}
       <NewGroupPostModal
         modalState={newGroupModalState}
         setModalState={setNewGroupModalState}
@@ -157,7 +157,6 @@ export default function GroupDetail() {
         <div className={styles.content}>
           {group?.joined == "joined" ? (
             <GroupDetailSidebar
-              key={Date.now()}
               group={group}
               setInviteGroupModalState={setInviteGroupModalState}
               setMembersModalState={setMembersModalState}
@@ -165,7 +164,8 @@ export default function GroupDetail() {
             />
           ) : (
             <GroupSidebar
-              handleFilter={handleFilter}
+              setFilter={handleFilter}
+              filter={""}
               redirect={true}
             />
           )}
@@ -190,62 +190,58 @@ export default function GroupDetail() {
                   accept={"image/*"}
                 />
                 <img
-                  src={groupBackgroundLoader(group?.background)}
+                  src={getImageURL(group.background, defaultGroupCover)}
+                  onError={catchImageError(defaultGroupCover)}
                   alt={""}
                 />
               </div>
               <div className={styles.info}>
                 <div className={styles.top}>
                   <h2>{group?.name}</h2>
-                  {group?.joined == "joined" && (
-                    <button onClick={() => promiseToast(handleLeave)}>
-                      <h4>Leave Group</h4>
-                    </button>
-                  )}
+                  {group?.joined == "joined" && <button onClick={() => promiseToast(handleLeave)}>Leave Group</button>}
                   {group?.joined == "pending" && (
                     <button
                       onClick={() => setInviteGroupModalState(true)}
                       disabled={true}>
-                      <h4>Requested</h4>
+                      Requested
                     </button>
                   )}
-                  {group?.joined == "not accepted" && (
-                    <button onClick={() => handleRequestJoin()}>
-                      <h4>Accept Invite</h4>
-                    </button>
-                  )}
-                  {group?.joined == "not joined" && (
-                    <button onClick={() => handleRequestJoin()}>
-                      <h4>Request</h4>
-                    </button>
-                  )}
+                  {group?.joined == "not accepted" && <button onClick={() => handleRequestJoin()}>Accept Invite</button>}
+                  {group?.joined == "not joined" && <button onClick={() => handleRequestJoin()}>Request</button>}
                 </div>
                 <hr />
                 <nav>
                   {group?.joined == "joined" ? (
                     <>
-                      <div
+                      <button
                         className={tab == "discussion" ? styles.tabContentActive : styles.tabContent}
                         onClick={() => setTab("discussion")}>
                         Discussion
-                      </div>
-                      <div
+                      </button>
+                      <button
                         className={tab == "files" ? styles.tabContentActive : styles.tabContent}
                         onClick={() => setTab("files")}>
                         Files
-                      </div>
-                      <div
+                      </button>
+                      <button
                         className={tab == "people" ? styles.tabContentActive : styles.tabContent}
                         onClick={() => setTab("people")}>
                         People
-                      </div>
+                      </button>
                     </>
                   ) : (
-                    <div
-                      className={tab == "about" ? styles.tabContentActive : styles.tabContent}
-                      onClick={() => setTab("about")}>
-                      About
-                    </div>
+                    <>
+                      <button
+                        className={tab == "about" ? styles.tabContentActive : styles.tabContent}
+                        onClick={() => setTab("about")}>
+                        About
+                      </button>
+                      <button
+                        className={tab == "people" ? styles.tabContentActive : styles.tabContent}
+                        onClick={() => setTab("people")}>
+                        People
+                      </button>
+                    </>
                   )}
                 </nav>
               </div>

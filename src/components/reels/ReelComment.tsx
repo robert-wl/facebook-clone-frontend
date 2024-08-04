@@ -14,14 +14,14 @@ import { Link } from "react-router-dom";
 import LikeLabel from "@/components/post/LikeLabel.tsx";
 import useAuth from "@/hooks/use-auth.ts";
 
-interface ReelCommentBox {
+interface IProps {
   comment: ReelComment;
   parent?: ReelComment;
   reply: boolean;
   setComment?: Dispatch<SetStateAction<ReelComment>>;
 }
 
-export default function ReelCommentBox({ comment: iComment, reply, parent, setComment: setParentComment }: ReelCommentBox) {
+export default function ReelCommentBox({ comment: iComment, reply, parent, setComment: setParentComment }: IProps) {
   const { auth } = useAuth();
   const [comment, setComment] = useState<ReelComment>(iComment);
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -54,9 +54,9 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
   };
 
   const handleComment = async () => {
-    console.log(commentInput);
-    if (commentInput.length < 8) return;
+    // if (commentInput.length < 8) return;
 
+    console.log("TEST");
     if (reply) {
       const data = await createReelComment({
         variables: {
@@ -69,7 +69,10 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
 
       setCommentInput("");
       setReset(reset + 1);
-      if (!data) return;
+
+      if (!data) {
+        return;
+      }
 
       if (comment.comments?.length && comment.comments.length > 0) {
         setComment({
@@ -85,7 +88,7 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
     } else {
       if (!parent) return;
       const replyContent = commentInput;
-      const tag = `<a href="user/${parent.user.username}" class="wysiwyg-mention" data-mention data-value="${parent.user.username}">@${parent.user.username}</a>&nbsp;`;
+      const tag = `<a href="/user/${parent.user.username}" class="wysiwyg-mention" data-mention data-value="${parent.user.username}">@${parent.user.username}</a>&nbsp;`;
 
       const modifiedString = replyContent.slice(0, 3) + tag + replyContent.slice(3);
       const data = await createReelComment({
@@ -107,7 +110,7 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
         if (prev.comments) {
           return {
             ...prev,
-            comments: [...prev.comments, data.data.createReelComment],
+            comments: [data.data.createReelComment, ...prev.comments],
           };
         } else {
           return {
@@ -137,7 +140,7 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
               {" " + comment.user.lastName}
             </h4>
             <div dangerouslySetInnerHTML={{ __html: domPurify(comment.content) }} />
-            {comment?.likeCount != undefined && comment?.likeCount > 0 && <LikeLabel count={comment.likeCount} />}
+            {!!comment?.likeCount && comment?.likeCount > 0 && <LikeLabel count={comment.likeCount} />}
           </div>
           <div className={styles.buttons}>
             <p
@@ -145,14 +148,9 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
               className={comment?.liked ? styles.liked : ""}>
               Like
             </p>
-            <p
-              onClick={() => {
-                setShowReplyInput(!showReplyInput);
-              }}>
-              Reply
-            </p>
+            <p onClick={() => setShowReplyInput(!showReplyInput)}>Reply</p>
           </div>
-          {!showReply && comment?.comments?.length != undefined && comment?.comments?.length > 0 && (
+          {!showReply && !!comment?.comments?.length && comment?.comments?.length > 0 && (
             <p
               className={styles.reply}
               onClick={() => setShowReply(true)}>
@@ -163,7 +161,7 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
           {showReplyInput && (
             <div className={styles.commentInput}>
               <img
-                src={auth?.profile ? auth.profile : "@/src/assets/default-profile.jpg"}
+                src={userProfileLoader(auth?.profile)}
                 alt={""}
               />
               <div className={styles.commentContainer}>
@@ -186,12 +184,11 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
             </div>
           )}
           {showReply &&
-            comment.comments &&
-            comment.comments.length > 0 &&
-            comment.comments.map((comment) => {
+            comment.comments?.map((comment) => {
               if (comment)
                 return (
                   <ReelCommentBox
+                    key={comment.id}
                     comment={comment}
                     reply={false}
                     parent={iComment}

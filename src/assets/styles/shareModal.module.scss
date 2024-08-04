@@ -1,3 +1,5 @@
+@use "./mixins.scss" as *;
+
 .background {
   display: flex;
   position: fixed;
@@ -9,29 +11,61 @@
   z-index: 10000;
 
   .box {
+    position: relative;
     color: var(--color);
     display: flex;
     flex-direction: column;
     width: 25rem;
-    padding: 1rem;
+    padding: 0 1rem 1rem;
     background-color: var(--main-color);
     box-shadow: var(--box-shadow-very-light);
+    overflow-y: auto;
+    overflow-x: hidden;
+    @include scrollbar;
+
 
     header {
+      top: 0;
+      position: sticky;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      background-color: var(--main-color);
+      padding-top: 1rem;
 
-      h2 {
-        flex: 1;
-        padding: 0;
-        margin: 0;
-        margin-left: 1rem;
-      }
+      div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
 
-      svg {
-        cursor: pointer;
+        h2 {
+          flex: 1;
+          padding: 0;
+          margin: 0;
+          margin-left: 1rem;
+        }
+
+        div {
+          position: absolute;
+          right: 0;
+          width: fit-content;
+          svg {
+            display: flex;
+            align-self: center;
+            padding: 0.5rem;
+            border-radius: 10rem;
+            background-color: var(--button-color);
+            cursor: pointer;
+            fill: var(--color);
+
+            &:hover {
+              background-color: var(--button-color-hover);
+            }
+          }
+        }
       }
     }
 
@@ -112,6 +146,7 @@
         align-items: center;
         padding: 0.5rem 0;
         width: 100%;
+        border-radius: var(--border-radius);
 
         &:hover {
           cursor: pointer;
@@ -133,6 +168,11 @@
           > span {
             margin-left: 1rem;
           }
+
+        }
+
+        > svg {
+          margin-right: 0.5rem;
         }
 
         &:hover {

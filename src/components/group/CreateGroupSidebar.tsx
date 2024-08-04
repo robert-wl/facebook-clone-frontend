@@ -7,13 +7,14 @@ import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useAuth from "@/hooks/use-auth.ts";
+import { IGroupData } from "@/pages/group/CreateGroup.tsx";
 
-interface CreateGroupSidebar {
-  groupData: { name: string; privacy: string; about: string };
-  setGroupData: Dispatch<SetStateAction<{ name: string; privacy: string; about: string }>>;
+interface IProps {
+  groupData: IGroupData;
+  setGroupData: Dispatch<SetStateAction<IGroupData>>;
 }
 
-export default function CreateGroupSidebar({ groupData, setGroupData }: CreateGroupSidebar) {
+export default function CreateGroupSidebar({ groupData, setGroupData }: IProps) {
   const [createGroup] = useMutation(CREATE_GROUP);
   const navigate = useNavigate();
   const { auth } = useAuth();

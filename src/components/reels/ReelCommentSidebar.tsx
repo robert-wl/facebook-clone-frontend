@@ -47,7 +47,6 @@ export default function ReelCommentSidebar({ reelData, setReelsData }: ReelComme
   const handleComment = async () => {
     const commentContent = comment;
 
-    // return console.log(commentContent);
     setComment("");
 
     if (commentContent.length > 8) {
@@ -95,13 +94,11 @@ export default function ReelCommentSidebar({ reelData, setReelsData }: ReelComme
       <div className={styles.content}>
         {comments?.map((cmnt, index) => {
           return (
-            <>
-              <ReelCommentBox
-                key={index + cmnt.id}
-                comment={cmnt}
-                reply={true}
-              />
-            </>
+            <ReelCommentBox
+              key={index + cmnt.id}
+              comment={cmnt}
+              reply={true}
+            />
           );
         })}
         {comments.length == 0 && <h5>No comments</h5>}

@@ -101,15 +101,16 @@ $background-color: #000000;
         .left {
           display: flex;
           position: absolute;
-          background-color: rgb(200, 200, 200, 0.8);
+          background-color: var(--main-color);
           border-radius: 20rem;
           transform: translate(0, -50%);
           top: 50%;
           left: -15%;
           padding: 0.5rem;
+          transition-duration: var(--transition-duration-short);
 
           &:hover {
-            background-color: rgb(200, 200, 200, 0.9);
+            background-color: var(--gray-color-hover);
             cursor: pointer;
           }
         }
@@ -117,15 +118,16 @@ $background-color: #000000;
         .right {
           display: flex;
           position: absolute;
-          background-color: rgb(200, 200, 200, 0.8);
+          background-color: var(--main-color);
           border-radius: 20rem;
           transform: translate(0, -50%);
           top: 50%;
           right: -15%;
           padding: 0.5rem;
+          transition-duration: var(--transition-duration-short);
 
           &:hover {
-            background-color: rgb(200, 200, 200, 0.9);
+            background-color: var(--gray-color-hover);
             cursor: pointer;
           }
         }
@@ -147,6 +149,7 @@ $background-color: #000000;
               background-color: rgb(100, 100, 100, 0.75);
               border-radius: 20rem;
               color: white;
+              transition-duration: var(--transition-duration-short);
 
               &:hover {
                 cursor: pointer;

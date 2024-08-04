@@ -101,7 +101,6 @@ export default function GroupFeed({ setShareModalState, setCurrPost, pageRef }: 
           })}
         </>
       )}
-      {/*{loading && !stop && <PostSkeleton />}*/}
       {!stop && <PostSkeleton />}
     </div>
   );

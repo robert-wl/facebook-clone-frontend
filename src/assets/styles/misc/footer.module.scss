@@ -38,8 +38,9 @@
 
     > footer {
       width: 30rem;
-      text-align: start;
+      text-align: center;
       display: flex;
+        justify-content: center;
       gap: 0.5rem;
       p {
         margin: 0;

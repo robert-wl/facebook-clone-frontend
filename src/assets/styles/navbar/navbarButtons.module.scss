@@ -11,7 +11,7 @@
 
 
   &:hover {
-    background-color: var(--main-hover-color);
+    background-color: var(--main-color-hover);
     border-radius: 0.5rem;
   }
 }
@@ -21,7 +21,7 @@
   border-bottom: 0.25rem solid #1877f2;
 
   &:hover {
-    background-color: #f0f2f5;
+    background-color: var(--main-color-hover);
     border-radius: 0.5rem 0.5rem 0 0;
   }
 }

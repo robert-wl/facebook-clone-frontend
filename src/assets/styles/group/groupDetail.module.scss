@@ -91,6 +91,7 @@
               padding: 0.75rem;
               margin: 1rem;
               width: fit-content;
+              transition-duration: var(--transition-duration-short);
 
               h4 {
                 margin: 0;
@@ -99,12 +100,17 @@
               }
 
               &:disabled {
-                background-color: var(--button-color);
-                color: var(--color);
+                color: black;
+                background-color: var(--gray-color);
+                cursor: not-allowed;
 
                 &:hover {
-                  cursor: not-allowed;
+                    background-color: var(--gray-color);
                 }
+              }
+
+              &:hover {
+                background-color: var(--blue-button-hover);
               }
             }
           }
@@ -120,13 +126,17 @@
               padding: 1rem;
               width: 7rem;
               border-bottom: var(--border-tab);
+              background-color: transparent;
+              border: none;
+              border-bottom: var(--border-tab);
+              font-weight: bolder;
+              color: var(--color);
             }
 
             .tabContentActive {
               @extend .tabContent;
               border-bottom: var(--border-tab-active);
               color: var(--blue-color);
-              font-weight: bolder;
             }
           }
         }

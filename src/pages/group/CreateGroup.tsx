@@ -1,12 +1,20 @@
 import styles from "@/assets/styles/group/createGroup.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
-import {useState} from "react";
+import { useState } from "react";
 import CreateGroupSidebar from "@/components/group/CreateGroupSidebar.tsx";
-import {defaultGroupBackground} from "@/controller/groupBackgroundLoader.ts";
-import {defaultUserProfile} from "@/controller/userProfileLoader.ts";
+import { defaultGroupBackground } from "@/controller/groupBackgroundLoader.ts";
+import { defaultUserProfile } from "@/controller/userProfileLoader.ts";
+
+const defaultGroupData = {
+  name: "",
+  privacy: "Public",
+  about: "",
+};
+
+export type IGroupData = typeof defaultGroupData;
 
 export default function CreateGroup() {
-  const [groupData, setGroupData] = useState({
+  const [groupData, setGroupData] = useState<IGroupData>({
     name: "",
     privacy: "Public",
     about: "",
@@ -15,7 +23,7 @@ export default function CreateGroup() {
   return (
     <>
       <div className={styles.page}>
-        <Navbar/>
+        <Navbar />
         <div className={styles.content}>
           <CreateGroupSidebar
             groupData={groupData}
@@ -34,7 +42,7 @@ export default function CreateGroup() {
                 <header>
                   <h2>{groupData.name == "" ? "Group name..." : groupData.name}</h2>
                   <p>{groupData.privacy} • 1 member</p>
-                  <hr/>
+                  <hr />
                   <div className={styles.tab}>
                     <h4>Discussion</h4>
                     <h4>People</h4>
@@ -54,12 +62,6 @@ export default function CreateGroup() {
               </div>
             </div>
           </div>
-          {/*<ReelsSidebar*/}
-          {/*    setVideo={setVideo}*/}
-          {/*    content={content}*/}
-          {/*    setContent={setContent}*/}
-          {/*    handleSubmit={handleSubmit}*/}
-          {/*/>*/}
         </div>
       </div>
     </>

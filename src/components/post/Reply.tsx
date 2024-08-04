@@ -46,7 +46,7 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
 
   const handleReply = () => {
     if (c) {
-      const tag = `<a href="user/${c.user.username}" class="wysiwyg-mention" data-mention data-value="${c.user.username}">@${c.user.username}</a>&nbsp;`;
+      const tag = `<a href="/user/${c.user.username}" class="wysiwyg-mention" data-mention data-value="${c.user.username}">@${c.user.username}</a>&nbsp;`;
 
       const modifiedString = replyContent.slice(0, 3) + tag + replyContent.slice(3);
       createComment({
@@ -152,7 +152,6 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
                     size={"1rem"}
                     onClick={() => handleReply()}
                     color={replyContent.length > 8 ? "blue" : ""}
-                    disabled={replyContent.length == 0}
                   />
                 </div>
               </div>

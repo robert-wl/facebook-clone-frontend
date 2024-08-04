@@ -1,24 +1,26 @@
 import styles from "@/assets/styles/group/groupSidebar.module.scss";
-import {AiOutlineSearch} from "react-icons/ai";
-import {HiMiniHome} from "react-icons/hi2";
-import {FaCompass} from "react-icons/fa";
-import {Dispatch, SetStateAction} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import {useQuery} from "@apollo/client";
-import {GET_JOINED_GROUPS} from "@/lib/query/group/getJoinedGroups.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {Group} from "@/gql/graphql.ts";
-import groupBackgroundLoader from "@/controller/groupBackgroundLoader.ts";
+import { AiOutlineSearch } from "react-icons/ai";
+import { HiMiniHome } from "react-icons/hi2";
+import { FaCompass } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { GET_JOINED_GROUPS } from "@/lib/query/group/getJoinedGroups.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { Group } from "@/gql/graphql.ts";
+import PeopleArtIcon from "@/components/icons/colored/PeopleArtIcon.tsx";
+import { defaultGroupCover } from "@/utils/image-utils.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
-interface GroupSidebar {
+interface IProps {
   redirect: boolean;
-  handleFilter?: (filter: string) => void;
+  filter: string;
+  setFilter?: (filter: string) => void;
   currentTab?: string;
-  setCurrentTab?: Dispatch<SetStateAction<string>>;
+  setCurrentTab?: (tab: string) => void;
 }
 
-export default function GroupSidebar({handleFilter, redirect, currentTab, setCurrentTab}: GroupSidebar) {
-  const {data} = useQuery(GET_JOINED_GROUPS, {
+export default function GroupSidebar({ filter, setFilter, redirect, currentTab, setCurrentTab }: IProps) {
+  const { data } = useQuery(GET_JOINED_GROUPS, {
     fetchPolicy: "cache-and-network",
     onError: debouncedError,
   });
@@ -32,17 +34,18 @@ export default function GroupSidebar({handleFilter, redirect, currentTab, setCur
   };
   return (
     <>
-      <div className={styles.barSpace}/>
+      <div className={styles.barSpace} />
       <div className={styles.bar}>
         <header>
           <div className={styles.bio}>
             <h2>Groups</h2>
-            {!redirect && handleFilter && (
+            {!redirect && setFilter && (
               <div className={styles.search}>
-                <AiOutlineSearch/>
+                <AiOutlineSearch />
                 <input
                   type={"text"}
-                  onChange={(e) => handleFilter(e.target.value)}
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
                   placeholder={"Find groups..."}
                 />
               </div>
@@ -54,7 +57,7 @@ export default function GroupSidebar({handleFilter, redirect, currentTab, setCur
             className={currentTab == "feed" ? styles.containerActive : styles.container}
             onClick={() => handleTab("feed")}>
             <div className={styles.logo}>
-              <HiMiniHome size={"1.5rem"}/>
+              <HiMiniHome size={"1.5rem"} />
             </div>
             <h4>Your Feed</h4>
           </div>
@@ -62,31 +65,44 @@ export default function GroupSidebar({handleFilter, redirect, currentTab, setCur
             className={currentTab == "discover" ? styles.containerActive : styles.container}
             onClick={() => handleTab("discover")}>
             <div className={styles.logo}>
-              <FaCompass size={"1.5rem"}/>
+              <FaCompass size={"1.5rem"} />
             </div>
             <h4>Discover</h4>
           </div>
-          <button>
-            <Link to={"/group/create"}>+ Create new group</Link>
-          </button>
-          <hr/>
+
+          <Link
+            className={styles.createGroup}
+            to={"/group/create"}>
+            <button>+ Create new group</button>
+          </Link>
+
+          <hr />
           <h3>Groups you've joined</h3>
-          {data &&
-            data.getJoinedGroups.map((group: Group) => {
-              return (
-                <Link
-                  to={`/group/${group.id}`}
-                  key={group.id}>
-                  <div className={styles.group}>
-                    <img
-                      src={groupBackgroundLoader(group.background)}
-                      alt={""}
-                    />
-                    <h4>{group.name}</h4>
-                  </div>
-                </Link>
-              );
-            })}
+          {data?.getJoinedGroups.length > 0 ? (
+            <div className={styles.groupList}>
+              {data.getJoinedGroups.map((group: Group) => {
+                return (
+                  <Link
+                    to={`/group/${group.id}`}
+                    key={group.id}>
+                    <div className={styles.group}>
+                      <SafeImage
+                        src={group.background}
+                        defaultSrc={defaultGroupCover}
+                      />
+                      <h4>{group.name}</h4>
+                    </div>
+                  </Link>
+                );
+              })}
+              <div style={{ height: "10rem" }} />
+            </div>
+          ) : (
+            <div>
+              <PeopleArtIcon />
+              <h3>You haven't joined any groups yet.</h3>
+            </div>
+          )}
         </div>
       </div>
     </>
