@@ -5,8 +5,8 @@ import { useQuery } from "@apollo/client";
 import { GET_FRIENDS } from "@/lib/query/friend/getFriends.graphql.ts";
 import { User } from "@/gql/graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface VisibilityModal {
   setVisibilityModalState: Dispatch<SetStateAction<boolean>>;
@@ -76,7 +76,11 @@ export default function VisibilityModal({ setVisibilityModalState, visibilityLis
                   className={styles.friend}
                   onClick={() => handleCheck(user)}>
                   <div>
-                    <img src={userProfileLoader(user.profile)} />
+                    <SafeImage
+                      src={user.profile}
+                      type={"user-profile"}
+                      alt={"profile picture"}
+                    />
                     <span>
                       {user.firstName} {user.lastName}
                     </span>

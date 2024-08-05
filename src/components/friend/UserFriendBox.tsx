@@ -1,23 +1,23 @@
 import styles from "@/assets/styles/friends/userFriendBox.module.scss";
-import {Link} from "react-router-dom";
-import {User} from "@/gql/graphql.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
+import { Link } from "react-router-dom";
+import { User } from "@/gql/graphql.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface UserFriendBox {
   friend: User;
   username: string;
 }
 
-export default function UserFriendBox({username, friend}: UserFriendBox) {
+export default function UserFriendBox({ username, friend }: UserFriendBox) {
   return (
     <>
       {username == friend.username.toString() ? (
         <div className={styles.container}>
           <header>
             <Link to={"/user/" + friend.username}>
-              <img
-                src={userProfileLoader(friend.profile)}
-                alt={""}
+              <SafeImage
+                src={friend.profile}
+                type={"user-profile"}
               />
             </Link>
           </header>
@@ -32,9 +32,9 @@ export default function UserFriendBox({username, friend}: UserFriendBox) {
         <div className={styles.container}>
           <header>
             <Link to={"/user/" + friend.username}>
-              <img
-                src={userProfileLoader(friend.profile)}
-                alt={""}
+              <SafeImage
+                src={friend.profile}
+                type={"user-profile"}
               />
             </Link>
           </header>

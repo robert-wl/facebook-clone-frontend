@@ -11,9 +11,9 @@ import { PiArrowBendDownRightDuotone } from "react-icons/pi";
 import { AiFillLike } from "react-icons/ai";
 import RichText from "@/components/richText/RichText.tsx";
 import domPurify from "@/controller/domPurify.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import ProfilePicture from "@/components/ProfilePicture.tsx";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface Comments {
   comment: Comment | Maybe<Comment>;
@@ -130,9 +130,10 @@ export default function Comments({ comment }: Comments) {
             {showReplyInput && (
               <div className={styles.commentInput}>
                 <div className={styles.image}>
-                  <img
-                    src={userProfileLoader(auth?.profile)}
-                    alt={""}
+                  <SafeImage
+                    src={auth?.profile}
+                    type={"user-profile"}
+                    alt={"profile picture"}
                   />
                 </div>
                 <div className={styles.commentContainer}>

@@ -1,25 +1,25 @@
 import styles from "@/assets/styles/group/membersModal.module.scss";
-import {AiOutlineClose, AiOutlineSearch} from "react-icons/ai";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {Member} from "@/gql/graphql.ts";
-import {GrUserAdmin} from "react-icons/gr";
-import {BiLogOut} from "react-icons/bi";
-import {useMutation} from "@apollo/client";
-import {PROMOTE_MEMBER} from "@/lib/query/group/promoteMember.graphql.ts";
-import {useParams} from "react-router-dom";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
-import {RiAdminLine} from "react-icons/ri";
-import {KICK_MEMBER} from "@/lib/query/group/kickMember.graphql.ts";
+import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Member } from "@/gql/graphql.ts";
+import { GrUserAdmin } from "react-icons/gr";
+import { BiLogOut } from "react-icons/bi";
+import { useMutation } from "@apollo/client";
+import { PROMOTE_MEMBER } from "@/lib/query/group/promoteMember.graphql.ts";
+import { useParams } from "react-router-dom";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { RiAdminLine } from "react-icons/ri";
+import { KICK_MEMBER } from "@/lib/query/group/kickMember.graphql.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface MembersModal {
   members: Member[] | undefined;
   setMembersModalState: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function MembersModal({members, setMembersModalState}: MembersModal) {
+export default function MembersModal({ members, setMembersModalState }: MembersModal) {
   const [membersList, setMembersList] = useState<Member[]>([]);
-  const {groupId} = useParams();
+  const { groupId } = useParams();
   const [promoteMember] = useMutation(PROMOTE_MEMBER);
   const [kickMember] = useMutation(KICK_MEMBER);
 
@@ -72,9 +72,9 @@ export default function MembersModal({members, setMembersModalState}: MembersMod
               onClick={() => setMembersModalState(false)}
             />
           </header>
-          <hr/>
+          <hr />
           <div className={styles.content}>
-            <AiOutlineSearch size={"1.2rem"}/>
+            <AiOutlineSearch size={"1.2rem"} />
             <input
               type={"text"}
               placeholder={"Search members..."}
@@ -91,9 +91,9 @@ export default function MembersModal({members, setMembersModalState}: MembersMod
                     // onClick={() => handleInvite(user.id)}
                   >
                     <div>
-                      <img
-                        src={userProfileLoader(member.user.profile)}
-                        alt={"profile picture"}
+                      <SafeImage
+                        src={member.user.profile}
+                        type={"user-profile"}
                       />
                       <div className={styles.profile}>
                         <p>
@@ -128,9 +128,9 @@ export default function MembersModal({members, setMembersModalState}: MembersMod
                     // onClick={() => handleInvite(user.id)}
                   >
                     <div>
-                      <img
-                        src={userProfileLoader(member.user.profile)}
-                        alt={"profile picture"}
+                      <SafeImage
+                        src={member.user.profile}
+                        type={"user-profile"}
                       />
                       <div className={styles.profile}>
                         <p>

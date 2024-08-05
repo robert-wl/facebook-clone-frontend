@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 import { GET_FRIENDS } from "@/lib/query/friend/getFriends.graphql.ts";
 import { Friend, User } from "@/gql/graphql.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface TagFriendModal {
   setTagModalState: Dispatch<SetStateAction<boolean>>;
@@ -78,8 +79,9 @@ export default function TagFriendModal({ setTagModalState, tagList, setTagList }
                   className={styles.friend}
                   onClick={() => handleCheck(user)}>
                   <div>
-                    <img
-                      src={user.profile ? user.profile : "@/src/assets/default-profile.jpg"}
+                    <SafeImage
+                      src={user.profile}
+                      type={"user-profile"}
                       alt={"profile picture"}
                     />
                     <span>

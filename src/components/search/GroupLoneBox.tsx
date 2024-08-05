@@ -1,18 +1,18 @@
 import styles from "@/assets/styles/search/search.module.scss";
-import {Link} from "react-router-dom";
-import groupBackgroundLoader from "@/controller/groupBackgroundLoader.ts";
-import {Group} from "@/gql/graphql.ts";
-import {useMutation} from "@apollo/client";
-import {HANDLE_REQUEST} from "@/lib/query/group/handleRequest.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {Dispatch, SetStateAction} from "react";
+import { Link } from "react-router-dom";
+import { Group } from "@/gql/graphql.ts";
+import { useMutation } from "@apollo/client";
+import { HANDLE_REQUEST } from "@/lib/query/group/handleRequest.graphql.ts";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { Dispatch, SetStateAction } from "react";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface GroupLoneBox {
   group: Group;
   setGroupData: Dispatch<SetStateAction<Group[]>>;
 }
 
-export default function GroupLoneBox({group, setGroupData}: GroupLoneBox) {
+export default function GroupLoneBox({ group, setGroupData }: GroupLoneBox) {
   const [handleRequest] = useMutation(HANDLE_REQUEST);
   const handleJoin = async () => {
     if (group.joined == "not joined" || group.joined == "not accepted") {
@@ -40,9 +40,10 @@ export default function GroupLoneBox({group, setGroupData}: GroupLoneBox) {
     <div className={styles.groupLoneBox}>
       <div className={styles.left}>
         <Link to={"/group/" + group.id}>
-          <img
-            src={groupBackgroundLoader(group.background)}
-            alt={""}
+          <SafeImage
+            src={group.background}
+            type={"group-cover"}
+            alt={"profile picture"}
           />
         </Link>
       </div>

@@ -6,8 +6,8 @@ import { Dispatch, SetStateAction, useRef } from "react";
 import { useMutation } from "@apollo/client";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import { ADD_FRIEND } from "@/lib/query/friend/addFriend.graphql.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface RecommendFriendBox {
   friend: User;
@@ -45,9 +45,9 @@ export default function RecommendFriendBox({ friend, setFriends }: RecommendFrie
       className={styles.recommendFriendBox}>
       <header>
         <Link to={"/user/" + friend.username}>
-          <img
-            src={userProfileLoader(friend.profile)}
-            alt={""}
+          <SafeImage
+            src={friend.profile}
+            type={"user-profile"}
           />
         </Link>
       </header>

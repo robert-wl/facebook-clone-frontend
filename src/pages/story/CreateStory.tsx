@@ -16,8 +16,8 @@ import { Link } from "react-router-dom";
 import { IoIosAdd } from "react-icons/io";
 import { toast } from "react-toastify";
 import promiseToast from "@/controller/toast/promiseToast.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export interface Content {
   text: string;
@@ -129,9 +129,10 @@ export default function CreateStory() {
                               <SidebarButton
                                 active={false}
                                 text={friend.firstName + " " + friend.lastName}>
-                                <img
-                                  src={userProfileLoader(friend.profile)}
-                                  alt={""}
+                                <SafeImage
+                                  src={friend.profile}
+                                  type={"user-profile"}
+                                  alt={"profile picture"}
                                 />
                               </SidebarButton>
                             </Link>
@@ -151,9 +152,10 @@ export default function CreateStory() {
                               <SidebarButton
                                 active={false}
                                 text={friend.firstName + " " + friend.lastName}>
-                                <img
-                                  src={userProfileLoader(friend.profile!)}
-                                  alt={""}
+                                <SafeImage
+                                  src={friend.profile}
+                                  type={"user-profile"}
+                                  alt={"profile picture"}
                                 />
                               </SidebarButton>
                             </Link>

@@ -3,11 +3,11 @@ import { Dispatch, SetStateAction } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_GROUP } from "@/lib/query/group/createGroup.graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useAuth from "@/hooks/use-auth.ts";
 import { IGroupData } from "@/pages/group/CreateGroup.tsx";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface IProps {
   groupData: IGroupData;
@@ -55,9 +55,9 @@ export default function CreateGroupSidebar({ groupData, setGroupData }: IProps) 
           </div>
         </header>
         <div className={styles.profile}>
-          <img
-            src={userProfileLoader(auth?.profile)}
-            alt={""}
+          <SafeImage
+            src={auth?.profile}
+            type={"user-profile"}
           />
           <div className={styles.text}>
             <h3>

@@ -11,7 +11,6 @@ import { HiMiniHome } from "react-icons/hi2";
 import { FaCompass } from "react-icons/fa";
 import { Optional } from "@/types/utils";
 import PeopleArtIcon from "@/components/icons/colored/PeopleArtIcon.tsx";
-import { defaultGroupCover } from "@/utils/image-utils.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 
 interface IProps {
@@ -63,7 +62,7 @@ export default function GroupDetailSidebar({ group, setInviteGroupModalState, se
         <header>
           <SafeImage
             src={group?.background}
-            defaultSrc={defaultGroupCover}
+            type={"group-background"}
           />
           <div className={styles.bio}>
             <h4>{group?.name}</h4>
@@ -106,7 +105,7 @@ export default function GroupDetailSidebar({ group, setInviteGroupModalState, se
                         <div className={styles.group}>
                           <SafeImage
                             src={group.background}
-                            defaultSrc={defaultGroupCover}
+                            type={"group-cover"}
                           />
                           <h4>{group.name}</h4>
                         </div>

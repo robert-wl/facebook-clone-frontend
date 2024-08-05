@@ -11,8 +11,8 @@ import { Story, User } from "@/gql/graphql.ts";
 import StoryBox from "@/components/stories/StoryBox.tsx";
 import { GET_USER_WITH_STORIES } from "@/lib/query/story/getUserWithStories.graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export default function Stories() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -85,9 +85,10 @@ export default function Stories() {
                               <SidebarButton
                                 active={username == friend.username}
                                 text={friend.firstName + " " + friend.lastName}>
-                                <img
-                                  src={userProfileLoader(friend.profile)}
-                                  alt={""}
+                                <SafeImage
+                                  src={friend.profile}
+                                  type={"user-profile"}
+                                  alt={"profile picture"}
                                 />
                               </SidebarButton>
                             </Link>
@@ -106,9 +107,10 @@ export default function Stories() {
                               <SidebarButton
                                 active={username == friend.username}
                                 text={friend.firstName + " " + friend.lastName}>
-                                <img
-                                  src={userProfileLoader(friend.profile)}
-                                  alt={""}
+                                <SafeImage
+                                  src={friend.profile}
+                                  type={"user-profile"}
+                                  alt={"profile picture"}
                                 />
                               </SidebarButton>
                             </Link>

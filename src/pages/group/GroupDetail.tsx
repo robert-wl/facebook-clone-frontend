@@ -7,7 +7,6 @@ import { GET_GROUP } from "@/lib/query/group/getGroup.graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Group, Post } from "@/../gql/graphql.ts";
-import { defaultUserProfile } from "@/controller/userProfileLoader.ts";
 import PostBox from "@/components/post/PostBox.tsx";
 import NewGroupPostModal from "@/components/group/NewGroupPostModal.tsx";
 import InviteGroupModal from "@/components/group/InviteGroupModal.tsx";
@@ -25,7 +24,6 @@ import { LEAVE_GROUP } from "@/lib/query/group/leaveGroup.graphql.ts";
 import { toast } from "react-toastify";
 import promiseToast from "@/controller/toast/promiseToast.ts";
 import useAuth from "@/hooks/use-auth.ts";
-import { defaultGroupCover } from "@/utils/image-utils.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 
 export default function GroupDetail() {
@@ -192,7 +190,7 @@ export default function GroupDetail() {
                 />
                 <SafeImage
                   src={group.background}
-                  defaultSrc={defaultGroupCover}
+                  type={"group-background"}
                 />
               </div>
               <div className={styles.info}>
@@ -274,7 +272,7 @@ export default function GroupDetail() {
                         <div className={styles.inputHeader}>
                           <SafeImage
                             src={auth?.profile}
-                            defaultSrc={defaultUserProfile}
+                            type={"user-profile"}
                           />
                           <button onClick={() => setNewGroupModalState(true)}>What's on your mind?</button>
                         </div>

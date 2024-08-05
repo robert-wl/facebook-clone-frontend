@@ -1,15 +1,15 @@
-import { GroupFile } from "@/gql/graphql.ts";
 import { Nullable, Optional } from "@/types/utils";
 import { SyntheticEvent } from "react";
+import { BackendFile } from "@/types/files";
 
 export const defaultGroupCover = "/group/default-group-cover.png";
 
-export function getImageURLFromFile(file: Optional<Nullable<GroupFile | string>>, defaultURL?: string) {
+export function getImageURLFromFile(file: Optional<Nullable<BackendFile | string>>, defaultURL?: string) {
   if (!file) {
     return defaultURL;
   }
   if (typeof file === "string") {
-    file = JSON.parse(file) as GroupFile;
+    file = JSON.parse(file) as BackendFile;
   }
 
   return file.url;

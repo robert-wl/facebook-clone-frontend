@@ -8,8 +8,8 @@ import { MdOutlineArrowForwardIos } from "react-icons/md";
 import { GET_GROUP_INVITE } from "@/lib/query/group/getGroupInvite.graphql.ts";
 import { useParams } from "react-router-dom";
 import { INVITE_TO_GROUP } from "@/lib/query/group/inviteToGroup.graphql.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface IProps {
   inviteModalState: boolean;
@@ -92,9 +92,9 @@ export default function InviteGroupModal({ inviteModalState, setInviteModalState
                     className={styles.friend}
                     onClick={() => handleInvite(user.id)}>
                     <div>
-                      <img
-                        src={userProfileLoader(user.profile)}
-                        alt={"profile picture"}
+                      <SafeImage
+                        src={user.profile}
+                        type={"user-profile"}
                       />
                       <span>
                         {user.firstName} {user.lastName}

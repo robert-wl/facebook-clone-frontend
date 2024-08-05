@@ -1,23 +1,24 @@
 import styles from "@/assets/styles/group/joinRequestModal.module.scss";
-import {AiOutlineCheck, AiOutlineClose, AiOutlineSearch} from "react-icons/ai";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {useMutation, useQuery} from "@apollo/client";
-import {GET_JOIN_REQUESTS} from "@/lib/query/group/getJoinRequest.graphql.ts";
-import {useParams} from "react-router-dom";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {Member, User} from "@/gql/graphql.ts";
-import {RxCross1} from "react-icons/rx";
-import {APPROVE_MEMBER} from "@/lib/query/group/approveMember.graphql.ts";
-import {DENY_MEMBER} from "@/lib/query/group/denyMember.graphql.ts";
+import { AiOutlineCheck, AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_JOIN_REQUESTS } from "@/lib/query/group/getJoinRequest.graphql.ts";
+import { useParams } from "react-router-dom";
+import { debouncedError } from "@/controller/errorHandler.ts";
+import { Member, User } from "@/gql/graphql.ts";
+import { RxCross1 } from "react-icons/rx";
+import { APPROVE_MEMBER } from "@/lib/query/group/approveMember.graphql.ts";
+import { DENY_MEMBER } from "@/lib/query/group/denyMember.graphql.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface JoinRequestsModal {
   setJoinRequestsModalState: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function JoinRequestsModal({setJoinRequestsModalState}: JoinRequestsModal) {
-  const {groupId} = useParams();
+export default function JoinRequestsModal({ setJoinRequestsModalState }: JoinRequestsModal) {
+  const { groupId } = useParams();
   const [requests, setRequests] = useState<Member[]>([]);
-  const {data} = useQuery(GET_JOIN_REQUESTS, {
+  const { data } = useQuery(GET_JOIN_REQUESTS, {
     variables: {
       id: groupId,
     },
@@ -65,9 +66,9 @@ export default function JoinRequestsModal({setJoinRequestsModalState}: JoinReque
               onClick={() => setJoinRequestsModalState(false)}
             />
           </header>
-          <hr/>
+          <hr />
           <div className={styles.content}>
-            <AiOutlineSearch size={"1.2rem"}/>
+            <AiOutlineSearch size={"1.2rem"} />
             <input
               type={"text"}
               placeholder={"Search join requests..."}
@@ -82,9 +83,9 @@ export default function JoinRequestsModal({setJoinRequestsModalState}: JoinReque
                   key={index}
                   className={styles.friend}>
                   <div>
-                    <img
-                      src={user.profile ? user.profile : "@/src/assets/default-profile.jpg"}
-                      alt={"profile picture"}
+                    <SafeImage
+                      src={user?.profile}
+                      type={"user-profile"}
                     />
                     <span>
                       {user.firstName} {user.lastName}

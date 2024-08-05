@@ -4,6 +4,7 @@ import { useState } from "react";
 import CreateGroupSidebar from "@/components/group/CreateGroupSidebar.tsx";
 import { defaultGroupBackground } from "@/controller/groupBackgroundLoader.ts";
 import { defaultUserProfile } from "@/controller/userProfileLoader.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 const defaultGroupData = {
   name: "",
@@ -34,9 +35,10 @@ export default function CreateGroup() {
               <h3>Group Preview</h3>
               <div className={styles.body}>
                 <div className={styles.image}>
-                  <img
+                  <SafeImage
                     src={defaultGroupBackground}
-                    alt={""}
+                    type={"user-profile"}
+                    alt={"profile picture"}
                   />
                 </div>
                 <header>
@@ -53,9 +55,10 @@ export default function CreateGroup() {
                   <p>{groupData.about == "" ? "About group..." : groupData.about}</p>
                 </div>
                 <div className={styles.inputHeader}>
-                  <img
+                  <SafeImage
                     src={defaultUserProfile}
-                    alt={""}
+                    type={"user-profile"}
+                    alt={"profile picture"}
                   />
                   <button>What's on your mind?</button>
                 </div>

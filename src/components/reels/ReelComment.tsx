@@ -9,10 +9,10 @@ import { CREATE_REEL_COMMENT } from "@/lib/query/reels/createReelComment.graphql
 import { PiArrowBendDownRightDuotone } from "react-icons/pi";
 import domPurify from "@/controller/domPurify.ts";
 import RichText from "@/components/richText/RichText.tsx";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
 import LikeLabel from "@/components/post/LikeLabel.tsx";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface IProps {
   comment: ReelComment;
@@ -127,9 +127,10 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
       <div className={styles.container}>
         <div className={styles.left}>
           <Link to={"/user/" + comment.user.username}>
-            <img
-              src={userProfileLoader(comment.user.profile)}
-              alt={""}
+            <SafeImage
+              src={comment.user.profile}
+              type={"user-profile"}
+              alt={"profile picture"}
             />
           </Link>
         </div>
@@ -160,9 +161,10 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
           )}
           {showReplyInput && (
             <div className={styles.commentInput}>
-              <img
-                src={userProfileLoader(auth?.profile)}
-                alt={""}
+              <SafeImage
+                src={auth?.profile}
+                type={"user-profile"}
+                alt={"profile picture"}
               />
               <div className={styles.commentContainer}>
                 <div className={styles.textarea}>

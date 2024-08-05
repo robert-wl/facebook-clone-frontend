@@ -23,8 +23,6 @@ import ShareModal from "@/components/ShareModal.tsx";
 import UserFriend from "@/components/user/UserFriend.tsx";
 import PeopleMightKnowContainer from "@/components/friend/PeopleMightKnowContainer.tsx";
 import { IoPeopleCircleOutline } from "react-icons/io5";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
-import userBackgroundLoader from "@/controller/userBackgroundLoader.ts";
 import { PiBellSimpleFill, PiBellSimpleSlashFill } from "react-icons/pi";
 import { BLOCK_USER } from "@/lib/query/notification/blockUser.graphql.ts";
 import promiseToast from "@/controller/toast/promiseToast.ts";
@@ -32,6 +30,7 @@ import { toast } from "react-toastify";
 import useAuth from "@/hooks/use-auth.ts";
 import { Nullable } from "@/types/utils";
 import { AnimatePresence } from "framer-motion";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export default function User() {
   const { username } = useParams();
@@ -214,15 +213,16 @@ export default function User() {
               onChange={(e) => promiseToast(() => handleBackgroundFile(e))}
               accept={"image/*"}
             />
-            <img
+            <SafeImage
               className={styles.profileBackground}
-              src={userBackgroundLoader(user?.background)}
-              alt={"profile picture"}
+              src={user?.background}
+              type={"user-background"}
+              alt={"profile background"}
             />
-            <img
-              className={styles.profilePicture}
-              src={userProfileLoader(user?.profile)}
-              alt={""}
+            <SafeImage
+              src={user?.profile}
+              type={"user-profile"}
+              alt={"profile picture"}
             />
             <div className={styles.circular}>
               {auth?.username == username && (

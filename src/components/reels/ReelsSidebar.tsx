@@ -1,11 +1,11 @@
 import styles from "@/assets/styles/reels/reelsSidebar.module.scss";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { RiVideoAddFill } from "react-icons/ri";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import promiseToast from "@/controller/toast/promiseToast.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface ReelsSidebar {
   setVideo: Dispatch<SetStateAction<File | null>>;
@@ -67,9 +67,10 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
           </div>
         </header>
         <div className={styles.profile}>
-          <img
-            src={userProfileLoader(auth?.profile)}
-            alt={""}
+          <SafeImage
+            src={auth?.profile}
+            type={"user-profile"}
+            alt={"profile picture"}
           />
           <h3>{auth?.username}</h3>
         </div>

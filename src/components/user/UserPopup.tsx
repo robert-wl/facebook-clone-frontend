@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "@/assets/styles/profilePicture.module.scss";
 import { Link } from "react-router-dom";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { User } from "@/gql/graphql.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface IProps {
   isShown: boolean;
@@ -24,9 +24,10 @@ export default function UserPopup({ isShown, setIsShown, user }: IProps) {
           className={styles.profile}>
           <div className={styles.content}>
             <Link to={"/user/" + user?.username}>
-              <img
-                src={userProfileLoader(user?.profile)}
-                alt={""}
+              <SafeImage
+                src={user?.profile}
+                type={"user-profile"}
+                alt={"profile picture"}
               />
             </Link>
             <div className={styles.bio}>

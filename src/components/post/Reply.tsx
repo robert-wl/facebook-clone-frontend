@@ -9,9 +9,9 @@ import domPurify from "@/controller/domPurify.ts";
 import RichText from "@/components/richText/RichText.tsx";
 import { IoSend } from "react-icons/io5";
 import { CREATE_COMMENT } from "@/lib/query/post/createComment.graphql.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { Link } from "react-router-dom";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface Reply {
   c: Comment | Maybe<Comment>;
@@ -80,17 +80,19 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
       <div className={styles.top}>
         <div className={styles.image}>
           <Link to={"/user/" + comment?.user?.username}>
-            <img
-              src={userProfileLoader(comment?.user.profile)}
-              alt={""}
+            <SafeImage
+              src={comment?.user.profile}
+              type={"user-profile"}
+              alt={"profile picture"}
             />
           </Link>
           <div className={styles.profile}>
             <div className={styles.content}>
               <Link to={"/user/" + comment?.user?.username}>
-                <img
-                  src={userProfileLoader(comment?.user?.profile)}
-                  alt={""}
+                <SafeImage
+                  src={comment?.user.profile}
+                  type={"user-profile"}
+                  alt={"profile picture"}
                 />
               </Link>
               <div className={styles.bio}>
@@ -134,9 +136,10 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
           {showReplyInput && (
             <div className={styles.commentInput}>
               <div className={styles.image}>
-                <img
-                  src={userProfileLoader(auth?.profile)}
-                  alt={""}
+                <SafeImage
+                  src={auth?.profile}
+                  type={"user-profile"}
+                  alt={"profile picture"}
                 />
               </div>
               <div className={styles.commentContainer}>

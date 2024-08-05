@@ -81,7 +81,7 @@ export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
           {files[currentIndex].type.includes("image") && (
             <SafeImage
               src={files[currentIndex].url}
-              defaultSrc={""}
+              type={"post"}
             />
           )}
         </div>
@@ -93,9 +93,9 @@ export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
                 <div
                   key={index}
                   className={styles.image}>
-                  <img
-                    src={typeof src === "string" ? src : src.url}
-                    alt={""}
+                  <SafeImage
+                    src={src}
+                    type={"post"}
                   />
                 </div>
               );

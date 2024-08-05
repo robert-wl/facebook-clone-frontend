@@ -13,9 +13,9 @@ import { LIKE_REEL } from "@/lib/query/reels/likeReel.graphql.ts";
 import ReelCommentSidebar from "@/components/reels/ReelCommentSidebar.tsx";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import { Link } from "react-router-dom";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import reelLoader from "@/controller/reelLoader.ts";
 import { GET_REELS_PAGINATED } from "@/lib/query/reels/getReelsPaginated.graphql.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 const paginationLimit = 8;
 
@@ -111,9 +111,10 @@ export default function Reels() {
             <div className={styles.box}>
               <div className={styles.profile}>
                 <Link to={`/user/${currentReel?.user.username}`}>
-                  <img
-                    src={userProfileLoader(currentReel?.user.profile)}
-                    alt={""}
+                  <SafeImage
+                    src={currentReel.user.profile}
+                    type={"user-profile"}
+                    alt={"profile picture"}
                   />
                 </Link>
                 <h4>

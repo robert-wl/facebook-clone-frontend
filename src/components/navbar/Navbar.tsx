@@ -6,12 +6,12 @@ import { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { BiSolidMessageRoundedDetail, BiUserCircle } from "react-icons/bi";
 import { MdKeyboardArrowRight, MdLogout } from "react-icons/md";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import SearchBar from "./SearchBar.tsx";
 import NotificationButton from "./buttons/NotificationButton.tsx";
 import { BsFillMoonFill } from "react-icons/bs";
 import useAuth from "@/hooks/use-auth.ts";
 import useTheme from "@/hooks/use-theme.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export default function Navbar() {
   const location = useLocation();
@@ -72,10 +72,10 @@ export default function Navbar() {
           </Link>
           <NotificationButton />
           <div className={styles.imageBox}>
-            <img
+            <SafeImage
               onClick={() => handleClick()}
-              src={userProfileLoader(auth?.profile)}
-              alt={""}
+              src={auth?.profile}
+              type={"user-profile"}
               ref={imageRef}
             />
 

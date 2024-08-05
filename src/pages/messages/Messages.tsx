@@ -9,9 +9,8 @@ import { Conversation } from "@/gql/graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import MessageBox from "@/components/message/MessageBox.tsx";
 import domPurify from "@/controller/domPurify.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
-import groupBackgroundLoader from "@/controller/groupBackgroundLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export default function Messages() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -75,8 +74,9 @@ export default function Messages() {
                             key={index}
                             className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}>
                             <Link to={"/messages/" + conv.id}>
-                              <img
-                                src={userProfileLoader(user.profile)}
+                              <SafeImage
+                                src={user.profile}
+                                type={"user-profile"}
                                 alt={"profile picture"}
                               />
                               <div className={styles.content}>
@@ -99,8 +99,9 @@ export default function Messages() {
                             key={index}
                             className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}>
                             <Link to={"/messages/" + conv.id}>
-                              <img
-                                src={groupBackgroundLoader(conv.group.background)}
+                              <SafeImage
+                                src={conv.group.background}
+                                type={"group-background"}
                                 alt={"profile picture"}
                               />
                               <div className={styles.content}>

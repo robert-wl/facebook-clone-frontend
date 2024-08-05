@@ -1,12 +1,12 @@
 import styles from "@/assets/styles/search/search.module.scss";
 import { Link } from "react-router-dom";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { User } from "@/gql/graphql.ts";
 import { useMutation } from "@apollo/client";
 import { ADD_FRIEND } from "@/lib/query/friend/addFriend.graphql.ts";
 import { Dispatch, SetStateAction } from "react";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface UserBox {
   user: User;
@@ -43,9 +43,10 @@ export default function UserBox({ user, setUsers }: UserBox) {
     <div className={styles.userBox}>
       <div className={styles.left}>
         <Link to={"/user/" + user.username}>
-          <img
-            src={userProfileLoader(user.profile)}
-            alt={""}
+          <SafeImage
+            src={user.profile}
+            type={"user-profile"}
+            alt={"profile picture"}
           />
         </Link>
       </div>

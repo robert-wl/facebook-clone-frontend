@@ -2,8 +2,8 @@ import styles from "@/assets/styles/sidebar/sidebarStory.module.scss";
 import { Dispatch, SetStateAction } from "react";
 import ColorButton from "@/components/stories/ColorButton.tsx";
 import { Content } from "@/pages/story/CreateStory.tsx";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface Sidebar {
   title: string;
@@ -33,9 +33,10 @@ export default function StorySidebar({ title, content, setContent, tab, setTab, 
           </div>
         </header>
         <div className={styles.profile}>
-          <img
-            src={userProfileLoader(auth?.profile)}
-            alt={""}
+          <SafeImage
+            src={auth?.profile}
+            type={"user-profile"}
+            alt={"profile picture"}
           />
           <h3>{auth?.username}</h3>
         </div>

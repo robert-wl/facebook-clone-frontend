@@ -8,7 +8,6 @@ import { GET_JOINED_GROUPS } from "@/lib/query/group/getJoinedGroups.graphql.ts"
 import { debouncedError } from "@/controller/errorHandler.ts";
 import { Group } from "@/gql/graphql.ts";
 import PeopleArtIcon from "@/components/icons/colored/PeopleArtIcon.tsx";
-import { defaultGroupCover } from "@/utils/image-utils.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 
 interface IProps {
@@ -88,7 +87,7 @@ export default function GroupSidebar({ filter, setFilter, redirect, currentTab, 
                     <div className={styles.group}>
                       <SafeImage
                         src={group.background}
-                        defaultSrc={defaultGroupCover}
+                        type={"group-cover"}
                       />
                       <h4>{group.name}</h4>
                     </div>

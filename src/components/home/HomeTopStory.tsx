@@ -1,11 +1,11 @@
 import styles from "@/assets/styles/home/homeTop.module.scss";
 import { Link } from "react-router-dom";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { MdOutlineAdd } from "react-icons/md";
 import { AiOutlineShareAlt } from "react-icons/ai";
 import { BsClockHistory } from "react-icons/bs";
 import useAuth from "@/hooks/use-auth.ts";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export default function HomeTopStory() {
   const { auth } = useAuth();
@@ -15,9 +15,9 @@ export default function HomeTopStory() {
       <div className={styles.left}>
         <div className={styles.story}>
           <Link to={"/stories"}>
-            <img
-              src={userProfileLoader(auth?.profile)}
-              alt={""}
+            <SafeImage
+              src={auth?.profile}
+              type={"user-profile"}
             />
           </Link>
           <div className={styles.create}>

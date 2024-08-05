@@ -6,9 +6,8 @@ import { useSubscription } from "@apollo/client";
 import { VIEW_CONVERSATION } from "@/lib/query/message/viewConversation.graphql.ts";
 import { useState } from "react";
 import domPurify from "@/controller/domPurify.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
-import { FileUpload } from "@/controller/firebase/storage.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export default function MessageBox() {
   const { conversationID } = useParams();
@@ -27,12 +26,6 @@ export default function MessageBox() {
     setStop(true);
   }
 
-  const getImageURL = (obj: string) => {
-    const file: FileUpload = JSON.parse(obj);
-
-    return file.url;
-  };
-
   return (
     <div className={styles.chat}>
       <MessageInput conversationID={conversationID!} />
@@ -44,16 +37,16 @@ export default function MessageBox() {
                 <div className={styles.chatReceiver}>
                   <div>
                     {message.image ? (
-                      <img
+                      <SafeImage
                         src={message.image}
-                        alt={""}
+                        type={"others"}
                       />
                     ) : message.post ? (
                       <div className={styles.post}>
                         <header>
-                          <img
-                            src={userProfileLoader(message.post.user.profile)}
-                            alt={""}
+                          <SafeImage
+                            src={message.post.user.profile}
+                            type={"user-profile"}
                           />
                           {message.post.user.firstName} {message.post.user.lastName}
                         </header>
@@ -76,16 +69,16 @@ export default function MessageBox() {
                   className={styles.chatSender}>
                   <div>
                     {message.image ? (
-                      <img
-                        src={getImageURL(message.image)}
-                        alt={""}
+                      <SafeImage
+                        src={message.image}
+                        type={"others"}
                       />
                     ) : message.post ? (
                       <div className={styles.post}>
                         <header>
-                          <img
-                            src={userProfileLoader(message.post.user.profile)}
-                            alt={""}
+                          <SafeImage
+                            src={message.post.user.profile}
+                            type={"user-profile"}
                           />
                           {message.post.user.firstName} {message.post.user.lastName}
                         </header>

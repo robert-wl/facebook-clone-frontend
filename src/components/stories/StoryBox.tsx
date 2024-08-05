@@ -3,7 +3,7 @@ import { useState } from "react";
 import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
 import { Story } from "@/gql/graphql.ts";
 import ProgressBar from "./ProgressBar.tsx";
-import storyImageLoader from "@/controller/storyImageLoader.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface StoryBox {
   stories: Story[];
@@ -81,9 +81,10 @@ export default function StoryBox({ stories }: StoryBox) {
           </div>
         )}
         {stories[page]?.image ? (
-          <img
-            src={storyImageLoader(stories[page]?.image)}
-            alt={""}
+          <SafeImage
+            src={stories[page]?.image} //TODO ADD DEFAULT
+            type={"group-background"}
+            alt={"story image"}
           />
         ) : (
           <div

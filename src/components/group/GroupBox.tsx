@@ -5,7 +5,7 @@ import { useMutation } from "@apollo/client";
 import { HANDLE_REQUEST } from "@/lib/query/group/handleRequest.graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import { Dispatch, SetStateAction } from "react";
-import { catchImageError, defaultGroupCover, getImageURL } from "@/utils/image-utils.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface GroupBox {
   group: Group;
@@ -50,10 +50,9 @@ export default function GroupBox({ group, setGroups }: GroupBox) {
   return (
     <div className={styles.box}>
       <Link to={`/group/${group.id}`}>
-        <img
-          src={getImageURL(group.background, defaultGroupCover)}
-          onError={catchImageError(defaultGroupCover)}
-          alt={""}
+        <SafeImage
+          src={group.background}
+          type={"group-cover"}
         />
       </Link>
       <h3>{group.name}</h3>

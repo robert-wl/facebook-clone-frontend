@@ -1,12 +1,12 @@
 import styles from "@/assets/styles/search/search.module.scss";
 import { Link } from "react-router-dom";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { User } from "@/gql/graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import { useMutation } from "@apollo/client";
 import { ADD_FRIEND } from "@/lib/query/friend/addFriend.graphql.ts";
 import { Dispatch, SetStateAction } from "react";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface UserLoneBox {
   user: User;
@@ -46,9 +46,9 @@ export default function UserLoneBox({ user, setUsers }: UserLoneBox) {
     <div className={styles.userLoneBox}>
       <div className={styles.left}>
         <Link to={"/user/" + user.username}>
-          <img
-            src={userProfileLoader(user.profile)}
-            alt={""}
+          <SafeImage
+            src={user.profile}
+            type={"user-profile"}
           />
         </Link>
       </div>

@@ -5,6 +5,7 @@ import { AiOutlineShareAlt } from "react-icons/ai";
 import { BsFillCameraVideoFill } from "react-icons/bs";
 import useAuth from "@/hooks/use-auth.ts";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export default function HomeTopReels() {
   const { auth } = useAuth();
@@ -13,10 +14,10 @@ export default function HomeTopReels() {
       <div className={styles.left}>
         <div className={styles.story}>
           <Link to={"/reels"}>
-            <img
+            <SafeImage
               className={styles.vid}
-              src={auth?.profile ? auth.profile : "@/src/assets/default-profile.jpg"}
-              alt={""}
+              src={auth?.profile}
+              type={"user-profile"}
             />
             <BsFillCameraVideoFill size={"3rem"} />
           </Link>

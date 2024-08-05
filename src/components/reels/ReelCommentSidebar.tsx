@@ -8,8 +8,8 @@ import { CREATE_REEL_COMMENT } from "@/lib/query/reels/createReelComment.graphql
 import ReelCommentBox from "./ReelComment.tsx";
 import { GET_REEL_COMMENTS } from "@/lib/query/reels/getReelComments.graphql.ts";
 import RichText from "@/components/richText/RichText.tsx";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import useAuth from "@/hooks/use-auth.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface ReelCommentSidebar {
   reelData: Reel;
@@ -80,9 +80,10 @@ export default function ReelCommentSidebar({ reelData, setReelsData }: ReelComme
     <div className={styles.comments}>
       <header>
         <div className={styles.profile}>
-          <img
-            src={userProfileLoader(reelData?.user.profile)}
-            alt={""}
+          <SafeImage
+            src={reelData?.user.profile}
+            type={"user-profile"}
+            alt={"profile picture"}
           />
           <h5>
             {reelData?.user.firstName} {reelData?.user.lastName}
@@ -104,9 +105,10 @@ export default function ReelCommentSidebar({ reelData, setReelsData }: ReelComme
         {comments.length == 0 && <h5>No comments</h5>}
       </div>
       <div className={styles.commentInput}>
-        <img
-          src={userProfileLoader(auth?.profile)}
-          alt={""}
+        <SafeImage
+          src={auth?.profile}
+          type={"user-profile"}
+          alt={"profile picture"}
         />
         <div className={styles.commentContainer}>
           <div className={styles.textarea}>

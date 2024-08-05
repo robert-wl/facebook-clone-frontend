@@ -1,11 +1,11 @@
 import styles from "@/assets/styles/profilePicture.module.scss";
 import { User } from "@/gql/graphql.ts";
 import { Link } from "react-router-dom";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
 import { Nullable } from "@/types/utils";
 import { useState } from "react";
 import useDebounce from "@/hooks/use-debounce.ts";
 import UserPopup from "@/components/user/UserPopup.tsx";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface IProps {
   user: Nullable<User>;
@@ -27,11 +27,11 @@ export default function ProfilePicture({ user, showBox, zIndex }: IProps) {
         user={user!}
       />
       <Link to={"/user/" + user?.username}>
-        <img
+        <SafeImage
           onMouseEnter={() => debouncedPopup(true)}
           onMouseLeave={() => debouncedPopup(false)}
-          src={userProfileLoader(user?.profile)}
-          alt={""}
+          src={user?.profile}
+          type={"user-profile"}
         />
       </Link>
     </div>
