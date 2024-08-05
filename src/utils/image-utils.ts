@@ -4,7 +4,7 @@ import { SyntheticEvent } from "react";
 
 export const defaultGroupCover = "/group/default-group-cover.png";
 
-export function getImageURL(file: Optional<Nullable<GroupFile | string>>, defaultURL?: string) {
+export function getImageURLFromFile(file: Optional<Nullable<GroupFile | string>>, defaultURL?: string) {
   if (!file) {
     return defaultURL;
   }
@@ -13,6 +13,14 @@ export function getImageURL(file: Optional<Nullable<GroupFile | string>>, defaul
   }
 
   return file.url;
+}
+
+export function getImageURL(url: Nullable<Optional<string>>, defaultURL?: string) {
+  if (!url) {
+    return defaultURL;
+  }
+
+  return url;
 }
 
 export function catchImageError(defaultURL?: string) {
