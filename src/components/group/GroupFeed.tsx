@@ -5,72 +5,47 @@ import { useQuery } from "@apollo/client";
 import { GET_GROUP_HOME_POSTS } from "@/lib/query/group/getGroupHomePosts.graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import { Post } from "@/gql/graphql.ts";
-import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
-import { debounce } from "@/utils/debouncer.ts";
+import { Dispatch, MutableRefObject, SetStateAction, useState } from "react";
+import useInfiniteScroll from "@/hooks/use-infinite-scroll.ts";
+import EmptyPost from "@/components/post/EmptyPost.tsx";
 
 interface GroupFeed {
   setShareModalState: Dispatch<SetStateAction<boolean>>;
   setCurrPost: Dispatch<SetStateAction<Post | null>>;
-  pageRef: RefObject<HTMLDivElement>;
+  pageRef: MutableRefObject<HTMLDivElement>;
 }
+
+const paginationLimit = 5;
 
 export default function GroupFeed({ setShareModalState, setCurrPost, pageRef }: GroupFeed) {
   const [postData, setPostData] = useState<Post[]>([]);
   const [stop, setStop] = useState(false);
-  let start = 0;
-  const { loading, refetch: getGroupHomePosts } = useQuery(GET_GROUP_HOME_POSTS, {
+  const [currPostIndex, setCurrPostIndex] = useState(0);
+  const { loading } = useQuery(GET_GROUP_HOME_POSTS, {
     variables: {
       pagination: {
-        start: 0,
-        limit: 4,
+        start: currPostIndex,
+        limit: paginationLimit,
       },
     },
+    fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       const result = data.getGroupHomePosts;
 
       if (result.length == 0) setStop(true);
-      setPostData([...postData, ...result]);
+      setPostData((data) => [...data, ...result]);
     },
     onError: debouncedError,
   });
 
-  const handleFetch = () => {
-    getGroupHomePosts({
-      pagination: {
-        start: start,
-        limit: 4,
-      },
-    })
-      .then(() => {
-        start += 4;
-      })
-      .catch(debouncedError);
+  const handleFetch = async () => {
+    setCurrPostIndex((prev) => prev + paginationLimit);
   };
 
-  const debouncedHandleScroll = debounce(handleFetch, 50);
-  let scrollElement: HTMLElement | null;
-  const handleScroll = () => {
-    if (scrollElement) {
-      const scrollTop = scrollElement.scrollTop;
-      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      const totalHeight = scrollElement.scrollHeight;
-
-      if (!(scrollTop + windowHeight + 200 >= totalHeight)) {
-        return;
-      }
-      debouncedHandleScroll();
-    }
-  };
-
-  useEffect(() => {
-    scrollElement = pageRef.current!;
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
-      return () => {
-        scrollElement!.addEventListener("scroll", handleScroll);
-      };
-    }
-  }, []);
+  useInfiniteScroll<HTMLDivElement>({
+    callback: handleFetch,
+    pageRef,
+  });
 
   if (!loading && postData.length == 0)
     return (
@@ -102,6 +77,7 @@ export default function GroupFeed({ setShareModalState, setCurrPost, pageRef }: 
         </>
       )}
       {!stop && <PostSkeleton />}
+      {stop && <EmptyPost />}
     </div>
   );
 }

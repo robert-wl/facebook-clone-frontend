@@ -1,0 +1,21 @@
+.myBox {
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  box-shadow: var(--box-shadow-very-light);
+  background-color: var(--main-color);
+  margin: 1rem auto;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  color: var(--color);
+
+  .message {
+    margin: 0 1rem 1rem;
+    padding: 0 1rem 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    color: var(--gray-text-color);
+  }
+
+}

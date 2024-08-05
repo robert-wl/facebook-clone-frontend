@@ -17,6 +17,7 @@ import VisibilityModal from "@/components/post/VisibilityModal.tsx";
 import useAuth from "@/hooks/use-auth.ts";
 import useInfiniteScroll from "@/hooks/use-infinite-scroll.ts";
 import { Nullable } from "@/types/utils";
+import EmptyPost from "@/components/post/EmptyPost.tsx";
 
 const paginationLimit = 5;
 
@@ -126,6 +127,7 @@ export default function Home() {
                 <PostSkeleton />
               </>
             )}
+            {!hideSkeleton && <EmptyPost />}
           </div>
         </div>
       </div>

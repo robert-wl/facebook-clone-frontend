@@ -10,7 +10,7 @@ import { MdPeopleOutline } from "react-icons/md";
 import { HiMiniHome } from "react-icons/hi2";
 import { FaCompass } from "react-icons/fa";
 import { Optional } from "@/types/utils";
-import PeopleArtIcon from "@/components/icons/colored/PeopleArtIcon.tsx";
+import PeopleArtIcon from "@/components/icons/art/PeopleArtIcon.tsx";
 import SafeImage from "@/components/SafeImage.tsx";
 
 interface IProps {
@@ -37,7 +37,9 @@ export default function GroupDetailSidebar({ group, setInviteGroupModalState, se
     <>
       <div className={styles.barSpace} />
       <div className={styles.bar}>
-        <div className={styles.content}>
+        <div
+          className={styles.content}
+          style={{ height: tab === "browse" ? "100%" : "fit-content" }}>
           <div
             className={styles.container}
             onClick={() => handleTab("feed")}>

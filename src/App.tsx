@@ -27,16 +27,11 @@ import Notifications from "@/pages/notifications/Notifications.tsx";
 import StoriesHome from "@/pages/story/StoriesHome.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Temp from "@/Temp.tsx";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route
-          path="temp"
-          element={<Temp />}
-        />
         <Route
           path="/login"
           element={

@@ -112,7 +112,7 @@ export default function Reels() {
               <div className={styles.profile}>
                 <Link to={`/user/${currentReel?.user.username}`}>
                   <SafeImage
-                    src={currentReel.user.profile}
+                    src={currentReel?.user.profile}
                     type={"user-profile"}
                     alt={"profile picture"}
                   />

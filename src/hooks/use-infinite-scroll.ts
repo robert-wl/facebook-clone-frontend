@@ -1,15 +1,16 @@
-import { useEffect, useRef } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 import { debounce } from "@/utils/debouncer.ts";
 
-interface IProps {
+interface IProps<T> {
   callback: () => void;
   debounceDelay?: number;
+  pageRef?: MutableRefObject<T>;
 }
 
-export default function useInfiniteScroll<T extends HTMLElement>({ callback, debounceDelay = 50 }: IProps) {
+export default function useInfiniteScroll<T extends HTMLElement>({ callback, debounceDelay = 50, pageRef: outerRef }: IProps<T>) {
   const pageRef = useRef<T>(null);
 
-  const debouncedCallback = debounce(callback, debounceDelay);
+  const debouncedCallback = debounce(callback, debounceDelay!);
   const handleScroll = (element: T) => {
     if (element) {
       const scrollTop = element.scrollTop;
@@ -24,7 +25,7 @@ export default function useInfiniteScroll<T extends HTMLElement>({ callback, deb
   };
 
   useEffect(() => {
-    const scrollElement = pageRef.current!;
+    const scrollElement = outerRef?.current ?? pageRef.current!;
 
     if (scrollElement) {
       scrollElement.addEventListener("scroll", () => handleScroll(scrollElement));
