@@ -49,6 +49,7 @@
         max-width: 70%;
         text-overflow: ellipsis;
         overflow-y: hidden;
+        text-transform: capitalize;
       }
 
       p {
@@ -255,6 +256,7 @@
           text-align: start;
           max-width: 70%;
           overflow-x: hidden;
+          text-transform: capitalize;
         }
 
         &:hover {

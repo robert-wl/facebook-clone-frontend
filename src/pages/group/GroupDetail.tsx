@@ -7,7 +7,7 @@ import { GET_GROUP } from "@/lib/query/group/getGroup.graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Group, Post } from "@/../gql/graphql.ts";
-import userProfileLoader from "@/controller/userProfileLoader.ts";
+import { defaultUserProfile } from "@/controller/userProfileLoader.ts";
 import PostBox from "@/components/post/PostBox.tsx";
 import NewGroupPostModal from "@/components/group/NewGroupPostModal.tsx";
 import InviteGroupModal from "@/components/group/InviteGroupModal.tsx";
@@ -25,7 +25,8 @@ import { LEAVE_GROUP } from "@/lib/query/group/leaveGroup.graphql.ts";
 import { toast } from "react-toastify";
 import promiseToast from "@/controller/toast/promiseToast.ts";
 import useAuth from "@/hooks/use-auth.ts";
-import { catchImageError, defaultGroupCover, getImageURL } from "@/utils/image-utils.ts";
+import { defaultGroupCover } from "@/utils/image-utils.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 export default function GroupDetail() {
   const navigate = useNavigate();
@@ -189,10 +190,9 @@ export default function GroupDetail() {
                   onChange={(e) => promiseToast(() => handleBackgroundFile(e))}
                   accept={"image/*"}
                 />
-                <img
-                  src={getImageURL(group.background, defaultGroupCover)}
-                  onError={catchImageError(defaultGroupCover)}
-                  alt={""}
+                <SafeImage
+                  src={group.background}
+                  defaultSrc={defaultGroupCover}
                 />
               </div>
               <div className={styles.info}>
@@ -272,9 +272,9 @@ export default function GroupDetail() {
                     {group?.joined == "joined" && (
                       <div className={styles.inputBox}>
                         <div className={styles.inputHeader}>
-                          <img
-                            src={userProfileLoader(auth?.profile)}
-                            alt={""}
+                          <SafeImage
+                            src={auth?.profile}
+                            defaultSrc={defaultUserProfile}
                           />
                           <button onClick={() => setNewGroupModalState(true)}>What's on your mind?</button>
                         </div>

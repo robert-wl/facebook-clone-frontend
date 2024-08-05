@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { BiSolidLeftArrowCircle, BiSolidRightArrowCircle } from "react-icons/bi";
 import { FileUpload } from "@/controller/firebase/storage.ts";
 import { Maybe } from "@/gql/graphql.ts";
+import SafeImage from "@/components/SafeImage.tsx";
 
 interface ImageCarousel {
   files: Maybe<string>[];
@@ -15,16 +16,16 @@ export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
       return JSON.parse(file!) as FileUpload;
     });
   });
-  const [index, setIndexndex] = useState(0);
+  const [currentIndex, setCurrentCurrentIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleLeft = () => {
-    if (index > 0) setIndexndex(index - 1);
-    if (index == 0) setIndexndex(files.length - 1);
+    if (currentIndex > 0) setCurrentCurrentIndex(currentIndex - 1);
+    if (currentIndex == 0) setCurrentCurrentIndex(files.length - 1);
   };
 
   const handleRight = () => {
-    setIndexndex((index + 1) % files.length);
+    setCurrentCurrentIndex((currentIndex + 1) % files.length);
   };
 
   const handleError = (e: any, type: "image" | "video") => {
@@ -52,15 +53,15 @@ export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
     <>
       <div className={styles.container}>
         <div className={styles.image}>
-          {files[index].type.includes("video") && (
+          {files[currentIndex].type.includes("video") && (
             <video
               ref={videoRef}
               onLoad={(e) => handleLoad(e, "video")}
-              key={index}
+              key={currentIndex}
               onError={(e) => handleError(e, "video")}
               autoPlay={true}
               controls={true}>
-              <source src={files?.[index].url ?? ""} />
+              <source src={files?.[currentIndex].url ?? ""} />
             </video>
           )}
           {files && files.length > 1 && (
@@ -77,12 +78,10 @@ export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
               <BiSolidRightArrowCircle size={35} />
             </div>
           )}
-          {files[index].type.includes("image") && (
-            <img
-              src={files ? files[index].url : ""}
-              alt={""}
-              onLoad={(e) => handleLoad(e, "image")}
-              onError={(e) => handleError(e, "image")}
+          {files[currentIndex].type.includes("image") && (
+            <SafeImage
+              src={files[currentIndex].url}
+              defaultSrc={""}
             />
           )}
         </div>
@@ -109,8 +108,8 @@ export default function ImageCarousel({ files: fileOutside }: ImageCarousel) {
             return (
               <div
                 key={index}
-                onClick={() => setIndexndex(index)}
-                className={index == index ? styles.dotActive : styles.dot}
+                onClick={() => setCurrentCurrentIndex(index)}
+                className={currentIndex == index ? styles.dotActive : styles.dot}
               />
             );
           })}

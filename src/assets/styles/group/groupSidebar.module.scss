@@ -69,7 +69,7 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
 
     .container,
@@ -192,6 +192,7 @@
             text-align: start;
             max-width: 70%;
             overflow-x: hidden;
+            text-transform: capitalize;
           }
 
           &:hover {
