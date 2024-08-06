@@ -12,7 +12,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER } from "@/lib/query/user/getUser.graphql.ts";
 import { BiSolidMessageRoundedDetail, BiSolidPencil } from "react-icons/bi";
 import { IoIosArrowDown, IoMdReverseCamera } from "react-icons/io";
-import uploadStorage, { deleteStorage } from "@/controller/firebase/storage.ts";
+import uploadStorage, { deleteStorage } from "@/lib/firebase/storage.ts";
 import { UPDATE_USER_PROFILE } from "@/lib/query/user/updateUserProfile.graphql.ts";
 import { UPDATE_USER_BACKGROUND } from "@/lib/query/user/updateUserBackground.graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
@@ -220,6 +220,7 @@ export default function User() {
               alt={"profile background"}
             />
             <SafeImage
+              className={styles.profilePicture}
               src={user?.profile}
               type={"user-profile"}
               alt={"profile picture"}

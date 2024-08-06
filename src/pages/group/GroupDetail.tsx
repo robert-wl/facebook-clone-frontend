@@ -13,7 +13,7 @@ import InviteGroupModal from "@/components/group/InviteGroupModal.tsx";
 import ShareModal from "@/components/ShareModal.tsx";
 import GroupSidebar from "@/components/group/GroupSidebar.tsx";
 import { IoMdReverseCamera } from "react-icons/io";
-import uploadStorage from "@/controller/firebase/storage.ts";
+import uploadStorage from "@/lib/firebase/storage.ts";
 import { UPDATE_GROUP_BACKGROUND } from "@/lib/query/group/updateGroupBackground.graphql.ts";
 import GroupFileBox from "@/components/group/GroupFileBox.tsx";
 import JoinRequestsModal from "@/components/group/JoinRequestsModal.tsx";

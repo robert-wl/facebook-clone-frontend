@@ -2,29 +2,31 @@ import styles from "@/assets/styles/messages/messageInput.module.scss";
 import { FaImages } from "react-icons/fa6";
 import { BiSolidMicrophoneAlt } from "react-icons/bi";
 import { BsSendFill } from "react-icons/bs";
-import { useRef, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useRef, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { SEND_MESSAGE } from "@/lib/query/message/sendMessage.graphql.ts";
-import uploadStorage from "@/controller/firebase/storage.ts";
+import uploadStorage from "@/lib/firebase/storage.ts";
 import { RxCross2 } from "react-icons/rx";
+import { Conversation } from "@/gql/graphql.ts";
 
 interface IProps {
   conversationID: string;
+  setConversations: Dispatch<SetStateAction<Conversation[]>>;
 }
 
-export default function MessageInput({ conversationID }: IProps) {
+export default function MessageInput({ setConversations, conversationID }: IProps) {
   const [text, setText] = useState<string>("");
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [sendMessage] = useMutation(SEND_MESSAGE);
   const [image, setImage] = useState<File | null>(null);
 
   const handleSubmit = async () => {
-    const currImage = image;
-    const currText = text;
-    setText("");
-    setImage(null);
-    if (currImage) {
-      const url = await uploadStorage("messages", currImage);
+    if (!image && text.length == 0) {
+      return;
+    }
+
+    if (image) {
+      const url = await uploadStorage("messages", image);
       await sendMessage({
         variables: {
           convID: conversationID,
@@ -32,14 +34,35 @@ export default function MessageInput({ conversationID }: IProps) {
         },
       });
     }
+
     if (text.length > 0) {
       await sendMessage({
         variables: {
           convID: conversationID,
-          message: currText,
+          message: text,
         },
       });
     }
+
+    setText("");
+    setImage(null);
+    setConversations((prev) => {
+      return prev.map((conv) => {
+        if (conv.id == conversationID) {
+          console.log("called", {
+            ...conv,
+            lastSentMessageTime: new Date().toISOString(),
+            lastMessage: text.length > 0 ? text : "Sent an image",
+          });
+          return {
+            ...conv,
+            lastSentMessageTime: new Date().toISOString(),
+            lastMessage: text.length > 0 ? text : "Sent an image",
+          };
+        }
+        return conv;
+      });
+    });
   };
 
   const handleImageInput = () => {
@@ -48,7 +71,7 @@ export default function MessageInput({ conversationID }: IProps) {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
 

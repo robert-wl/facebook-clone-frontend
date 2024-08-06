@@ -1,5 +1,5 @@
 import def from "../assets/default-profile.jpg";
-import { FileUpload } from "./firebase/storage.ts";
+import { FileUpload } from "@/lib/firebase/storage.ts";
 
 export const defaultUserProfile = def as string;
 

@@ -4,7 +4,7 @@ import { defaultUserProfile } from "@/controller/userProfileLoader.ts";
 import { defaultUserBackground } from "@/controller/userBackgroundLoader.ts";
 import { defaultGroupBackground } from "@/controller/groupBackgroundLoader.ts";
 import { forwardRef } from "react";
-import { FileUpload } from "@/controller/firebase/storage.ts";
+import { FileUpload } from "@/lib/firebase/storage.ts";
 
 interface IProps {
   srcType?: "string" | "file";

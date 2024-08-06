@@ -16,19 +16,12 @@ export const GET_CONVERSATIONS = gql`
       group {
         name
         background
-        members {
-          user {
-            firstName
-            lastName
-            username
-          }
-          approved
-          role
-        }
       }
       messages {
         message
       }
+      lastMessage
+      lastSentMessageTime
     }
   }
 `;

@@ -1,7 +1,7 @@
 import styles from "@/assets/styles/group/groupFileBox.module.scss";
 import { AiOutlineFile, AiOutlineSearch } from "react-icons/ai";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import uploadStorage, { deleteStorage, FileUpload } from "@/controller/firebase/storage.ts";
+import uploadStorage, { deleteStorage, FileUpload } from "@/lib/firebase/storage.ts";
 import { useMutation, useQuery } from "@apollo/client";
 import { UPLOAD_FILE } from "@/lib/query/group/uploadFile.graphql.ts";
 import { Link, useParams } from "react-router-dom";

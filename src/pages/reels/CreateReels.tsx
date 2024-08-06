@@ -2,7 +2,7 @@ import styles from "@/assets/styles/reels/createReels.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import ReelsSidebar from "@/components/reels/ReelsSidebar.tsx";
 import { useState } from "react";
-import uploadStorage from "@/controller/firebase/storage.ts";
+import uploadStorage from "@/lib/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_REEL } from "@/lib/query/reels/createReel.graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";

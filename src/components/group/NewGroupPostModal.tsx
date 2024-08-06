@@ -2,7 +2,7 @@ import styles from "@/assets/styles/post/newPost.module.scss";
 import ProfilePicture from "@/components/ProfilePicture.tsx";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import ImageList from "@/components/ImageList.tsx";
-import uploadStorage from "@/controller/firebase/storage.ts";
+import uploadStorage from "@/lib/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "@/lib/query/post/createPost.graphql.ts";
 import { Group } from "@/gql/graphql.ts";

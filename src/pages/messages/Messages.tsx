@@ -2,19 +2,18 @@ import styles from "@/assets/styles/messages/messages.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import { Link, useParams } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_CONVERSATIONS } from "@/lib/query/message/getConversations.graphql.ts";
 import { Conversation } from "@/gql/graphql.ts";
 import { debouncedError } from "@/controller/errorHandler.ts";
 import MessageBox from "@/components/message/MessageBox.tsx";
-import domPurify from "@/controller/domPurify.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 
 export default function Messages() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [filteredConversations, setFilteredConversations] = useState<Conversation[]>([]);
+  const [filter, setFilter] = useState<string>("");
   const { conversationID } = useParams();
   const { auth } = useAuth();
   const { data: conversationData } = useQuery(GET_CONVERSATIONS, {
@@ -22,22 +21,21 @@ export default function Messages() {
     onError: debouncedError,
   });
 
+  const filteredConversations = useMemo(() => {
+    return conversations
+      .filter((conv) => {
+        const user = conv.users[0].user.username == auth?.username ? conv.users[1]?.user : conv.users[0]?.user;
+        const name = user.firstName + " " + user.lastName;
+        return name.toLowerCase().includes(filter.toLowerCase());
+      })
+      .sort((a, b) => new Date(b.lastSentMessageTime).getTime() - new Date(a.lastSentMessageTime).getTime());
+  }, [conversations, filter]);
+
   useEffect(() => {
     if (conversationData) {
       setConversations(conversationData.getConversations);
-      setFilteredConversations(conversationData.getConversations);
     }
   }, [conversationData]);
-
-  const handleFilter = (filter: string) => {
-    const filtered = conversations.filter((conv) => {
-      const user = conv.users[0].user.username == auth?.username ? conv.users[1].user : conv.users[0].user;
-      const name = user.firstName + " " + user.lastName;
-      return name.toLowerCase().includes(filter.toLowerCase());
-    });
-
-    setFilteredConversations(filtered);
-  };
 
   return (
     <>
@@ -60,17 +58,38 @@ export default function Messages() {
                   <input
                     type={"text"}
                     placeholder={"Seach Messenger"}
-                    onChange={(e) => handleFilter(e.target.value)}
+                    onChange={(e) => setFilter(e.target.value)}
                   />
                 </div>
                 <div className={styles.messageContainer}>
                   {filteredConversations.length > 0 ? (
                     filteredConversations.map((conv, index) => {
+                      if (conv.group) {
+                        return (
+                          <div
+                            key={index}
+                            className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}>
+                            <Link to={"/messages/" + conv.id}>
+                              <SafeImage
+                                src={conv.group.background}
+                                type={"group-background"}
+                                alt={"group background"}
+                              />
+                              <div className={styles.content}>
+                                <h3>{conv.group.name}</h3>
+                                <p>{conv.lastMessage}</p>
+                              </div>
+                            </Link>
+                          </div>
+                        );
+                      }
+
                       if (conv.users[0] && conv.users[1]) {
                         const user = conv.users[0].user.username == auth?.username ? conv.users[1].user : conv.users[0].user;
 
                         return (
                           <div
+                            onClick={() => console.log(conv)}
                             key={index}
                             className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}>
                             <Link to={"/messages/" + conv.id}>
@@ -83,30 +102,7 @@ export default function Messages() {
                                 <h3>
                                   {user.firstName} {user.lastName}
                                 </h3>
-                                <p
-                                  dangerouslySetInnerHTML={{
-                                    __html: conv.messages ? domPurify(conv.messages[conv.messages.length - 1]?.message) : "",
-                                  }}
-                                />
-                              </div>
-                            </Link>
-                          </div>
-                        );
-                      }
-                      if (conv.group) {
-                        return (
-                          <div
-                            key={index}
-                            className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}>
-                            <Link to={"/messages/" + conv.id}>
-                              <SafeImage
-                                src={conv.group.background}
-                                type={"group-background"}
-                                alt={"profile picture"}
-                              />
-                              <div className={styles.content}>
-                                <h3>{conv.group.name}</h3>
-                                <p>{conv.messages ? conv.messages[conv.messages.length - 1]?.message : ""}</p>
+                                <p dangerouslySetInnerHTML={{ __html: conv.lastMessage ?? "" }} />
                               </div>
                             </Link>
                           </div>
@@ -124,7 +120,10 @@ export default function Messages() {
             <div className={styles.barSpace} />
             {conversationID ? (
               <>
-                <MessageBox key={conversationID + "messageBoks"} />
+                <MessageBox
+                  setConversations={setConversations}
+                  key={conversationID}
+                />
               </>
             ) : (
               <div className={styles.empty}>

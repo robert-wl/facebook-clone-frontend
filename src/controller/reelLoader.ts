@@ -1,5 +1,5 @@
 import { Reel } from "../../gql/graphql.ts";
-import { FileUpload } from "./firebase/storage.ts";
+import { FileUpload } from "@/lib/firebase/storage.ts";
 
 export default function reelLoader(reel: Reel) {
   const video = reel.video;

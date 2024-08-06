@@ -1,4 +1,4 @@
-import { getDownloadURL, getStorage, ref, uploadBytes, deleteObject } from "firebase/storage";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { app } from "./firebase.ts";
 
 export interface FileUpload {

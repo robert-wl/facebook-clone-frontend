@@ -1,15 +1,19 @@
 import styles from "@/assets/styles/messages/messages.module.scss";
 import MessageInput from "./MessageInput.tsx";
-import { Message } from "@/gql/graphql.ts";
+import { Conversation, Message } from "@/gql/graphql.ts";
 import { Navigate, useParams } from "react-router-dom";
 import { useSubscription } from "@apollo/client";
 import { VIEW_CONVERSATION } from "@/lib/query/message/viewConversation.graphql.ts";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import domPurify from "@/controller/domPurify.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 
-export default function MessageBox() {
+interface IProps {
+  setConversations: Dispatch<SetStateAction<Conversation[]>>;
+}
+
+export default function MessageBox({ setConversations }: IProps) {
   const { conversationID } = useParams();
   const { auth } = useAuth();
   const [stop, setStop] = useState<boolean>(false);
@@ -28,7 +32,10 @@ export default function MessageBox() {
 
   return (
     <div className={styles.chat}>
-      <MessageInput conversationID={conversationID!} />
+      <MessageInput
+        setConversations={setConversations}
+        conversationID={conversationID!}
+      />
       {data &&
         data.viewConversation.map((message: Message, index: number) => {
           return (
