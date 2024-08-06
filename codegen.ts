@@ -1,16 +1,16 @@
-
-import type { CodegenConfig } from '@graphql-codegen/cli';
+import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "http://localhost:8080/query",
+  //@ts-ignore
+  schema: import.meta.env.VITE_GRAPHQL_BACKED_URL,
   documents: "*/**/*.graphql.ts",
   generates: {
     "gql/": {
       preset: "client",
-      plugins: []
-    }
-  }
+      plugins: [],
+    },
+  },
 };
 
 export default config;
