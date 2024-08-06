@@ -2,20 +2,20 @@ import styles from "@/assets/styles/reels/reels.module.scss";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { MouseEvent, useEffect, useState } from "react";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { Reel } from "@/gql/graphql.ts";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { AiFillLike } from "react-icons/ai";
 import { PiShareFatFill } from "react-icons/pi";
 import { BiSolidCommentDetail } from "react-icons/bi";
-import statsConverter from "@/controller/statsConverter.ts";
+import statsConverter from "@/utils/stats-utils.ts";
 import { LIKE_REEL } from "@/lib/query/reels/likeReel.graphql.ts";
 import ReelCommentSidebar from "@/components/reels/ReelCommentSidebar.tsx";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import { Link } from "react-router-dom";
-import reelLoader from "@/controller/reelLoader.ts";
 import { GET_REELS_PAGINATED } from "@/lib/query/reels/getReelsPaginated.graphql.ts";
 import SafeImage from "@/components/SafeImage.tsx";
+import { FileUpload } from "@/lib/firebase/storage.ts";
 
 const paginationLimit = 8;
 
@@ -91,6 +91,16 @@ export default function Reels() {
       video.play();
     } else {
       video.pause();
+    }
+  };
+
+  const reelLoader = (reel: Reel) => {
+    const video = reel.video;
+    try {
+      const imgObj = JSON.parse(video) as FileUpload;
+      return imgObj.url;
+    } catch (e) {
+      return video;
     }
   };
 

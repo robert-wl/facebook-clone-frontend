@@ -1,4 +1,6 @@
-export default function statsConverter(num: number | undefined) {
+import { Optional } from "@/types/utils";
+
+export default function statsConverter(num: Optional<number>) {
   if (num == undefined) return 0;
   if (num < 1000) {
     return num.toString();

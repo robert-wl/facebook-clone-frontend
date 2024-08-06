@@ -3,7 +3,7 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } fr
 import { RiVideoAddFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import promiseToast from "@/controller/toast/promiseToast.ts";
+import promiseToast from "@/lib/toast/promiseToast.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 

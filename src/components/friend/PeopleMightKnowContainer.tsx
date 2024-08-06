@@ -1,7 +1,7 @@
 import styles from "@/assets/styles/user/user.module.scss";
 import { useQuery } from "@apollo/client";
 import { GET_PEOPLE_MIGHT_KNOW } from "@/lib/query/friend/getPeopleMightKnow.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { User } from "@/gql/graphql.ts";
 import { useState } from "react";
 import RecommendFriendBox from "./RecommendFriendBox.tsx";

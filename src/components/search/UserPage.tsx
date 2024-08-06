@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { User } from "@/gql/graphql.ts";
 import { useQuery } from "@apollo/client";
 import { GET_FILTERED_USERS } from "@/lib/query/search/getFilteredUsers.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
 import UserLoneBox from "./UserLoneBox.tsx";
 import { debounce } from "@/utils/debouncer.ts";

@@ -5,9 +5,9 @@ import { Navigate, useParams } from "react-router-dom";
 import { useSubscription } from "@apollo/client";
 import { VIEW_CONVERSATION } from "@/lib/query/message/viewConversation.graphql.ts";
 import { Dispatch, SetStateAction, useState } from "react";
-import domPurify from "@/controller/domPurify.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
+import { domPurify } from "@/utils/rich-text-utils.ts";
 
 interface IProps {
   setConversations: Dispatch<SetStateAction<Conversation[]>>;

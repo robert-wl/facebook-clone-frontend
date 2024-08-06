@@ -1,6 +1,8 @@
 import { ContentBlock } from "react-draft-wysiwyg";
 
-export default function findWithRegex(regex: RegExp, contentBlock: ContentBlock, callback: (start: number, end: number) => void) {
+type RegexCallback = (start: number, end: number) => void;
+
+export default function findWithRegex(regex: RegExp, contentBlock: ContentBlock, callback: RegexCallback) {
   const text = contentBlock.getText();
   let matchArr, start;
   while ((matchArr = regex.exec(text)) !== null) {

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { AUTHENTICATE_USER } from "@/lib/query/user/authenticateUser.graphql.ts";
 import { FormEvent, useState } from "react";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import Footer from "@/components/misc/Footer.tsx";
 import { toast } from "react-toastify";
 import useAuth from "@/hooks/use-auth.ts";
@@ -29,11 +29,13 @@ export default function Login() {
       },
     }).catch(debouncedError);
 
-    if (result) {
-      setToken!(result.data.authenticateUser);
-      await getUser!();
-      return navigate("/");
+    if (!result) {
+      return;
     }
+
+    setToken!(result.data.authenticateUser);
+    await getUser!();
+    return navigate("/");
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -52,11 +54,13 @@ export default function Login() {
       },
     }).catch(debouncedError);
 
-    if (result) {
-      setToken!(result.data.authenticateUser);
-      await getUser!();
-      return navigate("/");
+    if (!result) {
+      return;
     }
+
+    setToken!(result.data.authenticateUser);
+    await getUser!();
+    return navigate("/");
   };
 
   return (

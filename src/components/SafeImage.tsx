@@ -1,8 +1,13 @@
-import { catchImageError, defaultGroupCover, getImageURL, getImageURLFromFile } from "@/utils/image-utils.ts";
+import {
+  catchImageError,
+  defaultGroupBackground,
+  defaultGroupCover,
+  defaultUserBackground,
+  defaultUserProfile,
+  getImageURL,
+  getImageURLFromFile,
+} from "@/utils/image-utils.ts";
 import { Nullable, Optional } from "@/types/utils";
-import { defaultUserProfile } from "@/controller/userProfileLoader.ts";
-import { defaultUserBackground } from "@/controller/userBackgroundLoader.ts";
-import { defaultGroupBackground } from "@/controller/groupBackgroundLoader.ts";
 import { forwardRef } from "react";
 import { FileUpload } from "@/lib/firebase/storage.ts";
 

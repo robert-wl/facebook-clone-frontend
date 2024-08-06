@@ -1,9 +1,14 @@
 import { Nullable, Optional } from "@/types/utils";
 import { SyntheticEvent } from "react";
 import { BackendFile } from "@/types/files";
+import groupBackground from "@/public/group/default-group-cover.png";
+import groupCover from "@/public/group/default-group-cover.png";
+import userProfile from "@/public/user/default-profile.jpg";
 
-export const defaultGroupCover = "/group/default-group-cover.png";
-
+export const defaultGroupCover = groupCover as string;
+export const defaultGroupBackground = groupBackground as string;
+export const defaultUserBackground = "https://picsum.photos/200/300";
+export const defaultUserProfile = userProfile as string;
 export function getImageURLFromFile(file: Optional<Nullable<BackendFile | string>>, defaultURL?: string) {
   if (!file) {
     return defaultURL;

@@ -10,7 +10,7 @@ import { GET_STORIES } from "@/lib/query/story/getStories.graphql.ts";
 import { Story, User } from "@/gql/graphql.ts";
 import StoryBox from "@/components/stories/StoryBox.tsx";
 import { GET_USER_WITH_STORIES } from "@/lib/query/story/getUserWithStories.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 

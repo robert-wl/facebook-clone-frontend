@@ -1,12 +1,12 @@
 import styles from "@/assets/styles/register/register.module.scss";
-import {useState} from "react";
-import {NewUser} from "@/../gql/graphql.ts";
-import {useMutation} from "@apollo/client";
-import {REGISTER_USER} from "@/lib/query/user/createUser.graphql.ts";
-import {Link, useNavigate} from "react-router-dom";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { useState } from "react";
+import { NewUser } from "@/../gql/graphql.ts";
+import { useMutation } from "@apollo/client";
+import { REGISTER_USER } from "@/lib/query/user/createUser.graphql.ts";
+import { Link, useNavigate } from "react-router-dom";
+import { debouncedError } from "@/utils/error-handler.ts";
 import Footer from "@/components/misc/Footer.tsx";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function Register() {
   const [user, setUser] = useState<NewUser>({
@@ -23,38 +23,42 @@ export default function Register() {
   const [registerUser] = useMutation(REGISTER_USER);
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    let error = "Unknown error";
+  const handleSubmit = async () => {
     if (user.firstName.length == 0) {
-      error = "Error: First name cannot be empty";
-    } else if (user.username.length < 5) {
-      error = "Error: Username must be at least 5 characters long";
-    } else if (user.email.length == 0) {
-      error = "Error: Email cannot be empty";
-    } else if (!user.email.includes("@")) {
-      error = "Error: Email must contain @";
-    } else if (user.password != confirmPassword) {
-      error = "Error: Passwords do not match";
-    } else if (user.dob.length == 0) {
-      error = "Error: Date of birth cannot be empty";
-    } else if (user.gender.length == 0) {
-      error = "Error: Gender cannot be empty";
-    } else if (user.dob > new Date().toISOString()) {
-      error = "Error: invalid date";
-    } else {
-      return registerUser({
-        variables: {
-          user: user,
-        },
-      })
-        .then(() => {
-          toast.success("Success: account created successfully");
-          return navigate("/login");
-        })
-        .catch(debouncedError);
+      return toast.error("Error: First name cannot be empty");
+    }
+    if (user.username.length < 5) {
+      return toast.error("Error: Username must be at least 5 characters long");
+    }
+    if (user.email.length == 0) {
+      return toast.error("Error: Email cannot be empty");
+    }
+    if (!user.email.includes("@")) {
+      return toast.error("Error: Email must contain @");
+    }
+    if (user.password != confirmPassword) {
+      return toast.error("Error: Passwords do not match");
+    }
+    if (user.dob.length == 0) {
+      return toast.error("Error: Date of birth cannot be empty");
+    }
+    if (user.gender.length == 0) {
+      return toast.error("Error: Gender cannot be empty");
+    }
+    if (user.dob > new Date().toISOString()) {
+      return toast.error("Error: Date of birth cannot be in the future");
     }
 
-    toast.error(error);
+    const result = await registerUser({
+      variables: {
+        user: user,
+      },
+    }).catch(debouncedError);
+
+    if (!result) {
+      toast.success("Success: account created successfully");
+      return navigate("/login");
+    }
   };
 
   return (
@@ -67,29 +71,29 @@ export default function Register() {
             <input
               placeholder={"First Name"}
               value={user.firstName}
-              onChange={(e) => setUser({...user, firstName: e.target.value})}
+              onChange={(e) => setUser({ ...user, firstName: e.target.value })}
             />
             <input
               placeholder={"Last Name"}
               value={user.lastName}
-              onChange={(e) => setUser({...user, lastName: e.target.value})}
+              onChange={(e) => setUser({ ...user, lastName: e.target.value })}
             />
           </div>
           <input
             value={user.username}
             placeholder={"Username"}
-            onChange={(e) => setUser({...user, username: e.target.value})}
+            onChange={(e) => setUser({ ...user, username: e.target.value })}
           />
           <input
             value={user.email}
             placeholder={"Email address"}
-            onChange={(e) => setUser({...user, email: e.target.value})}
+            onChange={(e) => setUser({ ...user, email: e.target.value })}
           />
           <input
             type="password"
             value={user.password}
             placeholder={"Password"}
-            onChange={(e) => setUser({...user, password: e.target.value})}
+            onChange={(e) => setUser({ ...user, password: e.target.value })}
           />
           <input
             type="password"
@@ -100,7 +104,7 @@ export default function Register() {
           <label>Date of birth</label>
           <input
             type="date"
-            onChange={(e) => setUser({...user, dob: new Date(e.target.value).toISOString()})}
+            onChange={(e) => setUser({ ...user, dob: new Date(e.target.value).toISOString() })}
           />
           <label>Gender</label>
           <div className={styles.genderBox}>
@@ -109,7 +113,7 @@ export default function Register() {
               <input
                 type="radio"
                 checked={user.gender == "female"}
-                onChange={() => setUser({...user, gender: "female"})}
+                onChange={() => setUser({ ...user, gender: "female" })}
               />
             </label>
             <label>
@@ -117,7 +121,7 @@ export default function Register() {
               <input
                 type="radio"
                 checked={user.gender == "male"}
-                onChange={() => setUser({...user, gender: "male"})}
+                onChange={() => setUser({ ...user, gender: "male" })}
               />
             </label>
             <label>
@@ -125,18 +129,18 @@ export default function Register() {
               <input
                 type="radio"
                 checked={user.gender == "other"}
-                onChange={() => setUser({...user, gender: "other"})}
+                onChange={() => setUser({ ...user, gender: "other" })}
               />
             </label>
           </div>
-          <hr/>
+          <hr />
           <button onClick={() => handleSubmit()}>Register</button>
           <p>
             <Link to={"/login"}>Already have an account?</Link>
           </p>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

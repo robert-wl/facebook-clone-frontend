@@ -8,14 +8,14 @@ import StorySidebar from "@/components/sidebar/StorySidebar.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_IMAGE_STORY } from "@/lib/query/story/createImageStory.graphql.ts";
 import { CREATE_TEXT_STORY } from "@/lib/query/story/createTextStory.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import uploadStorage from "@/lib/firebase/storage.ts";
 import { User } from "@/gql/graphql.ts";
 import { GET_USER_WITH_STORIES } from "@/lib/query/story/getUserWithStories.graphql.ts";
 import { Link } from "react-router-dom";
 import { IoIosAdd } from "react-icons/io";
 import { toast } from "react-toastify";
-import promiseToast from "@/controller/toast/promiseToast.ts";
+import promiseToast from "@/lib/toast/promiseToast.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 

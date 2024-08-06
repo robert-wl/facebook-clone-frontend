@@ -2,7 +2,7 @@ import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import { Group } from "@/gql/graphql.ts";
 import { useQuery } from "@apollo/client";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { debounce } from "@/utils/debouncer.ts";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
 import styles from "@/assets/styles/search/search.module.scss";

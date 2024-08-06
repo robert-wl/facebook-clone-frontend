@@ -1,26 +1,27 @@
 import styles from "@/assets/styles/activateAccount/activateAccount.module.scss";
-import {useMutation} from "@apollo/client";
-import {ACTIVATE_USER} from "@/lib/query/user/activateUser.graphql.ts";
-import {useNavigate, useParams} from "react-router-dom";
-import {debouncedError} from "@/controller/errorHandler.ts";
+import { useMutation } from "@apollo/client";
+import { ACTIVATE_USER } from "@/lib/query/user/activateUser.graphql.ts";
+import { useNavigate, useParams } from "react-router-dom";
+import { debouncedError } from "@/utils/error-handler.ts";
 import Footer from "@/components/misc/Footer.tsx";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function ActivateAccount() {
   const [activateAccount] = useMutation(ACTIVATE_USER);
-  const {activationID} = useParams();
+  const { activationID } = useParams();
   const navigate = useNavigate();
-  const handleSubmit = () => {
-    activateAccount({
+  const handleSubmit = async () => {
+    const result = await activateAccount({
       variables: {
         id: activationID,
       },
-    })
-      .then(() => {
-        toast.success("Success: account activated successfully");
-        navigate("/login");
-      })
-      .catch(debouncedError);
+    }).catch(debouncedError);
+
+    if (!result) {
+      return;
+    }
+    toast.success("Success: account activated successfully");
+    navigate("/login");
   };
 
   return (
@@ -29,7 +30,7 @@ export default function ActivateAccount() {
         <h3>Activate Your Account</h3>
         <button onClick={() => handleSubmit()}>Activate</button>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

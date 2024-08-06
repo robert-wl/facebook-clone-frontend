@@ -4,16 +4,16 @@ import { useState } from "react";
 import { IoSend } from "react-icons/io5";
 import { useMutation } from "@apollo/client";
 import { CREATE_COMMENT } from "@/lib/query/post/createComment.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import Reply from "./Reply.tsx";
 import { LIKE_COMMENT } from "@/lib/query/post/likeComment.graphql.ts";
 import { PiArrowBendDownRightDuotone } from "react-icons/pi";
 import { AiFillLike } from "react-icons/ai";
 import RichText from "@/components/richText/RichText.tsx";
-import domPurify from "@/controller/domPurify.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import ProfilePicture from "@/components/ProfilePicture.tsx";
 import SafeImage from "@/components/SafeImage.tsx";
+import { domPurify } from "@/utils/rich-text-utils.ts";
 
 interface Comments {
   comment: Comment | Maybe<Comment>;

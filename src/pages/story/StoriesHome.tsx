@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { User } from "@/gql/graphql.ts";
 import { GET_USER_WITH_STORIES } from "@/lib/query/story/getUserWithStories.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import EmptyStory from "@/components/stories/EmptyStory.tsx";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";

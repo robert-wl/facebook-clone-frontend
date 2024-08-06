@@ -4,22 +4,22 @@ import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { GoComment } from "react-icons/go";
 import { PiShareFatThin } from "react-icons/pi";
 import { Comment, Group, Post } from "@/gql/graphql.ts";
-import getTimeDiff from "@/controller/timeConverter.ts";
+import getTimeDiff from "@/utils/time-utils.ts";
 import ImageCarousel from "@/components/ImageCarousel.tsx";
 import { IoSend } from "react-icons/io5";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Comments from "./Comments.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_COMMENT_POST } from "@/lib/query/post/getCommentPost.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { CREATE_COMMENT } from "@/lib/query/post/createComment.graphql.ts";
 import { LIKE_POST } from "@/lib/query/post/likePost.graphql.ts";
 import RichText from "@/components/richText/RichText.tsx";
-import domPurify from "@/controller/domPurify.ts";
 import { FiTrash2 } from "react-icons/fi";
 import { DELETE_POST } from "@/lib/query/post/deletePost.graphql.ts";
 import GroupProfilePicture from "@/components/GroupProfilePicture.tsx";
 import useAuth from "@/hooks/use-auth.ts";
+import { domPurify } from "@/utils/rich-text-utils.ts";
 
 interface PostBox {
   post: Post;
@@ -157,7 +157,7 @@ export default function PostBox({ post: postN, setCurrPost, setShareModalState, 
             <>
               <ProfilePicture
                 user={post!.user!}
-                showBox={false}
+                showBox={true}
               />
             </>
           )}

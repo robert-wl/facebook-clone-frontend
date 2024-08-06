@@ -3,16 +3,16 @@ import PostSkeleton from "@/components/post/PostSkeleton.tsx";
 import PostBox from "@/components/post/PostBox.tsx";
 import { useQuery } from "@apollo/client";
 import { GET_GROUP_HOME_POSTS } from "@/lib/query/group/getGroupHomePosts.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { Post } from "@/gql/graphql.ts";
-import { Dispatch, MutableRefObject, SetStateAction, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import useInfiniteScroll from "@/hooks/use-infinite-scroll.ts";
 import EmptyPost from "@/components/post/EmptyPost.tsx";
 
 interface GroupFeed {
   setShareModalState: Dispatch<SetStateAction<boolean>>;
   setCurrPost: Dispatch<SetStateAction<Post | null>>;
-  pageRef: MutableRefObject<HTMLDivElement>;
+  pageRef: RefObject<HTMLDivElement>;
 }
 
 const paginationLimit = 5;

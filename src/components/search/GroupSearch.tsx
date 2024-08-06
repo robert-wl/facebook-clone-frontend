@@ -1,9 +1,9 @@
 import styles from "@/assets/styles/search/search.module.scss";
-import {useQuery} from "@apollo/client";
-import {GET_FILTERED_GROUPS} from "@/lib/query/search/getFilteredGroups.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {Group} from "@/gql/graphql.ts";
-import {Dispatch, SetStateAction, useState} from "react";
+import { useQuery } from "@apollo/client";
+import { GET_FILTERED_GROUPS } from "@/lib/query/search/getFilteredGroups.graphql.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
+import { Group } from "@/gql/graphql.ts";
+import { Dispatch, SetStateAction, useState } from "react";
 import GroupBox from "./GroupBox.tsx";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
 
@@ -13,9 +13,9 @@ interface GroupSearch {
   setAnyGroupResult: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function GroupSearch({filter, setTab, setAnyGroupResult}: GroupSearch) {
+export default function GroupSearch({ filter, setTab, setAnyGroupResult }: GroupSearch) {
   const [groupData, setGroupData] = useState<Group[]>([]);
-  const {loading} = useQuery(GET_FILTERED_GROUPS, {
+  const { loading } = useQuery(GET_FILTERED_GROUPS, {
     variables: {
       filter: filter,
       pagination: {
@@ -33,8 +33,8 @@ export default function GroupSearch({filter, setTab, setAnyGroupResult}: GroupSe
   if (loading)
     return (
       <>
-        <GroupSearchSkeleton/>
-        <GroupSearchSkeleton/>
+        <GroupSearchSkeleton />
+        <GroupSearchSkeleton />
       </>
     );
   if (!loading && groupData.length == 0) {

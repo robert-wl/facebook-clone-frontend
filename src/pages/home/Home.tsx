@@ -7,7 +7,7 @@ import PostBox from "@/components/post/PostBox.tsx";
 import { GET_POSTS } from "@/lib/query/post/getPosts.graphql.ts";
 import { useQuery } from "@apollo/client";
 import { Post, User } from "@/gql/graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import Loading from "@/components/Loading.tsx";
 import PostSkeleton from "@/components/post/PostSkeleton.tsx";
 import ShareModal from "@/components/ShareModal.tsx";

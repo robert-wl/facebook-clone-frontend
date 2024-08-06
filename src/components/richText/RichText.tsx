@@ -1,10 +1,11 @@
 import styles from "@/assets/styles/richText/richText.module.scss";
-import {Editor} from "react-draft-wysiwyg";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {convertToRaw, EditorState} from "draft-js";
-import {useQuery} from "@apollo/client";
-import {GET_USERS} from "@/lib/query/user/getUsers.graphql.ts";
-import {User} from "@/gql/graphql.ts";
+import { Editor } from "react-draft-wysiwyg";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+//@ts-ignore
+import { convertToRaw, EditorState } from "draft-js";
+import { useQuery } from "@apollo/client";
+import { GET_USERS } from "@/lib/query/user/getUsers.graphql.ts";
+import { User } from "@/gql/graphql.ts";
 import draftToHtml from "draftjs-to-html";
 
 export interface MentionSuggestion {
@@ -24,19 +25,10 @@ interface RichText {
   resize?: "vertical" | "horizontal" | "none";
 }
 
-export default function RichText({
-                                   setText,
-                                   height,
-                                   width,
-                                   overflow,
-                                   minHeight,
-                                   placeholder,
-                                   resize,
-                                   maxWidth
-                                 }: RichText) {
+export default function RichText({ setText, height, width, overflow, minHeight, placeholder, resize, maxWidth }: RichText) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [suggestion, setSuggestion] = useState<MentionSuggestion[]>([]);
-  const {data} = useQuery(GET_USERS);
+  const { data } = useQuery(GET_USERS);
 
   useEffect(() => {
     if (data) {

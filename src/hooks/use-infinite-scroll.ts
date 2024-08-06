@@ -1,10 +1,10 @@
-import { MutableRefObject, useEffect, useRef } from "react";
+import { RefObject, useEffect, useRef } from "react";
 import { debounce } from "@/utils/debouncer.ts";
 
 interface IProps<T> {
   callback: () => void;
   debounceDelay?: number;
-  pageRef?: MutableRefObject<T>;
+  pageRef?: RefObject<T>;
 }
 
 export default function useInfiniteScroll<T extends HTMLElement>({ callback, debounceDelay = 50, pageRef: outerRef }: IProps<T>) {

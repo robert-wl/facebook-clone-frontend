@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { User } from "@/gql/graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { Nullable } from "@/types/utils";
 import { useSessionStorage } from "usehooks-ts";
 import { GET_AUTH } from "@/lib/query/user/getAuth.graphql.ts";

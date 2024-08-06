@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Group } from "@/gql/graphql.ts";
 import { useMutation } from "@apollo/client";
 import { HANDLE_REQUEST } from "@/lib/query/group/handleRequest.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { Dispatch, SetStateAction } from "react";
 import SafeImage from "@/components/SafeImage.tsx";
 

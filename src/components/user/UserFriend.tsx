@@ -3,7 +3,7 @@ import styles from "@/assets/styles/user/user.module.scss";
 import UserFriendBox from "@/components/friend/UserFriendBox.tsx";
 import NoFriendBox from "@/components/friend/NoFriendBox.tsx";
 import { useQuery } from "@apollo/client";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { GET_USER_MUTUALS } from "@/lib/query/friend/getUserMutuals.graphql.ts";
 import { useParams } from "react-router-dom";
 import { useState } from "react";

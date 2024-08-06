@@ -1,6 +1,6 @@
 import styles from "@/assets/styles/notification/notification.module.scss";
 import { Notification } from "@/gql/graphql.ts";
-import getTimeDiff from "@/controller/timeConverter.ts";
+import getTimeDiff from "@/utils/time-utils.ts";
 import { Link } from "react-router-dom";
 import SafeImage from "@/components/SafeImage.tsx";
 

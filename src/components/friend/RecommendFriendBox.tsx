@@ -4,7 +4,7 @@ import { BsFillPersonPlusFill } from "react-icons/bs";
 import { User } from "@/gql/graphql.ts";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { useMutation } from "@apollo/client";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { ADD_FRIEND } from "@/lib/query/friend/addFriend.graphql.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";

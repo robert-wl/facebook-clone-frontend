@@ -5,7 +5,7 @@ import { useState } from "react";
 import uploadStorage from "@/lib/firebase/storage.ts";
 import { useMutation } from "@apollo/client";
 import { CREATE_REEL } from "@/lib/query/reels/createReel.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 

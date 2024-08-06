@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_CONVERSATIONS } from "@/lib/query/message/getConversations.graphql.ts";
 import { Conversation } from "@/gql/graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import MessageBox from "@/components/message/MessageBox.tsx";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";

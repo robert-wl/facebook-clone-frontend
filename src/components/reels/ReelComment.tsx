@@ -4,15 +4,15 @@ import { IoSend } from "react-icons/io5";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { LIKE_REEL_COMMENT } from "@/lib/query/reels/likeReelComment.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { CREATE_REEL_COMMENT } from "@/lib/query/reels/createReelComment.graphql.ts";
 import { PiArrowBendDownRightDuotone } from "react-icons/pi";
-import domPurify from "@/controller/domPurify.ts";
 import RichText from "@/components/richText/RichText.tsx";
 import { Link } from "react-router-dom";
 import LikeLabel from "@/components/post/LikeLabel.tsx";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
+import { domPurify } from "@/utils/rich-text-utils.ts";
 
 interface IProps {
   comment: ReelComment;

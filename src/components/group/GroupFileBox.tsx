@@ -5,7 +5,7 @@ import uploadStorage, { deleteStorage, FileUpload } from "@/lib/firebase/storage
 import { useMutation, useQuery } from "@apollo/client";
 import { UPLOAD_FILE } from "@/lib/query/group/uploadFile.graphql.ts";
 import { Link, useParams } from "react-router-dom";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { GET_GROUP_FILES } from "@/lib/query/group/getGroupFiles.graphql.ts";
 import { Group, GroupFile } from "@/gql/graphql.ts";
 import { HiOutlineDownload } from "react-icons/hi";
@@ -13,7 +13,7 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { PiTrashBold } from "react-icons/pi";
 import { DELETE_FILE } from "@/lib/query/group/deleteFile.graphql.ts";
 import { toast } from "react-toastify";
-import promiseToast from "@/controller/toast/promiseToast.ts";
+import promiseToast from "@/lib/toast/promiseToast.ts";
 import useAuth from "@/hooks/use-auth.ts";
 
 interface GroupFileBox {

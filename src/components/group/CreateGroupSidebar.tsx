@@ -2,7 +2,7 @@ import styles from "@/assets/styles/group/createGroupSidebar.module.scss";
 import { Dispatch, SetStateAction } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_GROUP } from "@/lib/query/group/createGroup.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useAuth from "@/hooks/use-auth.ts";

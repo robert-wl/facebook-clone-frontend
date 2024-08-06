@@ -5,7 +5,7 @@ import { FaCompass } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_JOINED_GROUPS } from "@/lib/query/group/getJoinedGroups.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { Group } from "@/gql/graphql.ts";
 import PeopleArtIcon from "@/components/icons/art/PeopleArtIcon.tsx";
 import SafeImage from "@/components/SafeImage.tsx";

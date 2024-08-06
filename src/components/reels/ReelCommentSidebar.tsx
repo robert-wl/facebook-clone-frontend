@@ -2,7 +2,7 @@ import styles from "@/assets/styles/reels/reelCommentSidebar.module.scss";
 import { IoSend } from "react-icons/io5";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Reel, ReelComment } from "@/gql/graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_REEL_COMMENT } from "@/lib/query/reels/createReelComment.graphql.ts";
 import ReelCommentBox from "./ReelComment.tsx";

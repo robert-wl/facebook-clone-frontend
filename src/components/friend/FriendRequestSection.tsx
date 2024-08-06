@@ -3,7 +3,7 @@ import FriendBox from "./FriendBox.tsx";
 import NoFriendBox from "./NoFriendBox.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_FRIEND_REQUESTS } from "@/lib/query/friend/getFriendRequests.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { User } from "@/gql/graphql.ts";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ACCEPT_FRIEND } from "@/lib/query/friend/acceptFriend.graphql.ts";

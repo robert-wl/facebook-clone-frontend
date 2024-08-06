@@ -1,10 +1,10 @@
 import styles from "@/assets/styles/search/search.module.scss";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
-import {useQuery} from "@apollo/client";
-import {GET_FILTERED_USERS} from "@/lib/query/search/getFilteredUsers.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {User} from "@/gql/graphql.ts";
-import {Dispatch, SetStateAction, useState} from "react";
+import { useQuery } from "@apollo/client";
+import { GET_FILTERED_USERS } from "@/lib/query/search/getFilteredUsers.graphql.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
+import { User } from "@/gql/graphql.ts";
+import { Dispatch, SetStateAction, useState } from "react";
 import UserBox from "./UserBox.tsx";
 
 interface UserSearch {
@@ -13,9 +13,9 @@ interface UserSearch {
   setAnyUserResult: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function UserSearch({filter, setTab, setAnyUserResult}: UserSearch) {
+export default function UserSearch({ filter, setTab, setAnyUserResult }: UserSearch) {
   const [userData, setUserData] = useState<User[]>([]);
-  const {loading} = useQuery(GET_FILTERED_USERS, {
+  const { loading } = useQuery(GET_FILTERED_USERS, {
     variables: {
       filter: filter,
       pagination: {
@@ -32,8 +32,8 @@ export default function UserSearch({filter, setTab, setAnyUserResult}: UserSearc
   if (loading)
     return (
       <>
-        <GroupSearchSkeleton/>
-        <GroupSearchSkeleton/>
+        <GroupSearchSkeleton />
+        <GroupSearchSkeleton />
       </>
     );
 

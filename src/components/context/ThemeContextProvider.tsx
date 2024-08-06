@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useEffect } from "react";
 import { useMutation } from "@apollo/client";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { UPDATE_THEME } from "@/lib/query/user/updateTheme.graphql.ts";
 import { Nullable } from "@/types/utils";
 import useAuth from "@/hooks/use-auth.ts";

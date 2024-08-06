@@ -8,7 +8,7 @@ import { CREATE_POST } from "@/lib/query/post/createPost.graphql.ts";
 import { Group } from "@/gql/graphql.ts";
 import { useParams } from "react-router-dom";
 import RichText from "@/components/richText/RichText.tsx";
-import promiseToast from "@/controller/toast/promiseToast.ts";
+import promiseToast from "@/lib/toast/promiseToast.ts";
 import { toast } from "react-toastify";
 import useAuth from "@/hooks/use-auth.ts";
 

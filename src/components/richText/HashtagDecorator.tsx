@@ -1,7 +1,7 @@
 import styles from "@/assets/styles/richText/richText.module.scss";
-import {ContentBlock} from "react-draft-wysiwyg";
-import findWithRegex from "@/controller/regexFunction.ts";
-import {Link} from "react-router-dom";
+import { ContentBlock } from "react-draft-wysiwyg";
+import findWithRegex from "@/utils/regex-utils.ts";
+import { Link } from "react-router-dom";
 
 function hashtagStrategy(contentBlock: ContentBlock, callback: (start: number, end: number) => void) {
   findWithRegex(/#[\w\u0590-\u05ff]+/g, contentBlock, callback);

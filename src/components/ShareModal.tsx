@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Post, User } from "@/gql/graphql.ts";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 import { SHARE_POST } from "@/lib/query/post/sharePost.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 

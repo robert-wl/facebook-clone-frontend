@@ -4,7 +4,7 @@ import GroupDetailSidebar from "@/components/group/GroupDetailSidebar.tsx";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_GROUP } from "@/lib/query/group/getGroup.graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Group, Post } from "@/../gql/graphql.ts";
 import PostBox from "@/components/post/PostBox.tsx";
@@ -22,7 +22,7 @@ import GroupUser from "@/components/group/GroupUser.tsx";
 import { HANDLE_REQUEST } from "@/lib/query/group/handleRequest.graphql.ts";
 import { LEAVE_GROUP } from "@/lib/query/group/leaveGroup.graphql.ts";
 import { toast } from "react-toastify";
-import promiseToast from "@/controller/toast/promiseToast.ts";
+import promiseToast from "@/lib/toast/promiseToast.ts";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
 

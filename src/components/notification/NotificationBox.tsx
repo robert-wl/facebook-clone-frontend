@@ -1,18 +1,18 @@
 import styles from "@/assets/styles/notification/notification.module.scss";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import NotificationContent from "./NotificationContent.tsx";
-import {useMutation, useQuery} from "@apollo/client";
-import {GET_NOTIFICATIONS} from "@/lib/query/notification/getNotifications.graphql.ts";
-import {debouncedError} from "@/controller/errorHandler.ts";
-import {Notification} from "@/gql/graphql.ts";
-import {GET_UNREAD_NOTIFICATIONS} from "@/lib/query/notification/getUnreadNotifications.graphql.ts";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_NOTIFICATIONS } from "@/lib/query/notification/getNotifications.graphql.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
+import { Notification } from "@/gql/graphql.ts";
+import { GET_UNREAD_NOTIFICATIONS } from "@/lib/query/notification/getUnreadNotifications.graphql.ts";
 
 export default function NotificationBox() {
   const [tab, setTab] = useState<"all" | "unread">("all");
   const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
   const [unreadNotifications, setUnreadNotifications] = useState<Notification[]>([]);
 
-  const {refetch} = useQuery(GET_NOTIFICATIONS, {
+  const { refetch } = useQuery(GET_NOTIFICATIONS, {
     onCompleted: (data) => {
       const notifList = data.getNotifications;
 
@@ -51,7 +51,7 @@ export default function NotificationBox() {
           </button>
         </nav>
       </header>
-      <hr/>
+      <hr />
       <article>
         {tab == "all" && (
           <>

@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { User } from "@/gql/graphql.ts";
 import { useMutation, useQuery } from "@apollo/client";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import styles from "@/assets/styles/shareModal.module.scss";
 import { AiOutlineSearch } from "react-icons/ai";
 import { MdOutlineArrowForwardIos } from "react-icons/md";

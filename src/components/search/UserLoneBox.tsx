@@ -1,7 +1,7 @@
 import styles from "@/assets/styles/search/search.module.scss";
 import { Link } from "react-router-dom";
 import { User } from "@/gql/graphql.ts";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { useMutation } from "@apollo/client";
 import { ADD_FRIEND } from "@/lib/query/friend/addFriend.graphql.ts";
 import { Dispatch, SetStateAction } from "react";

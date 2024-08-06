@@ -22,7 +22,7 @@ export default function ProfilePicture({ user, showBox, zIndex }: IProps) {
       className={styles.imageBox}
       style={{ zIndex: zIndex }}>
       <UserPopup
-        isShown={showPopup}
+        isShown={showBox && showPopup}
         setIsShown={setShowPopup}
         user={user!}
       />

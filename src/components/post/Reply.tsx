@@ -2,16 +2,16 @@ import { Comment, Maybe } from "@/gql/graphql.ts";
 import styles from "@/assets/styles/post/reply.module.scss";
 import { AiFillLike } from "react-icons/ai";
 import { Dispatch, SetStateAction, useState } from "react";
-import { debouncedError } from "@/controller/errorHandler.ts";
+import { debouncedError } from "@/utils/error-handler.ts";
 import { useMutation } from "@apollo/client";
 import { LIKE_COMMENT } from "@/lib/query/post/likeComment.graphql.ts";
-import domPurify from "@/controller/domPurify.ts";
 import RichText from "@/components/richText/RichText.tsx";
 import { IoSend } from "react-icons/io5";
 import { CREATE_COMMENT } from "@/lib/query/post/createComment.graphql.ts";
 import { Link } from "react-router-dom";
 import useAuth from "@/hooks/use-auth.ts";
 import SafeImage from "@/components/SafeImage.tsx";
+import { domPurify } from "@/utils/rich-text-utils.ts";
 
 interface Reply {
   c: Comment | Maybe<Comment>;
