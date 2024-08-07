@@ -8,8 +8,9 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
   return defineConfig({
     plugins: [react(), tsconfigPaths()],
-    define: {
-      global: "window",
+    server: {
+      host: "0.0.0.0",
+      port: 3900,
     },
   });
 };
