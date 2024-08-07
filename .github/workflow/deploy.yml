@@ -1,0 +1,43 @@
+name: Build docker and deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker images
+        run: |
+          docker build -t yahkerobertkertasnya/facebook-clone-fe 
+          docker push yahkerobertkertasnya/facebook-clone-fe
+
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            git clone https://github.com/yahkerobertkertasnya/facebook-clone-frontend.git
+            cd facebook-clone-frontend
+            docker-compose -f docker-compose.server.yml pull
+            docker-compose -f docker-compose.server.yml down
+            docker-compose -f docker-compose.server.yml up -d
+            
