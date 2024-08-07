@@ -22,7 +22,7 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker build -t yahkerobertkertasnya/facebook-clone-fe 
+          docker build -t yahkerobertkertasnya/facebook-clone-fe .
           docker push yahkerobertkertasnya/facebook-clone-fe
 
   build_and_push:
