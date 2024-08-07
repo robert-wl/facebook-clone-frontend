@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  frontend:
+    container_name: ${DOCKER_HUB_USERNAME}/facebook-clone-fe
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_SSLMODE=${DATABASE_SSLMODE}
+      - DATABASE_TIMEZONE=${DATABASE_TIMEZONE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - JWT_KEY=${JWT_KEY}
+    tty: true
+    build: .
+    ports: 
+      - 4173:5300
+    restart: on-failure
