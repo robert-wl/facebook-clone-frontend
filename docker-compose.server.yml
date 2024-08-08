@@ -1,7 +1,8 @@
 version: '3.8'
 services:
   frontend:
-    container_name: ${DOCKER_HUB_USERNAME}/facebook-clone-fe
+    image: ${DOCKER_HUB_USERNAME}/facebook-clone-fe:latest
+    container_name: facebook-clone-fe
     environment:
       - VITE_GRAPHQL_BACKED_URL=${VITE_GRAPHQL_BACKED_URL}
       - VITE_GRAPHQL_BACKEND_WS_URL=${VITE_GRAPHQL_BACKEND_WS_URL}
