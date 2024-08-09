@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <ApolloProvider client={client}>
       <AuthContextProvider>
         <ThemeContextProvider>
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.VITE_ROOT_URL}>
             <App />
           </BrowserRouter>
         </ThemeContextProvider>

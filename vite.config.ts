@@ -6,8 +6,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+  const env = loadEnv(mode, process.cwd());
   return defineConfig({
     plugins: [react(), tsconfigPaths()],
+    base: env.VITE_ROOT_URL,
     server: {
       host: "0.0.0.0",
       port: 3900,
