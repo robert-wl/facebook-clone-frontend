@@ -22,10 +22,13 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker build -t yahkerobertkertasnya/facebook-clone-fe .
+          docker build \
+          -t yahkerobertkertasnya/facebook-clone-fe . \
+          --build-arg VITE_GRAPHQL_BACKED_URL=${{ secrets.VITE_GRAPHQL_BACKED_URL }} \
+          --build-arg VITE_GRAPHQL_BACKEND_WS_URL=${{ secrets.VITE_GRAPHQL_BACKEND_WS_URL }}
           docker push yahkerobertkertasnya/facebook-clone-fe
 
-  build-and-push:
+  pull-and-deploy:
     runs-on: ubuntu-latest
     needs: docker-build
     steps:
@@ -40,5 +43,5 @@ jobs:
             git pull
             docker-compose -f docker-compose.server.yml pull
             docker-compose -f docker-compose.server.yml down
-            docker-compose -f docker-compose.server.yml up -d
+            docker-compose -f --env-file .env docker-compose.server.yml up -d
             
