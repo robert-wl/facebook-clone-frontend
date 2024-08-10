@@ -54,7 +54,7 @@ export default function FriendRequestSection({ setFriends }: FriendRequestSectio
     <>
       <h2>Friend Requests</h2>
       <div className={styles.friendList}>
-        {requests.map((req, index) => {
+        {requests.map((req) => {
           return (
             <>
               <FriendBox

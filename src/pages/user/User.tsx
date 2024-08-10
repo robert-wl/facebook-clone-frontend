@@ -49,7 +49,7 @@ export default function User() {
       setUser(dat.getUser);
     },
     fetchPolicy: "cache-and-network",
-    onError: (e) => navigate("/"),
+    onError: () => navigate("/"),
   });
   const { auth } = useAuth();
   const [updateProfile] = useMutation(UPDATE_USER_PROFILE);
