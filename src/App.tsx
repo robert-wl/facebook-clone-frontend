@@ -1,5 +1,5 @@
 import "@/App.css";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "@/pages/auth/Login.tsx";
 import Register from "@/pages/auth/Register.tsx";
 import "toastify-js/src/toastify.css";
@@ -211,6 +211,10 @@ function App() {
               <Notifications />
             </AuthenticatedProtector>
           }
+        />
+        <Route
+          path=""
+          element={<Navigate to="/" />}
         />
       </Routes>
       <ToastContainer />

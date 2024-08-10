@@ -35,7 +35,7 @@ export default function Login() {
 
     setToken!(result.data.authenticateUser);
     await getUser!();
-    return navigate(import.meta.env.VITE_ROOT_URL);
+    return navigate("/");
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -60,7 +60,7 @@ export default function Login() {
 
     setToken!(result.data.authenticateUser);
     await getUser!();
-    return navigate(import.meta.env.VITE_ROOT_URL);
+    return navigate("/");
   };
 
   return (

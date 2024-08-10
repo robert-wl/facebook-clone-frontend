@@ -155,7 +155,7 @@ export default function User() {
         username: username,
       },
     })
-      .then((data) => navigate(`${import.meta.env.VITE_ROOT_URL}/messages/${data.data.createConversation.id}`))
+      .then((data) => navigate(`/messages/${data.data.createConversation.id}`))
       .catch(debouncedError);
   };
 

@@ -40,7 +40,7 @@ export default function CreateGroupSidebar({ groupData, setGroupData }: IProps) 
       },
     })
       .then(() => {
-        navigate(`${import.meta.env.VITE_ROOT_URL}/group`);
+        navigate(`/group`);
       })
       .catch(debouncedError);
   };

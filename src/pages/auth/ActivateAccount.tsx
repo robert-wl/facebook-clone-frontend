@@ -21,7 +21,7 @@ export default function ActivateAccount() {
       return;
     }
     toast.success("Success: account activated successfully");
-    navigate(`${import.meta.env.VITE_ROOT_URL}/login`);
+    navigate(`/login`);
   };
 
   return (

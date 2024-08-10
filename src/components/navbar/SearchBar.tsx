@@ -11,7 +11,7 @@ export default function SearchBar() {
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
-    navigate(`${import.meta.env.VITE_ROOT_URL}/search/${encodeURIComponent(search)}`);
+    navigate(`/search/${encodeURIComponent(search)}`);
   };
   return (
     <>

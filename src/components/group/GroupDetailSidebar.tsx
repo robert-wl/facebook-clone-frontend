@@ -30,7 +30,7 @@ export default function GroupDetailSidebar({ group, setInviteGroupModalState, se
 
   const handleTab = (nav: string) => {
     setTab(nav);
-    navigate(`${import.meta.env.VITE_ROOT_URL}/group?tab=${nav}`);
+    navigate(`/group?tab=${nav}`);
   };
 
   return (
