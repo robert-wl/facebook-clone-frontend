@@ -4,7 +4,7 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 
 const httpLink = createHttpLink({
-  uri: import.meta.env.VITE_GRAPHQL_BACKED_URL,
+  uri: import.meta.env.VITE_GRAPHQL_BACKEND_URL,
 });
 
 const wsLink = new GraphQLWsLink(

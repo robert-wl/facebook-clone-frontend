@@ -4,7 +4,7 @@ services:
     image: ${DOCKER_HUB_USERNAME}/facebook-clone-fe:latest
     container_name: facebook-clone-fe
     environment:
-      - VITE_GRAPHQL_BACKED_URL=${VITE_GRAPHQL_BACKED_URL}
+      - VITE_GRAPHQL_BACKEND_URL=${VITE_GRAPHQL_BACKEND_URL}
       - VITE_GRAPHQL_BACKEND_WS_URL=${VITE_GRAPHQL_BACKEND_WS_URL}
     tty: true
     build: .

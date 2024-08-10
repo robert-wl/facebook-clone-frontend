@@ -20,14 +20,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker images
+      - name: Build docker image
         run: |
           docker build \
           -t yahkerobertkertasnya/facebook-clone-fe . \
           --build-arg VITE_ROOT_URL=${{ secrets.VITE_ROOT_URL }} \
-          --build-arg VITE_GRAPHQL_BACKED_URL=${{ secrets.VITE_GRAPHQL_BACKED_URL }} \
+          --build-arg VITE_GRAPHQL_BACKEND_URL=${{ secrets.VITE_GRAPHQL_BACKEND_URL }} \
           --build-arg VITE_GRAPHQL_BACKEND_WS_URL=${{ secrets.VITE_GRAPHQL_BACKEND_WS_URL }}
-          docker push yahkerobertkertasnya/facebook-clone-fe
+
+      - name: Push docker image
+        run: |
+          docker push yahkerobertkertasnya/facebook-clone-fe:latest
 
   pull-and-deploy:
     runs-on: ubuntu-latest
@@ -44,5 +47,5 @@ jobs:
             git pull
             docker-compose -f docker-compose.server.yml pull
             docker-compose -f docker-compose.server.yml down
-            docker-compose --env-file .env -f docker-compose.server.yml up -d
+            docker-compose -f docker-compose.server.yml up -d
             
