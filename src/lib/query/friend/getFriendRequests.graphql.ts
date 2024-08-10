@@ -10,6 +10,7 @@ export const GET_FRIEND_REQUESTS = gql`
       email
       dob
       gender
+      profile
       active
     }
   }

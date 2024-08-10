@@ -46,11 +46,23 @@
       &:nth-child(2) {
         background-color: var(--blue-light-button);
         color: var(--blue-light-button-text);
+        transition-duration: var(--transition-duration-short);
+
+        &:hover {
+          background-color: var(--blue-light-button-hover);
+          color: var(--blue-light-button-text);
+          transition-duration: var(--transition-duration-short);
+        }
       }
 
       &:nth-child(3) {
-        background-color: rgb(100, 100, 100, 0.3);
+        background-color: var(--gray-color);
         color: var(--color);
+
+        &:hover {
+          background-color: var(--gray-color-hover);
+          color: var(--color);
+        }
       }
     }
   }
@@ -108,12 +120,24 @@
 
       &:nth-child(2) {
         background-color: var(--blue-light-button);
-        color: var(--blue-button);
+        color: var(--blue-light-button-text);
+        transition-duration: var(--transition-duration-short);
+
+        &:hover {
+          background-color: var(--blue-light-button-hover);
+          color: var(--blue-light-button-text);
+        }
       }
 
       &:nth-child(3) {
-        background-color: rgb(100, 100, 100, 0.3);
+        background-color: var(--gray-color);
         color: var(--color);
+        transition-duration: var(--transition-duration-short);
+
+        &:hover {
+          background-color: var(--gray-color-hover);
+          color: var(--color);
+        }
       }
 
       > svg {

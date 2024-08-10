@@ -1,5 +1,5 @@
 import styles from "@/assets/styles/search/search.module.scss";
-import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import { useParams } from "react-router-dom";
 import { User } from "@/gql/graphql.ts";
 import { useQuery } from "@apollo/client";
@@ -7,7 +7,7 @@ import { GET_FILTERED_USERS } from "@/lib/query/search/getFilteredUsers.graphql.
 import { debouncedError } from "@/utils/error-handler.ts";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
 import UserLoneBox from "./UserLoneBox.tsx";
-import { debounce } from "@/utils/debouncer.ts";
+import useInfiniteScroll from "@/hooks/use-infinite-scroll.ts";
 
 interface UserPage {
   pageRef: RefObject<HTMLDivElement>;
@@ -15,85 +15,41 @@ interface UserPage {
   finished?: boolean;
 }
 
+const paginationLimit = 10;
 export default function UserPage({ pageRef, setFinished, finished }: UserPage) {
   const { searchQuery } = useParams();
+  const [currFinished, setCurrFinished] = useState(false);
   const [userData, setUserData] = useState<User[]>([]);
-  let start = 10;
-  const { loading, refetch: getUsers } = useQuery(GET_FILTERED_USERS, {
+  const [currPostIndex, setCurrPostIndex] = useState(0);
+  const { loading } = useQuery(GET_FILTERED_USERS, {
     variables: {
       filter: searchQuery ? searchQuery : "",
       pagination: {
-        start: 0,
-        limit: 10,
+        start: currPostIndex,
+        limit: paginationLimit,
       },
     },
     fetchPolicy: "cache-and-network",
     onError: debouncedError,
     onCompleted: (data) => {
       const result = data.getFilteredUsers;
-      // console.log(result);
-
       if (result < 10) {
-        if (setFinished) setFinished(true);
+        setFinished ? setFinished(true) : setCurrFinished(true);
+        return;
       }
       setUserData([...userData, ...result]);
     },
   });
 
   const handleFetch = () => {
-    if (finished) return;
-    getUsers({
-      filter: searchQuery ? searchQuery : "",
-      pagination: {
-        start: start,
-        limit: 10,
-      },
-    })
-      .then(() => {
-        start += 10;
-      })
-      .catch(debouncedError);
+    if (finished || currFinished) return;
+    setCurrPostIndex((prev) => prev + paginationLimit);
   };
 
-  const debouncedHandleScroll = debounce(handleFetch, 50);
-  let scrollElement: HTMLElement | null;
-  const handleScroll = () => {
-    if (scrollElement) {
-      const scrollTop = scrollElement.scrollTop;
-      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      const totalHeight = scrollElement.scrollHeight;
-      // console.log(data)
-      if (!(scrollTop + windowHeight + 600 >= totalHeight)) {
-        return;
-      }
-      debouncedHandleScroll();
-    }
-  };
-
-  useEffect(() => {
-    scrollElement = pageRef.current!;
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
-      return () => {
-        scrollElement!.removeEventListener("scroll", handleScroll);
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    scrollElement = pageRef.current!;
-    if (scrollElement && finished) {
-      scrollElement!.removeEventListener("scroll", handleScroll);
-    }
-  }, [finished]);
-
-  if (loading)
-    return (
-      <>
-        <GroupSearchSkeleton key={"user1"} />
-        <GroupSearchSkeleton key={"user2"} />
-      </>
-    );
+  useInfiniteScroll<HTMLDivElement>({
+    callback: handleFetch,
+    pageRef,
+  });
 
   if (!loading && userData.length == 0 && !setFinished)
     return (
@@ -102,16 +58,24 @@ export default function UserPage({ pageRef, setFinished, finished }: UserPage) {
       </div>
     );
   return (
-    <div className={styles.search}>
-      {userData.map((user, index) => {
-        return (
-          <UserLoneBox
-            user={user}
-            setUsers={setUserData}
-            key={index}
-          />
-        );
-      })}
-    </div>
+    <>
+      <div className={styles.search}>
+        {userData.map((user) => {
+          return (
+            <UserLoneBox
+              user={user}
+              setUsers={setUserData}
+              key={user.id}
+            />
+          );
+        })}
+      </div>
+      {loading && !(finished || currFinished) && (
+        <>
+          <GroupSearchSkeleton />
+          <GroupSearchSkeleton />
+        </>
+      )}
+    </>
   );
 }

@@ -50,6 +50,7 @@
       font-size: 1rem;
       font-weight: bolder;
       padding: 0.5rem 0;
+      transition-duration: var(--transition-duration-short);
 
       &:hover {
         background-color: var(--blue-button-hover);
@@ -59,6 +60,7 @@
     .joined {
       background-color: var(--button-color);
       color: black;
+
       &:hover {
         background-color: var(--button-color);
         cursor: not-allowed;

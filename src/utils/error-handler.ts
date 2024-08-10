@@ -16,7 +16,7 @@ export default function errorHandler(error: ApolloError) {
     }).showToast();
     return { data: null } as FetchResult;
   } else if (error.message.includes("Token is expired") || error.message.includes("invalid number of segments")) {
-    window.location.href = "/login";
+    window.location.href = `${import.meta.env.VITE_ROOT_URL}/login`;
     toast.error("Token is expired");
 
     sessionStorage.removeItem("token");

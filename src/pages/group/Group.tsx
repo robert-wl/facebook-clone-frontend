@@ -40,6 +40,11 @@ export default function Group() {
     });
   }, [filter, groups]);
 
+  const setGroupFilter = (filter: string) => {
+    setTab("discover");
+    setFilter(filter);
+  };
+
   return (
     <>
       {shareModalState && (
@@ -52,7 +57,7 @@ export default function Group() {
         <Navbar />
         <div className={styles.content}>
           <GroupSidebar
-            setFilter={setFilter}
+            setFilter={setGroupFilter}
             redirect={false}
             filter={filter}
             currentTab={currentTab}

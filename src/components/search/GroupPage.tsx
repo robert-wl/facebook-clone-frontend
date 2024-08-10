@@ -1,13 +1,13 @@
-import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Group } from "@/gql/graphql.ts";
 import { useQuery } from "@apollo/client";
 import { debouncedError } from "@/utils/error-handler.ts";
-import { debounce } from "@/utils/debouncer.ts";
 import GroupSearchSkeleton from "./GroupSearchSkeleton.tsx";
 import styles from "@/assets/styles/search/search.module.scss";
 import GroupLoneBox from "./GroupLoneBox.tsx";
 import { GET_FILTERED_GROUPS } from "@/lib/query/search/getFilteredGroups.graphql.ts";
+import useInfiniteScroll from "@/hooks/use-infinite-scroll.ts";
 
 interface GroupPage {
   pageRef: RefObject<HTMLDivElement>;
@@ -15,16 +15,19 @@ interface GroupPage {
   finished?: boolean;
 }
 
+const paginationLimit = 10;
+
 export default function GroupPage({ pageRef, setFinished, finished }: GroupPage) {
   const { searchQuery } = useParams();
+  const [currFinished, setCurrFinished] = useState(false);
   const [groupData, setGroupData] = useState<Group[]>([]);
-  let start = 10;
-  const { loading, refetch: getGroups } = useQuery(GET_FILTERED_GROUPS, {
+  const [currPostIndex, setCurrPostIndex] = useState(0);
+  const { loading } = useQuery(GET_FILTERED_GROUPS, {
     variables: {
       filter: searchQuery ? searchQuery : "",
       pagination: {
-        start: 0,
-        limit: 10,
+        start: currPostIndex,
+        limit: paginationLimit,
       },
     },
     fetchPolicy: "cache-and-network",
@@ -33,7 +36,8 @@ export default function GroupPage({ pageRef, setFinished, finished }: GroupPage)
       const result = data.getFilteredGroups;
 
       if (result < 10) {
-        if (setFinished) setFinished(true);
+        setFinished ? setFinished(true) : setCurrFinished(true);
+        return;
       }
       setGroupData([...groupData, ...result]);
     },
@@ -41,59 +45,13 @@ export default function GroupPage({ pageRef, setFinished, finished }: GroupPage)
 
   const handleFetch = () => {
     if (finished) return;
-    getGroups({
-      filter: searchQuery ? searchQuery : "",
-      pagination: {
-        start: start,
-        limit: 10,
-      },
-    })
-      .then(() => {
-        start += 10;
-      })
-      .catch(debouncedError);
+    setCurrPostIndex((prev) => prev + paginationLimit);
   };
 
-  const debouncedHandleScroll = debounce(handleFetch, 50);
-  let scrollElement: HTMLElement | null;
-  const handleScroll = () => {
-    if (scrollElement) {
-      const scrollTop = scrollElement.scrollTop;
-      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      const totalHeight = scrollElement.scrollHeight;
-      // console.log(data)
-      if (!(scrollTop + windowHeight + 600 >= totalHeight)) {
-        return;
-      }
-      debouncedHandleScroll();
-    }
-  };
-
-  useEffect(() => {
-    scrollElement = pageRef.current!;
-
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
-      return () => {
-        scrollElement!.removeEventListener("scroll", handleScroll);
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    scrollElement = pageRef.current!;
-    if (scrollElement && finished) {
-      scrollElement!.removeEventListener("scroll", handleScroll);
-    }
-  }, [finished]);
-
-  if (loading)
-    return (
-      <>
-        <GroupSearchSkeleton key={1} />
-        <GroupSearchSkeleton key={2} />
-      </>
-    );
+  useInfiniteScroll<HTMLDivElement>({
+    callback: handleFetch,
+    pageRef,
+  });
 
   if (!loading && groupData.length == 0 && !setFinished)
     return (
@@ -102,16 +60,24 @@ export default function GroupPage({ pageRef, setFinished, finished }: GroupPage)
       </div>
     );
   return (
-    <div className={styles.search}>
-      {groupData.map((group, index) => {
-        return (
-          <GroupLoneBox
-            group={group}
-            setGroupData={setGroupData}
-            key={index}
-          />
-        );
-      })}
-    </div>
+    <>
+      <div className={styles.search}>
+        {groupData.map((group, index) => {
+          return (
+            <GroupLoneBox
+              group={group}
+              setGroupData={setGroupData}
+              key={index}
+            />
+          );
+        })}
+      </div>
+      {loading && !(finished || currFinished) && (
+        <>
+          <GroupSearchSkeleton />
+          <GroupSearchSkeleton />
+        </>
+      )}
+    </>
   );
 }

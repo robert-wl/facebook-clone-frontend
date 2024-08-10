@@ -40,7 +40,7 @@ export default function User() {
   const [currPost, setCurrPost] = useState<Nullable<Post>>(null);
   const [shareModalState, setShareModalState] = useState(false);
   const [peopleMightKnowState, setPeopleMightKnowState] = useState(false);
-
+  const navigate = useNavigate();
   const { loading } = useQuery(GET_USER, {
     variables: {
       username: username,
@@ -49,7 +49,7 @@ export default function User() {
       setUser(dat.getUser);
     },
     fetchPolicy: "cache-and-network",
-    onError: debouncedError,
+    onError: (e) => navigate("/"),
   });
   const { auth } = useAuth();
   const [updateProfile] = useMutation(UPDATE_USER_PROFILE);
@@ -57,7 +57,6 @@ export default function User() {
   const [addFriend] = useMutation(ADD_FRIEND);
   const [createConversation] = useMutation(CREATE_CONVERSATION);
   const [blockUser] = useMutation(BLOCK_USER);
-  const navigate = useNavigate();
 
   const handleProfileInput = () => {
     const fileInput = document.getElementById("profileInput") as HTMLInputElement;

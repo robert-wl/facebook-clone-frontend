@@ -31,7 +31,6 @@ export default function FriendRequestSection({ setFriends }: FriendRequestSectio
         friend: friend.id,
       },
     }).catch(debouncedError);
-    console.log("hai");
 
     setFriends((prev) => [...prev, friend]);
     setRequests((prev) => {
@@ -59,7 +58,7 @@ export default function FriendRequestSection({ setFriends }: FriendRequestSectio
           return (
             <>
               <FriendBox
-                key={index}
+                key={req.id}
                 friend={req}
                 handleAccept={handleAccept}
                 handleDeny={handleDeny}

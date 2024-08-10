@@ -8,13 +8,18 @@ interface AuthenticatedProtector {
 export default function AuthenticatedProtector({ children }: AuthenticatedProtector) {
   const { loading, auth, token } = useAuth();
 
-  if (loading || !auth) return <></>;
+  console.log("UNAUTHENTIVCATED", import.meta.env.VITE_ROOT_URL);
+  if (loading || !auth) {
+    console.log("BRRRR");
+    return <></>;
+  }
 
+  console.log("UNAUTHENTIVCATED2", import.meta.env.VITE_ROOT_URL);
   if (!token)
     return (
       <Navigate
         to={`${import.meta.env.VITE_ROOT_URL}/login`}
-        replace={true}
+        // replace={true}
       />
     );
 

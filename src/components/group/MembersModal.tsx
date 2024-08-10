@@ -1,6 +1,6 @@
 import styles from "@/assets/styles/group/membersModal.module.scss";
 import { AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Member } from "@/gql/graphql.ts";
 import { GrUserAdmin } from "react-icons/gr";
 import { BiLogOut } from "react-icons/bi";
@@ -19,6 +19,7 @@ interface MembersModal {
 
 export default function MembersModal({ members, setMembersModalState }: MembersModal) {
   const [membersList, setMembersList] = useState<Member[]>([]);
+  const [filter, setFilter] = useState("");
   const { groupId } = useParams();
   const [promoteMember] = useMutation(PROMOTE_MEMBER);
   const [kickMember] = useMutation(KICK_MEMBER);
@@ -26,6 +27,12 @@ export default function MembersModal({ members, setMembersModalState }: MembersM
   useEffect(() => {
     if (members) setMembersList(members);
   }, [members]);
+
+  const filteredMember = useMemo(() => {
+    return membersList.filter((member) => {
+      return member.user.firstName.toLowerCase().includes(filter.toLowerCase()) || member.user.lastName.toLowerCase().includes(filter.toLowerCase());
+    });
+  }, [filter]);
 
   const handlePromote = (member: Member) => {
     const edited = membersList.map((mem) => {
@@ -78,11 +85,11 @@ export default function MembersModal({ members, setMembersModalState }: MembersM
             <input
               type={"text"}
               placeholder={"Search members..."}
-              // onChange={(e) => handleFilter(e.target.value)}
+              onChange={(e) => setFilter(e.target.value)}
             />
           </div>
           <div className={styles.friendList}>
-            {membersList.map((member, index) => {
+            {filteredMember.map((member, index) => {
               if (member.role.toLowerCase() == "admin")
                 return (
                   <div
@@ -119,7 +126,7 @@ export default function MembersModal({ members, setMembersModalState }: MembersM
                   </div>
                 );
             })}
-            {membersList.map((member, index) => {
+            {filteredMember.map((member, index) => {
               if (member.role == "member")
                 return (
                   <div

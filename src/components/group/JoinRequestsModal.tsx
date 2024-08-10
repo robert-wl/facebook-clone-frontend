@@ -1,6 +1,6 @@
 import styles from "@/assets/styles/group/joinRequestModal.module.scss";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_JOIN_REQUESTS } from "@/lib/query/group/getJoinRequest.graphql.ts";
 import { useParams } from "react-router-dom";
@@ -16,6 +16,7 @@ interface JoinRequestsModal {
 }
 
 export default function JoinRequestsModal({ setJoinRequestsModalState }: JoinRequestsModal) {
+  const [filter, setFilter] = useState("");
   const { groupId } = useParams();
   const [requests, setRequests] = useState<Member[]>([]);
   const { data } = useQuery(GET_JOIN_REQUESTS, {
@@ -28,10 +29,11 @@ export default function JoinRequestsModal({ setJoinRequestsModalState }: JoinReq
   const [approveMember] = useMutation(APPROVE_MEMBER);
   const [denyMember] = useMutation(DENY_MEMBER);
 
-  useEffect(() => {
-    if (data) setRequests(data.getJoinRequests);
-  }, [data]);
-
+  const filteredRequests = useMemo(() => {
+    return requests.filter((member) => {
+      return member.user.firstName.toLowerCase().includes(filter.toLowerCase()) || member.user.lastName.toLowerCase().includes(filter.toLowerCase());
+    });
+  }, [filter]);
   const handleApprove = (user: User, approve: boolean) => {
     const filtered = requests.filter((member) => {
       return member.user.id.toString() != user.id.toString();
@@ -55,6 +57,10 @@ export default function JoinRequestsModal({ setJoinRequestsModalState }: JoinReq
     }
   };
 
+  useEffect(() => {
+    if (data) setRequests(data.getJoinRequests);
+  }, [data]);
+
   return (
     <>
       <div className={styles.background}>
@@ -72,11 +78,11 @@ export default function JoinRequestsModal({ setJoinRequestsModalState }: JoinReq
             <input
               type={"text"}
               placeholder={"Search join requests..."}
-              // onChange={(e) => handleFilter(e.target.value)}
+              onChange={(e) => setFilter(e.target.value)}
             />
           </div>
           <div className={styles.friendList}>
-            {requests.map((member, index) => {
+            {filteredRequests.map((member, index) => {
               const user = member.user;
               return (
                 <div

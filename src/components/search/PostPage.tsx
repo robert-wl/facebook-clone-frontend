@@ -1,12 +1,12 @@
-import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import { Post } from "@/gql/graphql.ts";
 import { useQuery } from "@apollo/client";
 import { debouncedError } from "@/utils/error-handler.ts";
-import { debounce } from "@/utils/debouncer.ts";
 import styles from "@/assets/styles/search/search.module.scss";
 import PostSkeleton from "@/components/post/PostSkeleton.tsx";
 import PostBox from "@/components/post/PostBox.tsx";
 import { GET_FILTERED_POSTS } from "@/lib/query/search/getFilteredPosts.graphql.ts";
+import useInfiniteScroll from "@/hooks/use-infinite-scroll.ts";
 
 interface PostPage {
   setCurrPost: Dispatch<SetStateAction<Post | null>>;
@@ -16,16 +16,18 @@ interface PostPage {
   setFinished?: Dispatch<SetStateAction<boolean>>;
 }
 
+const paginationLimit = 10;
+
 export default function PostPage({ setCurrPost, setShareModalState, pageRef, searchQuery, setFinished }: PostPage) {
   const [postData, setPostData] = useState<Post[]>([]);
   const [stop, setStop] = useState(false);
-  let start = 4;
-  const { loading, refetch: getPosts } = useQuery(GET_FILTERED_POSTS, {
+  const [currPostIndex, setCurrPostIndex] = useState(0);
+  const { loading } = useQuery(GET_FILTERED_POSTS, {
     variables: {
       filter: searchQuery ? searchQuery : "",
       pagination: {
-        start: 0,
-        limit: 4,
+        start: currPostIndex,
+        limit: paginationLimit,
       },
     },
     fetchPolicy: "cache-and-network",
@@ -44,43 +46,13 @@ export default function PostPage({ setCurrPost, setShareModalState, pageRef, sea
   });
 
   const handleFetch = () => {
-    getPosts({
-      filter: searchQuery ? searchQuery : "",
-      pagination: {
-        start: start,
-        limit: 4,
-      },
-    })
-      .then(() => {
-        start += 4;
-      })
-      .catch(debouncedError);
+    setCurrPostIndex((prev) => prev + paginationLimit);
   };
 
-  const debouncedHandleScroll = debounce(handleFetch, 50);
-  let scrollElement: HTMLElement | null;
-  const handleScroll = () => {
-    if (scrollElement) {
-      const scrollTop = scrollElement.scrollTop;
-      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      const totalHeight = scrollElement.scrollHeight;
-
-      if (!(scrollTop + windowHeight + 200 >= totalHeight)) {
-        return;
-      }
-      debouncedHandleScroll();
-    }
-  };
-
-  useEffect(() => {
-    scrollElement = pageRef.current!;
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
-      return () => {
-        scrollElement!.removeEventListener("scroll", handleScroll);
-      };
-    }
-  }, []);
+  useInfiniteScroll<HTMLDivElement>({
+    callback: handleFetch,
+    pageRef,
+  });
 
   if (!loading && postData.length == 0 && !setFinished)
     return (

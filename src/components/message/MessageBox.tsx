@@ -24,8 +24,9 @@ export default function MessageBox({ setConversations }: IProps) {
     skip: stop,
   });
 
+  console.log(error);
   if (error && !error.message.includes("must be defined") && !stop) {
-    return <Navigate to={`${import.meta.env.VITE_ROOT_URL}/messages`} />;
+    return <Navigate to={`/messages`} />;
   } else if (error && error.message.includes("must be defined") && !stop) {
     setStop(true);
   }

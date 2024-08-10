@@ -57,7 +57,7 @@ export default function RecommendFriendBox({ friend, setFriends }: RecommendFrie
         </h4>
         <button onClick={() => handleAddFriend()}>
           <BsFillPersonPlusFill size={"1.2rem"} /> Add Friend
-        </button>{" "}
+        </button>
         <button onClick={() => handleRemove()}>Remove</button>
       </div>
     </div>

@@ -12,7 +12,7 @@ export default ({ mode }) => {
     base: env.VITE_ROOT_URL,
     server: {
       host: "0.0.0.0",
-      port: 3900,
+      port: 4173,
     },
   });
 };

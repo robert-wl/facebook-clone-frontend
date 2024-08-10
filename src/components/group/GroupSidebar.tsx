@@ -44,7 +44,7 @@ export default function GroupSidebar({ filter, setFilter, redirect, currentTab, 
                 <input
                   type={"text"}
                   value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
+                  onChange={(e) => setFilter?.(e.target.value)}
                   placeholder={"Find groups..."}
                 />
               </div>
