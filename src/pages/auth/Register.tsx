@@ -57,7 +57,7 @@ export default function Register() {
 
     if (!result) {
       toast.success("Success: account created successfully");
-      return navigate("/login");
+      return navigate(`${import.meta.env.VITE_ROOT_URL}/login`);
     }
   };
 

@@ -113,14 +113,14 @@ export default function GroupDetail() {
 
     if (result == "success") {
       toast.success("Successfully left group");
-      navigate("/group");
+      navigate(`${import.meta.env.VITE_ROOT_URL}/group`);
     } else if (result == "not allowed") {
       toast.error("You are not allowed to leave this group");
     }
   };
 
   console.log(!loading, group?.members?.length == 0);
-  if (!loading && group?.members?.length == 0) return <Navigate to={"/group"} />;
+  if (!loading && group?.members?.length == 0) return <Navigate to={`${import.meta.env.VITE_ROOT_URL}/group`} />;
 
   return (
     <>

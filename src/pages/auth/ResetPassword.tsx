@@ -32,7 +32,7 @@ export default function ResetPassword() {
     })
       .then(() => {
         toast.success("Success: password reset successfully");
-        return navigate("/login");
+        return navigate(`${import.meta.env.VITE_ROOT_URL}/login`);
       })
       .catch(debouncedError);
   };

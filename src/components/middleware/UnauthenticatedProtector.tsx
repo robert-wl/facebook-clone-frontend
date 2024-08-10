@@ -7,7 +7,7 @@ export default function UnauthenticatedProtector({ children }: { children: JSX.E
   if (token)
     return (
       <Navigate
-        to={"/"}
+        to={import.meta.env.VITE_ROOT_URL}
         replace={true}
       />
     );

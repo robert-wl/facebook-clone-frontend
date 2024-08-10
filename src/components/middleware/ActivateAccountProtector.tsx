@@ -21,7 +21,7 @@ export default function ActivateAccountProtector({ children }: { children: JSX.E
         children
       ) : (
         <Navigate
-          to={"/login"}
+          to={`${import.meta.env.VITE_ROOT_URL}/login`}
           replace={true}
         />
       )}

@@ -47,7 +47,7 @@ export default function Stories() {
   }, [username]);
 
   if (friends.length != 0 && friends.filter((friend) => friend.username == username).length == 0) {
-    return <Navigate to={"/stories/create"} />;
+    return <Navigate to={`${import.meta.env.VITE_ROOT_URL}/stories/create`} />;
   }
 
   if (auth && username)
