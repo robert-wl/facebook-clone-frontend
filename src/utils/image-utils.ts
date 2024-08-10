@@ -2,10 +2,11 @@ import { Nullable, Optional } from "@/types/utils";
 import { SyntheticEvent } from "react";
 import { BackendFile } from "@/types/files";
 
-export const defaultGroupCover = "/public/group/default-group-cover.png";
-export const defaultGroupBackground = "/public/user/default-profile.jpg";
+export const defaultGroupCover = `${import.meta.env.VITE_ROOT_URL}/public/group/default-group-cover.png`;
+export const defaultGroupBackground = `${import.meta.env.VITE_ROOT_URL}/public/user/default-profile.jpg`;
 export const defaultUserBackground = "https://picsum.photos/200/300";
-export const defaultUserProfile = "/public/user/default-profile.jpg";
+export const defaultUserProfile = `${import.meta.env.VITE_ROOT_URL}/public/user/default-profile.jpg`;
+
 export function getImageURLFromFile(file: Optional<Nullable<BackendFile | string>>, defaultURL?: string) {
   if (!file) {
     return defaultURL;
