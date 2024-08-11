@@ -9,5 +9,5 @@ services:
     tty: true
     build: .
     ports:
-      - 4173:4173
+      - "4173:4173"
     restart: on-failure

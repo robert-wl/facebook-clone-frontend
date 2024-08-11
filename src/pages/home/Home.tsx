@@ -18,6 +18,7 @@ import useAuth from "@/hooks/use-auth.ts";
 import useInfiniteScroll from "@/hooks/use-infinite-scroll.ts";
 import { Nullable } from "@/types/utils";
 import EmptyPost from "@/components/post/EmptyPost.tsx";
+import HomeSide from "@/components/home/HomeSide.tsx";
 
 const paginationLimit = 5;
 
@@ -99,6 +100,7 @@ export default function Home() {
         className={styles.page}
         ref={ref}>
         <Navbar />
+        <HomeSide />
         <div className={styles.content}>
           <HomeTop />
           <div className={styles.inputBox}>

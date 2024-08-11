@@ -8,6 +8,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--background-color);
+  position: relative;
 
   @include scrollbar;
 

@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import useAuth from "@/hooks/use-auth.ts";
+import Loading from "@/components/Loading.tsx";
 
 interface AuthenticatedProtector {
   children: JSX.Element;
@@ -10,8 +11,7 @@ export default function AuthenticatedProtector({ children }: AuthenticatedProtec
 
   console.log("UNAUTHENTIVCATED", import.meta.env.VITE_ROOT_URL);
   if (loading || !auth) {
-    console.log("BRRRR");
-    return <></>;
+    return <Loading />;
   }
 
   console.log("UNAUTHENTIVCATED2", import.meta.env.VITE_ROOT_URL);
