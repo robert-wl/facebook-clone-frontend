@@ -34,7 +34,6 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
 
   useEffect(() => {
     if (currVideo) {
-      console.log("CURR VIDEO", currVideo);
       if (currVideo && currVideo.type !== "video/mp4") {
         toast.error("Error: video must be in mp4 format");
         return;
@@ -50,7 +49,6 @@ export default function ReelsSidebar({ setVideo, content, setContent, handleSubm
           toast.error("Error: video must be at least 1 second");
           return;
         }
-        console.log("IS SETT", currVideo);
         setVideo(currVideo);
       };
       videoHTML.src = URL.createObjectURL(currVideo);

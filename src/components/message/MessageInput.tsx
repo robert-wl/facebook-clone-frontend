@@ -49,11 +49,6 @@ export default function MessageInput({ setConversations, conversationID }: IProp
     setConversations((prev) => {
       return prev.map((conv) => {
         if (conv.id == conversationID) {
-          console.log("called", {
-            ...conv,
-            lastSentMessageTime: new Date().toISOString(),
-            lastMessage: text.length > 0 ? text : "Sent an image",
-          });
           return {
             ...conv,
             lastSentMessageTime: new Date().toISOString(),

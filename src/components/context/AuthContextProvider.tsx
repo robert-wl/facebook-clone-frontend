@@ -46,7 +46,6 @@ export default function AuthContextProvider({ children }: IProps) {
       return;
     }
 
-    console.log("DAT", data);
     setAuth(data.data.getAuth);
   };
 

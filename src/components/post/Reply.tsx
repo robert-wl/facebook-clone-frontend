@@ -60,7 +60,6 @@ export default function Reply({ c, parentId, setCurrComment }: Reply) {
         .then((data) => {
           const newComment = data.data.createComment;
           setCurrComment((comment) => {
-            console.log(comment);
             if (comment) {
               if (comment.comments) {
                 return { ...comment, comments: [...comment.comments, newComment] };

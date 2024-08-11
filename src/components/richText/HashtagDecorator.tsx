@@ -8,7 +8,6 @@ function hashtagStrategy(contentBlock: ContentBlock, callback: (start: number, e
 }
 
 function hashtagComponent(props: any) {
-  console.log(props);
   return (
     <Link to={"/search/" + props.decoratedText}>
       <span className={styles.hashtag}>{props.children}</span>

@@ -31,7 +31,6 @@ export default function ShareModal({ setShareModalState, currPost }: ShareModal)
       setFriends(friends);
       setFilteredFriends(friends);
     }
-    console.log(data);
   }, [data]);
 
   const handleFilter = (filter: string) => {

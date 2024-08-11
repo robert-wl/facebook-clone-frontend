@@ -1,13 +1,12 @@
 import styles from "@/assets/styles/user/user.module.scss";
 import UserFriendBox from "@/components/friend/UserFriendBox.tsx";
-import {Group} from "@/gql/graphql.ts";
+import { Group } from "@/gql/graphql.ts";
 
 interface GroupUser {
   group: Group;
 }
 
-export default function GroupUser({group}: GroupUser) {
-  console.log(group.members);
+export default function GroupUser({ group }: GroupUser) {
   return (
     <>
       <div className={styles.contentBox}>

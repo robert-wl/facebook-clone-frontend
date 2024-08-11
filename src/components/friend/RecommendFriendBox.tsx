@@ -30,7 +30,6 @@ export default function RecommendFriendBox({ friend, setFriends }: RecommendFrie
       },
     }).catch(debouncedError);
     setFriends((friends) => {
-      console.log(friends.filter((f) => f.id.toString() !== friend.id.toString()));
       return friends.filter((f) => f.id.toString() !== friend.id.toString());
     });
   };

@@ -7,7 +7,6 @@ function mentionStrategy(contentBlock: ContentBlock, callback: (start: number, e
 }
 
 function mentionComponent(props: any) {
-  console.log(props);
   return (
     <>
       <span className={styles.mention}>

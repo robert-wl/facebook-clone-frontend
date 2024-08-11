@@ -78,7 +78,6 @@ export default function NewPostModal({
     const urlList: string[] = [];
     for (const file of files) {
       const url = await uploadStorage("post", file);
-      console.log(url);
       urlList.push(url);
     }
 

@@ -50,7 +50,6 @@ export default function GroupDetail() {
     onError: debouncedError,
   });
 
-  console.log(data);
   useEffect(() => {
     if (data) {
       setGroup(data.getGroup);
@@ -119,7 +118,6 @@ export default function GroupDetail() {
     }
   };
 
-  console.log(!loading, group?.members?.length == 0);
   if (!loading && group?.members?.length == 0) return <Navigate to={`${import.meta.env.VITE_ROOT_URL}/group`} />;
 
   return (

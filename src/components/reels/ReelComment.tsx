@@ -54,9 +54,6 @@ export default function ReelCommentBox({ comment: iComment, reply, parent, setCo
   };
 
   const handleComment = async () => {
-    // if (commentInput.length < 8) return;
-
-    console.log("TEST");
     if (reply) {
       const data = await createReelComment({
         variables: {

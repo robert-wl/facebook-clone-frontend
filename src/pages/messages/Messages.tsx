@@ -89,7 +89,6 @@ export default function Messages() {
 
                         return (
                           <div
-                            onClick={() => console.log(conv)}
                             key={index}
                             className={conv.id.toString() === conversationID ? styles.messageActive : styles.message}>
                             <Link to={"/messages/" + conv.id}>
