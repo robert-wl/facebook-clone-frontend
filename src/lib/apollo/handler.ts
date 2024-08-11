@@ -14,7 +14,7 @@ const wsLink = new GraphQLWsLink(
 );
 
 const authLink = setContext((_, { headers }) => {
-  const token = sessionStorage.getItem("token")?.replaceAll('"', "");
+  const token = localStorage.getItem("token")?.replaceAll('"', "");
 
   return {
     headers: {

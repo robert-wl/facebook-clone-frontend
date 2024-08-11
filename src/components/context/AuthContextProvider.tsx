@@ -3,7 +3,7 @@ import { useQuery } from "@apollo/client";
 import { User } from "@/gql/graphql.ts";
 import { debouncedError } from "@/utils/error-handler.ts";
 import { Nullable } from "@/types/utils";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 import { GET_AUTH } from "@/lib/query/user/getAuth.graphql.ts";
 
 interface AuthContext {
@@ -31,8 +31,8 @@ interface IProps {
 }
 
 export default function AuthContextProvider({ children }: IProps) {
-  const [auth, setAuth, removeAuth] = useSessionStorage<Nullable<User>>("auth", null);
-  const [token, setToken, removeToken] = useSessionStorage<string>("token", "");
+  const [auth, setAuth, removeAuth] = useLocalStorage<Nullable<User>>("auth", null);
+  const [token, setToken, removeToken] = useLocalStorage<string>("token", "");
   const { refetch, loading } = useQuery(GET_AUTH, {
     onCompleted: (data) => setAuth(data.getAuth),
     onError: debouncedError,

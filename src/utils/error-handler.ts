@@ -19,7 +19,7 @@ export default function errorHandler(error: ApolloError) {
     window.location.href = `${import.meta.env.VITE_ROOT_URL}/login`;
     toast.error("Token is expired");
 
-    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
   }
   toast.error(error.message);
   console.log(error);
