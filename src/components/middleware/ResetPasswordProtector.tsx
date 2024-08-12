@@ -21,7 +21,7 @@ export default function ResetPasswordProtector({ children }: { children: JSX.Ele
         children
       ) : (
         <Navigate
-          to={`${import.meta.env.VITE_ROOT_URL}/login`}
+          to={`/login`}
           replace={true}
         />
       )}

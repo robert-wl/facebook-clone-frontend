@@ -16,7 +16,7 @@ export default function AuthenticatedProtector({ children }: AuthenticatedProtec
   if (!token)
     return (
       <Navigate
-        to={`${import.meta.env.VITE_ROOT_URL}/login`}
+        to={`/login`}
         // replace={true}
       />
     );
