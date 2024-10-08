@@ -26,6 +26,7 @@ jobs:
         uses: kitabisa/docker-slim-action@v1
         env:
           DSLIM_HTTP_PROBE: false
+          DSLIM_INCLUDE_PATH: /var/www/html
         with:
           overwrite: true
           target: yahkerobertkertasnya/facebook-clone-fe:latest
